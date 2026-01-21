@@ -88,11 +88,11 @@
 <h1>Monetarismus: Interaktive Waage</h1>
 <div class="waage">
   <div class="beam" id="beam"></div>
-  <div class="pan left" id="leftPan">💶💶💶<br>1,50 B€</div>
-  <div class="pan right" id="rightPan">📦<br>1,000 B€</div>
+  <div class="pan left" id="leftPan">💶💶💶<br>4,10 Mrd€</div>
+  <div class="pan right" id="rightPan">📦<br>1,100 Mrd€</div>
 </div>
 
-<div class="result" id="inflationStatus">Geldmengenüberhang: 50%</div>
+<div class="result" id="inflationStatus">Geldmengenüberhang: 273%</div>
 
 <h2>Geldpolitik</h2>
 <button class="geld" onclick="adjustMoney(2)">Leitzins erhöhen (-2%)</button>
@@ -107,8 +107,8 @@
 <button class="bip" onclick="adjustBIP(1.5)">Subventionen erhöhen (+1.5%)</button>
 
 <script>
-let geldMenge = 1.50; // Billionen € (realistischer Wert für M3/BIP-Verhältnis)
-let bip = 1.00; // Billionen €
+let geldMenge = 4.1; // Milliarden € (M3 Geldmenge)
+let bip = 1.1; // Milliarden € (BIP)
 
 function updateWaage() {
   const ratio = geldMenge / bip;
@@ -138,8 +138,8 @@ function updateWaage() {
   document.getElementById("inflationStatus").textContent = `${status}: ${percentage}%${interpretation}`;
 
   // Werte auf den Pans anzeigen
-  document.getElementById("leftPan").innerHTML = `💶💶💶<br>${geldMenge.toFixed(2)} B€`;
-  document.getElementById("rightPan").innerHTML = `📦<br>${bip.toFixed(3)} B€`;
+  document.getElementById("leftPan").innerHTML = `💶💶💶<br>${geldMenge.toFixed(2)} Mrd€`;
+  document.getElementById("rightPan").innerHTML = `📦<br>${bip.toFixed(3)} Mrd€`;
 }
 
 // KORRIGIERT: Geldpolitik SENKT die Geldmenge (kontraktiv)
