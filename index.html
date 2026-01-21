@@ -18,6 +18,13 @@
     font-size: 1.5em;
   }
 
+  .subtitle {
+    font-size: 0.9em;
+    color: #a0a0a0;
+    margin-top: -10px;
+    margin-bottom: 20px;
+  }
+
   .waage {
     position: relative;
     margin: 30px auto;
@@ -78,6 +85,7 @@
   @media(min-width: 600px) {
     h1 { font-size: 2em; }
     h2 { font-size: 1.7em; }
+    .subtitle { font-size: 1.1em; }
     .pan { width: 80px; height: 80px; font-size: 20px; }
     .result { font-size: 1.5em; padding: 15px; }
   }
@@ -86,6 +94,7 @@
 <body>
 
 <h1>Monetarismus: Interaktive Waage</h1>
+<p class="subtitle">Bundesrepublik Deutschland Ende 2025</p>
 <div class="waage">
   <div class="beam" id="beam"></div>
   <div class="pan left" id="leftPan">💶💶💶<br>4,10 Bio€</div>
