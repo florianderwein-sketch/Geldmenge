@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Monetarismus: Interaktive Waage</title>
 <style>
   /* Mobile-First Basis */
@@ -10,8 +10,14 @@
     background-color: #0d1b2a;
     color: #fff;
     font-family: Arial, sans-serif;
+    font-size: 16px; /* iOS Auto-Zoom vermeiden */
     text-align: center;
     padding: 15px;
+    padding-bottom: 90px; /* Platz für fixed Status */
+    /* Safe-Area für Notch/Dynamic Island */
+    padding-left: max(15px, env(safe-area-inset-left));
+    padding-right: max(15px, env(safe-area-inset-right));
+    padding-top: max(15px, env(safe-area-inset-top));
   }
 
   h1, h2 {
@@ -38,10 +44,15 @@
 
   .waage {
     position: relative;
-    margin: 40px auto;
-    width: 90%;
+    margin: 30px auto;
+    width: 95%; /* Mehr Breite auf Mobile */
     max-width: 500px;
-    height: 220px;
+    height: min(45vh, 280px); /* Dynamisch, max 280px */
+    min-height: 200px; /* Minimum für Lesbarkeit */
+
+    /* Touch-Verhalten */
+    touch-action: none; /* Kein Pan/Zoom auf Waage */
+    user-select: none;
   }
 
   /* Zentraler Stützpunkt */
@@ -82,6 +93,11 @@
     transition: transform 0.5s ease-in-out;
     border-radius: 2px;
     box-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
+
+    /* GPU-Beschleunigung */
+    will-change: transform;
+    transform: translateZ(0);
+    backface-visibility: hidden;
   }
 
   /* Aufhängungen (Ketten) */
@@ -92,6 +108,9 @@
     background: linear-gradient(to bottom, #ccc, #888);
     top: 80px;
     transition: height 0.5s;
+
+    /* GPU-Beschleunigung */
+    will-change: height;
   }
 
   .chain.left { left: 10%; }
@@ -107,10 +126,15 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 14px;
+    font-size: 16px; /* iOS Auto-Zoom vermeiden */
     font-weight: bold;
     transition: top 0.5s ease-in-out;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+
+    /* GPU-Beschleunigung */
+    will-change: top, transform;
+    transform: translateZ(0);
+    backface-visibility: hidden;
   }
 
   .left {
@@ -126,34 +150,112 @@
   }
 
   .result {
-    margin-top: 30px;
-    font-size: 1.2em;
-    padding: 12px;
-    border-radius: 8px;
+    /* Fixed am unteren Rand (Thumb-Zone) */
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+
+    margin: 0;
+    padding: 16px;
+    padding-bottom: max(16px, env(safe-area-inset-bottom));
+    border-radius: 0;
+
+    font-size: 1.3em;
+    font-weight: 700;
+
     background: linear-gradient(45deg, #ff4500, #ffa500);
+    box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.4);
+
+    /* Smooth transitions */
+    transition: background 0.3s, transform 0.2s;
   }
 
   button {
-    margin: 5px 3px;
-    padding: 10px;
-    font-size: 14px;
-    border-radius: 5px;
+    /* Mobile-First Touch-Optimierung */
+    margin: 8px 0;
+    padding: 16px 20px; /* Min 48px Höhe */
+    font-size: 16px; /* iOS Auto-Zoom vermeiden */
+    min-height: 48px; /* WCAG Touch-Target */
+    width: calc(100% - 16px);
+
+    border-radius: 8px;
     border: none;
     cursor: pointer;
+
+    /* Touch-Verhalten */
+    touch-action: manipulation; /* Entfernt 300ms Delay */
+    -webkit-tap-highlight-color: rgba(255, 255, 255, 0.1);
+    user-select: none;
+
+    /* Performance */
+    transition: transform 0.1s ease-out, box-shadow 0.1s;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   }
 
-  .kontraktiv { background-color: #c1121f; color: white; }
-  .expansiv { background-color: #2d6a4f; color: white; }
-  .fiskal { background-color: #9c6644; color: white; }
-  .reset { background-color: #555; color: white; margin-top: 15px; padding: 12px 20px; font-size: 16px; }
+  /* Touch-Feedback States */
+  button:active {
+    transform: scale(0.98) translateY(1px);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    transition: transform 0.05s, box-shadow 0.05s;
+  }
 
-  /* Größere Bildschirme */
+  .kontraktiv {
+    background-color: #c1121f;
+    color: white;
+  }
+
+  .kontraktiv:active {
+    background-color: #a00f1a;
+  }
+
+  .expansiv {
+    background-color: #2d6a4f;
+    color: white;
+  }
+
+  .expansiv:active {
+    background-color: #245740;
+  }
+
+  .fiskal {
+    background-color: #9c6644;
+    color: white;
+  }
+
+  .fiskal:active {
+    background-color: #7d5236;
+  }
+
+  .reset {
+    background-color: #555;
+    color: white;
+    margin-top: 20px;
+    padding: 16px 32px;
+    font-size: 16px;
+  }
+
+  .reset:active {
+    background-color: #333;
+  }
+
+  /* Tablet & Desktop */
   @media(min-width: 600px) {
+    body {
+      padding: 30px;
+      padding-bottom: 110px;
+    }
+
     h1 { font-size: 2em; }
     h2 { font-size: 1.7em; }
     .subtitle { font-size: 1.1em; }
     .disclaimer { font-size: 0.9em; max-width: 600px; }
-    .waage { height: 260px; }
+
+    .waage {
+      height: min(50vh, 320px);
+      margin: 50px auto;
+    }
     .waage::before { height: 100px; }
     .waage::after { top: 90px; }
     .beam { top: 100px; }
@@ -164,7 +266,30 @@
       font-size: 16px;
       top: 140px;
     }
-    .result { font-size: 1.5em; padding: 15px; }
+
+    button {
+      width: auto;
+      min-width: 200px;
+      padding: 14px 24px;
+      margin: 8px 6px;
+    }
+
+    .result {
+      font-size: 1.6em;
+      padding: 20px;
+    }
+  }
+
+  /* Desktop mit Hover */
+  @media(min-width: 900px) and (hover: hover) {
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
   }
 </style>
 </head>
