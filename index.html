@@ -28,7 +28,19 @@
     font-size: 0.9em;
     color: #a0a0a0;
     margin-top: -10px;
+    margin-bottom: 0;
+  }
+
+  .header-row {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
     margin-bottom: 20px;
+    width: 100%;
+    max-width: 95%;
+    margin-left: auto;
+    margin-right: auto;
   }
 
   .cta-hero {
@@ -413,9 +425,13 @@
   .reset {
     background-color: #555;
     color: white;
-    margin-top: 20px;
-    padding: 16px 32px;
+    margin: 0;
+    padding: 12px 24px;
     font-size: 16px;
+    min-height: 48px;
+    width: auto;
+    min-width: 160px;
+    flex-shrink: 0;
   }
 
   .reset:active {
@@ -514,6 +530,19 @@
     .subtitle { font-size: 1.1em; }
     .disclaimer { font-size: 0.9em; max-width: 600px; }
 
+    .header-row {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 90%;
+      gap: 20px;
+    }
+
+    .reset {
+      min-width: 180px;
+      padding: 12px 28px;
+    }
+
     .info-toggle {
       max-width: 600px;
       font-size: 1em;
@@ -596,7 +625,11 @@
 <body>
 
 <h1>Monetarismus: Interaktive Waage</h1>
-<p class="subtitle">Bundesrepublik Deutschland Ende 2025</p>
+
+<div class="header-row">
+  <p class="subtitle">Bundesrepublik Deutschland Ende 2025</p>
+  <button class="reset" onclick="resetWaage()">🔄 Zurücksetzen</button>
+</div>
 
 <div class="cta-hero">
   <div class="cta-icon">👇</div>
@@ -686,8 +719,6 @@
   </div>
 
 </div>
-
-<button class="reset" onclick="resetWaage()">🔄 Zurücksetzen</button>
 
 <script>
 // Ausgangswerte speichern
