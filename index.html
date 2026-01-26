@@ -31,6 +31,105 @@
     margin-bottom: 20px;
   }
 
+  .cta-hero {
+    background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+    border-radius: 12px;
+    padding: 20px 15px;
+    margin: 20px auto;
+    max-width: 90%;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  }
+
+  .cta-icon {
+    font-size: 2em;
+    margin-bottom: 8px;
+    animation: bounce 2s infinite;
+  }
+
+  .cta-title {
+    font-size: 1.2em;
+    margin: 8px 0;
+    color: #fff;
+  }
+
+  .cta-text {
+    font-size: 0.95em;
+    color: #e0e7ff;
+    margin: 8px 0 0 0;
+    line-height: 1.4;
+  }
+
+  @keyframes bounce {
+    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-10px); }
+    60% { transform: translateY(-5px); }
+  }
+
+  .info-toggle {
+    background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
+    color: #fff;
+    border: 1px solid #4b5563;
+    padding: 12px 20px;
+    min-height: 48px;
+    width: calc(100% - 16px);
+    max-width: 90%;
+    margin: 15px auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.95em;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .info-toggle:active {
+    transform: scale(0.98);
+    background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+  }
+
+  .info-toggle .info-label {
+    flex-grow: 1;
+    text-align: left;
+    margin-left: 8px;
+    font-weight: 600;
+  }
+
+  .info-toggle .info-icon {
+    font-size: 1.2em;
+  }
+
+  .info-toggle .info-arrow {
+    font-size: 1em;
+    transition: transform 0.3s ease;
+    display: inline-block;
+  }
+
+  .info-toggle.active .info-arrow {
+    transform: rotate(180deg);
+  }
+
+  .info-content {
+    max-height: 500px;
+    overflow: hidden;
+    transition: max-height 0.4s ease-in-out, opacity 0.3s ease, margin-bottom 0.3s ease;
+    opacity: 1;
+    margin-bottom: 15px;
+    will-change: max-height;
+    transform: translateZ(0);
+  }
+
+  .info-content.collapsed {
+    max-height: 0;
+    opacity: 0;
+    margin-bottom: 0;
+  }
+
+  .info-content .disclaimer {
+    margin-top: 0;
+  }
+
   .disclaimer {
     font-size: 0.8em;
     color: #ffa500;
@@ -53,6 +152,29 @@
     /* Touch-Verhalten */
     touch-action: none; /* Kein Pan/Zoom auf Waage */
     user-select: none;
+  }
+
+  .pan-label {
+    position: absolute;
+    top: 0;
+    font-size: 0.85em;
+    font-weight: 600;
+    color: #d1d5db;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    z-index: 10;
+  }
+
+  .pan-label-left {
+    left: 5%;
+    transform: translateX(-10%);
+    color: #4a9d7a;
+  }
+
+  .pan-label-right {
+    right: 5%;
+    transform: translateX(10%);
+    color: #c17a57;
   }
 
   /* Zentraler Stützpunkt */
@@ -170,6 +292,66 @@
 
     /* Smooth transitions */
     transition: background 0.3s, transform 0.2s;
+
+    /* Flexbox for icon + text */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+  }
+
+  .status-icon {
+    font-size: 1.5em;
+    display: inline-block;
+    transition: transform 0.3s ease;
+  }
+
+  .status-text {
+    display: inline-block;
+  }
+
+  /* Pulsing animation for extreme values */
+  .result.pulse {
+    animation: statusPulse 1.5s ease-in-out infinite;
+  }
+
+  .result.pulse .status-icon {
+    animation: iconBounce 1.5s ease-in-out infinite;
+  }
+
+  @keyframes statusPulse {
+    0%, 100% {
+      box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.4);
+    }
+    50% {
+      box-shadow: 0 -4px 20px rgba(255, 69, 0, 0.6);
+    }
+  }
+
+  @keyframes iconBounce {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+  }
+
+  /* Background gradient variations */
+  .result.inflation-high {
+    background: linear-gradient(45deg, #ff4500, #ff6347);
+  }
+
+  .result.inflation-moderate {
+    background: linear-gradient(45deg, #ffa500, #ffb347);
+  }
+
+  .result.balanced {
+    background: linear-gradient(45deg, #2d6a4f, #4a9d7a);
+  }
+
+  .result.deflation-moderate {
+    background: linear-gradient(45deg, #3b82f6, #60a5fa);
+  }
+
+  .result.deflation-high {
+    background: linear-gradient(45deg, #1e40af, #3b82f6);
   }
 
   button {
@@ -240,6 +422,86 @@
     background-color: #333;
   }
 
+  .accordion-container {
+    margin: 20px auto;
+    max-width: 95%;
+  }
+
+  .accordion-section {
+    margin-bottom: 12px;
+  }
+
+  .accordion-toggle {
+    width: 100%;
+    min-height: 56px;
+    padding: 16px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    font-weight: 700;
+    text-align: left;
+    position: relative;
+  }
+
+  .accordion-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.05em;
+  }
+
+  .accordion-icon {
+    font-size: 1.2em;
+    display: inline-block;
+    min-width: 24px;
+  }
+
+  .accordion-arrow {
+    font-size: 1.2em;
+    transition: transform 0.3s ease;
+    display: inline-block;
+  }
+
+  .accordion-toggle.active .accordion-arrow {
+    transform: rotate(180deg);
+  }
+
+  .kontraktiv-header {
+    background: linear-gradient(135deg, #c1121f 0%, #a00f1a 100%);
+    color: white;
+  }
+
+  .expansiv-header {
+    background: linear-gradient(135deg, #2d6a4f 0%, #1e4d3a 100%);
+    color: white;
+  }
+
+  .fiskal-header {
+    background: linear-gradient(135deg, #9c6644 0%, #7d5236 100%);
+    color: white;
+  }
+
+  .accordion-content {
+    max-height: 1000px;
+    overflow: hidden;
+    transition: max-height 0.4s ease-in-out, opacity 0.3s ease, margin-top 0.3s ease;
+    opacity: 1;
+    margin-top: 8px;
+    will-change: max-height;
+    transform: translateZ(0);
+  }
+
+  .accordion-content.collapsed {
+    max-height: 0;
+    opacity: 0;
+    margin-top: 0;
+  }
+
+  .accordion-content button {
+    margin: 6px 0;
+  }
+
   /* Tablet & Desktop */
   @media(min-width: 600px) {
     body {
@@ -251,6 +513,22 @@
     h2 { font-size: 1.7em; }
     .subtitle { font-size: 1.1em; }
     .disclaimer { font-size: 0.9em; max-width: 600px; }
+
+    .info-toggle {
+      max-width: 600px;
+      font-size: 1em;
+    }
+
+    .info-content .disclaimer {
+      max-width: 600px;
+    }
+
+    .cta-hero {
+      max-width: 600px;
+      padding: 25px 20px;
+    }
+    .cta-title { font-size: 1.4em; }
+    .cta-text { font-size: 1.05em; }
 
     .waage {
       height: min(50vh, 320px);
@@ -267,6 +545,11 @@
       top: 140px;
     }
 
+    .pan-label {
+      font-size: 0.95em;
+      top: 5px;
+    }
+
     button {
       width: auto;
       min-width: 200px;
@@ -277,6 +560,23 @@
     .result {
       font-size: 1.6em;
       padding: 20px;
+      gap: 16px;
+    }
+
+    .status-icon {
+      font-size: 1.8em;
+    }
+
+    .accordion-container {
+      max-width: 600px;
+    }
+
+    .accordion-toggle {
+      min-height: 60px;
+    }
+
+    .accordion-title {
+      font-size: 1.15em;
     }
   }
 
@@ -298,12 +598,31 @@
 <h1>Monetarismus: Interaktive Waage</h1>
 <p class="subtitle">Bundesrepublik Deutschland Ende 2025</p>
 
-<div class="disclaimer">
-  ⚠️ Vereinfachtes didaktisches Modell zur Veranschaulichung monetaristischer Grundkonzepte.
-  In der Realität sind die Zusammenhänge komplexer (z.B. Umlaufgeschwindigkeit, Erwartungen).
+<div class="cta-hero">
+  <div class="cta-icon">👇</div>
+  <h3 class="cta-title">So funktioniert's</h3>
+  <p class="cta-text">
+    Wähle unten eine Maßnahme und beobachte,<br>
+    wie sich die Waage bewegt!
+  </p>
+</div>
+
+<button class="info-toggle" onclick="toggleInfo()" id="infoToggle">
+  <span class="info-icon">ℹ️</span>
+  <span class="info-label">Wichtige Hinweise</span>
+  <span class="info-arrow">▼</span>
+</button>
+
+<div class="info-content collapsed" id="infoContent">
+  <div class="disclaimer">
+    ⚠️ Vereinfachtes didaktisches Modell zur Veranschaulichung monetaristischer Grundkonzepte.
+    In der Realität sind die Zusammenhänge komplexer (z.B. Umlaufgeschwindigkeit, Erwartungen).
+  </div>
 </div>
 
 <div class="waage">
+  <div class="pan-label pan-label-left">Geldmenge M3</div>
+  <div class="pan-label pan-label-right">BIP (Wirtschaft)</div>
   <div class="beam" id="beam"></div>
   <div class="chain left" id="chainLeft"></div>
   <div class="chain right" id="chainRight"></div>
@@ -311,25 +630,62 @@
   <div class="pan right" id="rightPan">📦<br>4,500 Bio€</div>
 </div>
 
-<div class="result" id="inflationStatus">Inflation: 22%</div>
+<div class="result" id="inflationStatus">
+  <span class="status-icon" id="statusIcon">⚖️</span>
+  <span class="status-text" id="statusText">Inflation: 22%</span>
+</div>
 
-<h2>Geldpolitik gegen Inflation</h2>
-<button class="kontraktiv" onclick="adjustMoney(2)">Leitzins erhöhen (-2%)</button>
-<button class="kontraktiv" onclick="adjustMoney(3)">Staatsanleihen verkaufen (-3%)</button>
-<button class="kontraktiv" onclick="adjustMoney(2)">Mindestreserven erhöhen (-2%)</button>
-<button class="kontraktiv" onclick="adjustMoney(1.5)">Liquidität verringern (-1.5%)</button>
+<div class="accordion-container">
 
-<h2>Geldpolitik gegen Deflation</h2>
-<button class="expansiv" onclick="adjustMoney(-2)">Leitzins senken (+2%)</button>
-<button class="expansiv" onclick="adjustMoney(-3)">Staatsanleihen kaufen (+3%)</button>
-<button class="expansiv" onclick="adjustMoney(-2)">Mindestreserven senken (+2%)</button>
-<button class="expansiv" onclick="adjustMoney(-1.5)">Liquidität erhöhen (+1.5%)</button>
+  <div class="accordion-section" id="section-kontrativ">
+    <button class="accordion-toggle kontraktiv-header" onclick="toggleAccordion('kontrativ')">
+      <span class="accordion-title">
+        <span class="accordion-icon">🔴</span>
+        Geldpolitik gegen Inflation
+      </span>
+      <span class="accordion-arrow" id="arrow-kontrativ">▼</span>
+    </button>
+    <div class="accordion-content" id="content-kontrativ">
+      <button class="kontraktiv" onclick="adjustMoney(2)">Leitzins erhöhen (-2%)</button>
+      <button class="kontraktiv" onclick="adjustMoney(3)">Staatsanleihen verkaufen (-3%)</button>
+      <button class="kontraktiv" onclick="adjustMoney(2)">Mindestreserven erhöhen (-2%)</button>
+      <button class="kontraktiv" onclick="adjustMoney(1.5)">Liquidität verringern (-1.5%)</button>
+    </div>
+  </div>
 
-<h2>Fiskalpolitik (Regierung)</h2>
-<button class="fiskal" onclick="adjustBIP(2)">Investitionen fördern (+2%)</button>
-<button class="fiskal" onclick="adjustBIP(2.5)">Konsum stimulieren (+2.5%)</button>
-<button class="fiskal" onclick="adjustBIP(1.5)">Steuern senken (+1.5%)</button>
-<button class="fiskal" onclick="adjustBIP(1.5)">Subventionen erhöhen (+1.5%)</button>
+  <div class="accordion-section" id="section-expansiv">
+    <button class="accordion-toggle expansiv-header" onclick="toggleAccordion('expansiv')">
+      <span class="accordion-title">
+        <span class="accordion-icon">🟢</span>
+        Geldpolitik gegen Deflation
+      </span>
+      <span class="accordion-arrow" id="arrow-expansiv">▼</span>
+    </button>
+    <div class="accordion-content collapsed" id="content-expansiv">
+      <button class="expansiv" onclick="adjustMoney(-2)">Leitzins senken (+2%)</button>
+      <button class="expansiv" onclick="adjustMoney(-3)">Staatsanleihen kaufen (+3%)</button>
+      <button class="expansiv" onclick="adjustMoney(-2)">Mindestreserven senken (+2%)</button>
+      <button class="expansiv" onclick="adjustMoney(-1.5)">Liquidität erhöhen (+1.5%)</button>
+    </div>
+  </div>
+
+  <div class="accordion-section" id="section-fiskal">
+    <button class="accordion-toggle fiskal-header" onclick="toggleAccordion('fiskal')">
+      <span class="accordion-title">
+        <span class="accordion-icon">🟤</span>
+        Fiskalpolitik (Regierung)
+      </span>
+      <span class="accordion-arrow" id="arrow-fiskal">▼</span>
+    </button>
+    <div class="accordion-content collapsed" id="content-fiskal">
+      <button class="fiskal" onclick="adjustBIP(2)">Investitionen fördern (+2%)</button>
+      <button class="fiskal" onclick="adjustBIP(2.5)">Konsum stimulieren (+2.5%)</button>
+      <button class="fiskal" onclick="adjustBIP(1.5)">Steuern senken (+1.5%)</button>
+      <button class="fiskal" onclick="adjustBIP(1.5)">Subventionen erhöhen (+1.5%)</button>
+    </div>
+  </div>
+
+</div>
 
 <button class="reset" onclick="resetWaage()">🔄 Zurücksetzen</button>
 
@@ -363,7 +719,44 @@ function updateWaage() {
   let status = ratio > 1 ? "Inflation" : "Deflation";
   let percentage = Math.round(Math.abs((ratio - 1) * 100));
 
-  document.getElementById("inflationStatus").textContent = `${status}: ${percentage}%`;
+  // Enhanced status feedback with icons and states
+  const statusBar = document.getElementById("inflationStatus");
+  const statusIcon = document.getElementById("statusIcon");
+  const statusText = document.getElementById("statusText");
+
+  // Remove all state classes
+  statusBar.classList.remove('pulse', 'inflation-high', 'inflation-moderate',
+                             'balanced', 'deflation-moderate', 'deflation-high');
+
+  // Determine icon and state based on severity
+  if (percentage < 3) {
+    // Balanced (< 3%)
+    statusIcon.textContent = '✅';
+    statusBar.classList.add('balanced');
+    statusText.textContent = `${status}: ${percentage}% (Stabil)`;
+  } else if (ratio > 1) {
+    // Inflation
+    if (percentage >= 10) {
+      statusIcon.textContent = '🔥';
+      statusBar.classList.add('inflation-high', 'pulse');
+      statusText.textContent = `${status}: ${percentage}% (Kritisch!)`;
+    } else {
+      statusIcon.textContent = '📈';
+      statusBar.classList.add('inflation-moderate');
+      statusText.textContent = `${status}: ${percentage}%`;
+    }
+  } else {
+    // Deflation
+    if (percentage >= 10) {
+      statusIcon.textContent = '❄️';
+      statusBar.classList.add('deflation-high', 'pulse');
+      statusText.textContent = `${status}: ${percentage}% (Kritisch!)`;
+    } else {
+      statusIcon.textContent = '📉';
+      statusBar.classList.add('deflation-moderate');
+      statusText.textContent = `${status}: ${percentage}%`;
+    }
+  }
 
   // Werte auf den Pans anzeigen
   document.getElementById("leftPan").innerHTML = `💶<br>${geldMenge.toFixed(2)} Bio€`;
@@ -386,6 +779,56 @@ function resetWaage() {
   bip = INITIAL_BIP;
   updateWaage();
 }
+
+// Accordion functionality
+let currentOpenSection = 'kontrativ';
+
+function toggleAccordion(sectionName) {
+  const content = document.getElementById(`content-${sectionName}`);
+  const toggle = content.previousElementSibling;
+
+  // If clicking already open section, just keep it open
+  if (currentOpenSection === sectionName) {
+    return;
+  }
+
+  // Close previously open section
+  if (currentOpenSection) {
+    const oldContent = document.getElementById(`content-${currentOpenSection}`);
+    const oldToggle = oldContent.previousElementSibling;
+
+    oldContent.classList.add('collapsed');
+    oldToggle.classList.remove('active');
+  }
+
+  // Open clicked section
+  content.classList.remove('collapsed');
+  toggle.classList.add('active');
+  currentOpenSection = sectionName;
+}
+
+// Info toggle functionality
+function toggleInfo() {
+  const content = document.getElementById('infoContent');
+  const toggle = document.getElementById('infoToggle');
+
+  content.classList.toggle('collapsed');
+  toggle.classList.toggle('active');
+}
+
+// Initialize first section as open on page load
+document.addEventListener('DOMContentLoaded', function() {
+  const firstToggle = document.querySelector('#section-kontrativ .accordion-toggle');
+  if (firstToggle) {
+    firstToggle.classList.add('active');
+  }
+
+  // Initialize info as collapsed
+  const infoContent = document.getElementById('infoContent');
+  if (infoContent) {
+    infoContent.classList.add('collapsed');
+  }
+});
 
 // Initiale Anzeige
 updateWaage();
