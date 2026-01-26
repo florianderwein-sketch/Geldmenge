@@ -78,6 +78,117 @@
     60% { transform: translateY(-5px); }
   }
 
+  /* Scenario Section */
+  .scenario-section {
+    margin: 25px auto 20px;
+    max-width: 95%;
+  }
+
+  .scenario-title {
+    font-size: 1.1em;
+    color: #a0a0a0;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+  }
+
+  .scenario-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 100%;
+  }
+
+  .scenario-btn {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+    border: 2px solid rgba(255, 255, 255, 0.25);
+    color: #fff;
+    padding: 14px 18px;
+    font-size: 16px;
+    min-height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  }
+
+  .scenario-btn:active {
+    transform: scale(0.97);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+  }
+
+  .scenario-flag {
+    font-size: 1.4em;
+    flex-shrink: 0;
+  }
+
+  .scenario-name {
+    flex: 1;
+    text-align: left;
+    font-weight: 600;
+  }
+
+  .scenario-year {
+    color: #a0a0a0;
+    font-size: 0.85em;
+  }
+
+  /* Toast Notification */
+  .toast {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-100px);
+    z-index: 2000;
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    border: 2px solid #ffa500;
+    border-radius: 12px;
+    padding: 16px 20px;
+    max-width: 90%;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+    opacity: 0;
+    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  }
+
+  .toast.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+  }
+
+  .toast-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .toast-icon {
+    font-size: 1.5em;
+    flex-shrink: 0;
+  }
+
+  .toast-text {
+    flex: 1;
+  }
+
+  .toast-title {
+    font-weight: 700;
+    font-size: 1em;
+    margin-bottom: 4px;
+    color: #ffa500;
+  }
+
+  .toast-message {
+    font-size: 0.9em;
+    line-height: 1.4;
+    color: #e0e0e0;
+  }
+
   .waage {
     position: relative;
     margin: 15px auto;
@@ -732,6 +843,36 @@
       margin-left: 12px;
       margin-right: 12px;
     }
+
+    .scenario-section {
+      max-width: 600px;
+      margin: 30px auto 25px;
+    }
+
+    .scenario-title {
+      font-size: 1.2em;
+    }
+
+    .scenario-buttons {
+      flex-direction: row;
+      gap: 12px;
+    }
+
+    .scenario-btn {
+      flex: 1;
+      flex-direction: column;
+      padding: 16px 14px;
+      gap: 8px;
+    }
+
+    .scenario-name {
+      text-align: center;
+      font-size: 0.95em;
+    }
+
+    .toast {
+      max-width: 500px;
+    }
   }
 
   /* Desktop mit Hover */
@@ -743,6 +884,17 @@
 
     button:active {
       transform: translateY(0);
+    }
+
+    .scenario-btn:hover {
+      border-color: #ffa500;
+      background: linear-gradient(135deg, rgba(255, 165, 0, 0.2) 0%, rgba(255, 165, 0, 0.1) 100%);
+      transform: translateY(-3px);
+      box-shadow: 0 4px 12px rgba(255, 165, 0, 0.4);
+    }
+
+    .scenario-btn:active {
+      transform: translateY(-1px);
     }
   }
 </style>
@@ -779,6 +931,34 @@
     Wähle unten eine Maßnahme und beobachte,<br>
     wie sich die Waage bewegt!
   </p>
+</div>
+
+<div class="scenario-section">
+  <h3 class="scenario-title">📖 Historische & Aktuelle Szenarien</h3>
+  <div class="scenario-buttons">
+    <button class="scenario-btn" onclick="loadScenario('weimar')">
+      <span class="scenario-flag">🇩🇪</span>
+      <span class="scenario-name">Weimarer Republik <span class="scenario-year">(1923)</span></span>
+    </button>
+    <button class="scenario-btn" onclick="loadScenario('venezuela')">
+      <span class="scenario-flag">🇻🇪</span>
+      <span class="scenario-name">Venezuela <span class="scenario-year">(2023)</span></span>
+    </button>
+    <button class="scenario-btn" onclick="loadScenario('japan')">
+      <span class="scenario-flag">🇯🇵</span>
+      <span class="scenario-name">Japan <span class="scenario-year">(2024)</span></span>
+    </button>
+  </div>
+</div>
+
+<div id="toast" class="toast">
+  <div class="toast-content">
+    <span class="toast-icon" id="toastIcon">📊</span>
+    <div class="toast-text">
+      <div class="toast-title" id="toastTitle">Szenario geladen</div>
+      <div class="toast-message" id="toastMessage">Szenario wurde geladen.</div>
+    </div>
+  </div>
 </div>
 
 <div class="waage">
@@ -986,6 +1166,75 @@ const INITIAL_BIP = 4.5; // Billionen € (Jahres-BIP Deutschland 2025)
 
 let geldMenge = INITIAL_GELDMENGE;
 let bip = INITIAL_BIP;
+
+// Scenario data
+const scenarios = {
+  weimar: {
+    name: 'Weimarer Republik 1923',
+    icon: '💸',
+    geldmenge: 500,
+    bip: 0.8,
+    description: 'Extreme Hyperinflation: Die Papiermark wurde massenhaft gedruckt, während die Wirtschaft kollabierte. Inflation >1000%/Tag.'
+  },
+  venezuela: {
+    name: 'Venezuela 2023',
+    icon: '📉',
+    geldmenge: 15,
+    bip: 0.5,
+    description: 'Aktuelle Hyperinflation: Jahrelanger Währungsverfall durch übermäßige Geldschöpfung. Inflation >3000%/Jahr.'
+  },
+  japan: {
+    name: 'Japan 2024',
+    icon: '🏦',
+    geldmenge: 3.5,
+    bip: 4.2,
+    description: 'Deflationsgefahr: Trotz niedriger Zinsen und hoher Geldmenge bleibt die Inflation niedrig. Strukturelle Probleme.'
+  }
+};
+
+// Toast notification system
+let toastTimeout = null;
+
+function showToast(icon, title, message) {
+  const toast = document.getElementById('toast');
+  const toastIcon = document.getElementById('toastIcon');
+  const toastTitle = document.getElementById('toastTitle');
+  const toastMessage = document.getElementById('toastMessage');
+
+  // Clear existing timeout
+  if (toastTimeout) {
+    clearTimeout(toastTimeout);
+  }
+
+  // Set content
+  toastIcon.textContent = icon;
+  toastTitle.textContent = title;
+  toastMessage.textContent = message;
+
+  // Show toast
+  toast.classList.add('show');
+
+  // Auto-hide after 5 seconds
+  toastTimeout = setTimeout(() => {
+    toast.classList.remove('show');
+  }, 5000);
+}
+
+// Load scenario
+function loadScenario(scenarioId) {
+  const scenario = scenarios[scenarioId];
+  if (!scenario) return;
+
+  // Update values
+  geldMenge = scenario.geldmenge;
+  bip = scenario.bip;
+
+  // Update waage
+  updateWaage();
+
+  // Show toast
+  showToast(scenario.icon, scenario.name, scenario.description);
+}
 
 function updateWaage() {
   const ratio = geldMenge / bip;
