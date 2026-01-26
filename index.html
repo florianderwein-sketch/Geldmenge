@@ -414,15 +414,6 @@
     background-color: #245740;
   }
 
-  .fiskal {
-    background-color: #9c6644;
-    color: white;
-  }
-
-  .fiskal:active {
-    background-color: #7d5236;
-  }
-
   .reset {
     background-color: #555;
     color: white;
@@ -491,11 +482,6 @@
 
   .expansiv-header {
     background: linear-gradient(135deg, #2d6a4f 0%, #1e4d3a 100%);
-    color: white;
-  }
-
-  .fiskal-header {
-    background: linear-gradient(135deg, #9c6644 0%, #7d5236 100%);
     color: white;
   }
 
@@ -699,22 +685,6 @@
     </div>
   </div>
 
-  <div class="accordion-section" id="section-fiskal">
-    <button class="accordion-toggle fiskal-header" onclick="toggleAccordion('fiskal')">
-      <span class="accordion-title">
-        <span class="accordion-icon">🟤</span>
-        Fiskalpolitik (Regierung)
-      </span>
-      <span class="accordion-arrow" id="arrow-fiskal">▼</span>
-    </button>
-    <div class="accordion-content collapsed" id="content-fiskal">
-      <button class="fiskal" onclick="adjustBIP(2)">Investitionen fördern (+2%)</button>
-      <button class="fiskal" onclick="adjustBIP(2.5)">Konsum stimulieren (+2.5%)</button>
-      <button class="fiskal" onclick="adjustBIP(1.5)">Steuern senken (+1.5%)</button>
-      <button class="fiskal" onclick="adjustBIP(1.5)">Subventionen erhöhen (+1.5%)</button>
-    </div>
-  </div>
-
 </div>
 
 <div class="header-row">
@@ -799,11 +769,6 @@ function updateWaage() {
 // Geldpolitik: positive percent = Reduktion, negative percent = Erhöhung
 function adjustMoney(percent) {
   geldMenge *= (1 - percent / 100);
-  updateWaage();
-}
-
-function adjustBIP(percent) {
-  bip *= (1 + percent / 100);
   updateWaage();
 }
 
