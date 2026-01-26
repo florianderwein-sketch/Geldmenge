@@ -505,6 +505,95 @@
     margin: 6px 0;
   }
 
+  /* Button with Help System */
+  .button-with-help {
+    position: relative;
+    margin: 6px 0;
+  }
+
+  .button-with-help button {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-right: 12px;
+    position: relative;
+  }
+
+  .button-text {
+    flex: 1;
+    text-align: left;
+    padding-right: 8px;
+  }
+
+  .help-icon {
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.15);
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-left: 8px;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: rgba(255, 255, 255, 0.2);
+  }
+
+  .help-icon:active {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(0.95);
+  }
+
+  .help-icon.active {
+    background: rgba(255, 255, 255, 0.25);
+    transform: rotate(180deg);
+  }
+
+  .help-panel {
+    max-height: 300px;
+    overflow: hidden;
+    transition: max-height 0.3s ease-in-out, opacity 0.2s ease, margin-top 0.2s ease;
+    opacity: 1;
+    margin-top: -2px;
+    margin-left: 8px;
+    margin-right: 8px;
+    padding: 12px 16px;
+    border-radius: 0 0 8px 8px;
+    font-size: 0.85em;
+    line-height: 1.5;
+    color: #e0e0e0;
+    will-change: max-height;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+  }
+
+  .help-panel.collapsed {
+    max-height: 0;
+    opacity: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-top: 0;
+  }
+
+  .help-panel::before {
+    content: '💡 ';
+    display: inline-block;
+    margin-right: 4px;
+  }
+
+  #section-kontrativ .help-panel {
+    background: rgba(193, 18, 31, 0.2);
+    border-left: 3px solid #c1121f;
+  }
+
+  #section-expansiv .help-panel {
+    background: rgba(45, 106, 79, 0.2);
+    border-left: 3px solid #2d6a4f;
+  }
+
   /* Tablet & Desktop */
   @media(min-width: 600px) {
     body {
@@ -595,6 +684,19 @@
     .accordion-title {
       font-size: 1.15em;
     }
+
+    .help-icon {
+      width: 36px;
+      height: 36px;
+      font-size: 18px;
+    }
+
+    .help-panel {
+      font-size: 0.9em;
+      padding: 14px 18px;
+      margin-left: 12px;
+      margin-right: 12px;
+    }
   }
 
   /* Desktop mit Hover */
@@ -662,10 +764,81 @@
       <span class="accordion-arrow" id="arrow-kontrativ">▼</span>
     </button>
     <div class="accordion-content" id="content-kontrativ">
-      <button class="kontraktiv" onclick="adjustMoney(2)">Leitzins erhöhen (-2%)</button>
-      <button class="kontraktiv" onclick="adjustMoney(3)">Staatsanleihen verkaufen (-3%)</button>
-      <button class="kontraktiv" onclick="adjustMoney(2)">Mindestreserven erhöhen (-2%)</button>
-      <button class="kontraktiv" onclick="adjustMoney(1.5)">Liquidität verringern (-1.5%)</button>
+      <div class="button-with-help">
+        <button class="kontraktiv" onclick="adjustMoney(2)">
+          <span class="button-text">Leitzins erhöhen (-2%)</span>
+          <span class="help-icon"
+                onclick="event.stopPropagation(); toggleHelp('help-leitzins-erhoehen', event)"
+                role="button"
+                tabindex="0"
+                aria-label="Mehr Informationen"
+                aria-expanded="false"
+                aria-controls="help-leitzins-erhoehen">ℹ️</span>
+        </button>
+        <div class="help-panel collapsed"
+             id="help-leitzins-erhoehen"
+             role="region"
+             aria-label="Erklärung: Leitzins erhöhen">
+          Der Leitzins ist der Zinssatz, zu dem Geschäftsbanken Geld bei der Zentralbank leihen. Ein höherer Leitzins verteuert Kredite und reduziert die Geldmenge im Umlauf.
+        </div>
+      </div>
+
+      <div class="button-with-help">
+        <button class="kontraktiv" onclick="adjustMoney(3)">
+          <span class="button-text">Staatsanleihen verkaufen (-3%)</span>
+          <span class="help-icon"
+                onclick="event.stopPropagation(); toggleHelp('help-staatsanleihen-verkaufen', event)"
+                role="button"
+                tabindex="0"
+                aria-label="Mehr Informationen"
+                aria-expanded="false"
+                aria-controls="help-staatsanleihen-verkaufen">ℹ️</span>
+        </button>
+        <div class="help-panel collapsed"
+             id="help-staatsanleihen-verkaufen"
+             role="region"
+             aria-label="Erklärung: Staatsanleihen verkaufen">
+          Die Zentralbank verkauft Staatsanleihen an Banken und entzieht ihnen damit Geld. Diese Offenmarktpolitik verringert die Liquidität im Bankensystem direkt.
+        </div>
+      </div>
+
+      <div class="button-with-help">
+        <button class="kontraktiv" onclick="adjustMoney(2)">
+          <span class="button-text">Mindestreserven erhöhen (-2%)</span>
+          <span class="help-icon"
+                onclick="event.stopPropagation(); toggleHelp('help-mindestreserven-erhoehen', event)"
+                role="button"
+                tabindex="0"
+                aria-label="Mehr Informationen"
+                aria-expanded="false"
+                aria-controls="help-mindestreserven-erhoehen">ℹ️</span>
+        </button>
+        <div class="help-panel collapsed"
+             id="help-mindestreserven-erhoehen"
+             role="region"
+             aria-label="Erklärung: Mindestreserven erhöhen">
+          Banken müssen einen Teil ihrer Einlagen als Reserve bei der Zentralbank halten. Höhere Mindestreserven bedeuten: Banken können weniger Geld als Kredite vergeben.
+        </div>
+      </div>
+
+      <div class="button-with-help">
+        <button class="kontraktiv" onclick="adjustMoney(1.5)">
+          <span class="button-text">Liquidität verringern (-1.5%)</span>
+          <span class="help-icon"
+                onclick="event.stopPropagation(); toggleHelp('help-liquiditaet-verringern', event)"
+                role="button"
+                tabindex="0"
+                aria-label="Mehr Informationen"
+                aria-expanded="false"
+                aria-controls="help-liquiditaet-verringern">ℹ️</span>
+        </button>
+        <div class="help-panel collapsed"
+             id="help-liquiditaet-verringern"
+             role="region"
+             aria-label="Erklärung: Liquidität verringern">
+          Die Zentralbank reduziert die verfügbare Geldmenge durch verschiedene Maßnahmen (z.B. Einlagefazilität). Weniger Liquidität bremst die Kreditvergabe.
+        </div>
+      </div>
     </div>
   </div>
 
@@ -678,10 +851,81 @@
       <span class="accordion-arrow" id="arrow-expansiv">▼</span>
     </button>
     <div class="accordion-content collapsed" id="content-expansiv">
-      <button class="expansiv" onclick="adjustMoney(-2)">Leitzins senken (+2%)</button>
-      <button class="expansiv" onclick="adjustMoney(-3)">Staatsanleihen kaufen (+3%)</button>
-      <button class="expansiv" onclick="adjustMoney(-2)">Mindestreserven senken (+2%)</button>
-      <button class="expansiv" onclick="adjustMoney(-1.5)">Liquidität erhöhen (+1.5%)</button>
+      <div class="button-with-help">
+        <button class="expansiv" onclick="adjustMoney(-2)">
+          <span class="button-text">Leitzins senken (+2%)</span>
+          <span class="help-icon"
+                onclick="event.stopPropagation(); toggleHelp('help-leitzins-senken', event)"
+                role="button"
+                tabindex="0"
+                aria-label="Mehr Informationen"
+                aria-expanded="false"
+                aria-controls="help-leitzins-senken">ℹ️</span>
+        </button>
+        <div class="help-panel collapsed"
+             id="help-leitzins-senken"
+             role="region"
+             aria-label="Erklärung: Leitzins senken">
+          Ein niedrigerer Leitzins macht Kredite günstiger. Banken leihen mehr Geld von der Zentralbank und geben mehr Kredite an Unternehmen und Privathaushalte.
+        </div>
+      </div>
+
+      <div class="button-with-help">
+        <button class="expansiv" onclick="adjustMoney(-3)">
+          <span class="button-text">Staatsanleihen kaufen (+3%)</span>
+          <span class="help-icon"
+                onclick="event.stopPropagation(); toggleHelp('help-staatsanleihen-kaufen', event)"
+                role="button"
+                tabindex="0"
+                aria-label="Mehr Informationen"
+                aria-expanded="false"
+                aria-controls="help-staatsanleihen-kaufen">ℹ️</span>
+        </button>
+        <div class="help-panel collapsed"
+             id="help-staatsanleihen-kaufen"
+             role="region"
+             aria-label="Erklärung: Staatsanleihen kaufen">
+          Die Zentralbank kauft Staatsanleihen und gibt Banken damit frisches Geld. Diese Offenmarktpolitik erhöht die Liquidität im Bankensystem direkt.
+        </div>
+      </div>
+
+      <div class="button-with-help">
+        <button class="expansiv" onclick="adjustMoney(-2)">
+          <span class="button-text">Mindestreserven senken (+2%)</span>
+          <span class="help-icon"
+                onclick="event.stopPropagation(); toggleHelp('help-mindestreserven-senken', event)"
+                role="button"
+                tabindex="0"
+                aria-label="Mehr Informationen"
+                aria-expanded="false"
+                aria-controls="help-mindestreserven-senken">ℹ️</span>
+        </button>
+        <div class="help-panel collapsed"
+             id="help-mindestreserven-senken"
+             role="region"
+             aria-label="Erklärung: Mindestreserven senken">
+          Banken müssen weniger Geld als Reserve halten und können mehr Kredite vergeben. Dies erhöht die Geldmenge im Wirtschaftskreislauf.
+        </div>
+      </div>
+
+      <div class="button-with-help">
+        <button class="expansiv" onclick="adjustMoney(-1.5)">
+          <span class="button-text">Liquidität erhöhen (+1.5%)</span>
+          <span class="help-icon"
+                onclick="event.stopPropagation(); toggleHelp('help-liquiditaet-erhoehen', event)"
+                role="button"
+                tabindex="0"
+                aria-label="Mehr Informationen"
+                aria-expanded="false"
+                aria-controls="help-liquiditaet-erhoehen">ℹ️</span>
+        </button>
+        <div class="help-panel collapsed"
+             id="help-liquiditaet-erhoehen"
+             role="region"
+             aria-label="Erklärung: Liquidität erhöhen">
+          Die Zentralbank stellt mehr Geld zur Verfügung (z.B. durch günstige Refinanzierungsgeschäfte). Mehr Liquidität erleichtert Banken die Kreditvergabe.
+        </div>
+      </div>
     </div>
   </div>
 
@@ -780,6 +1024,7 @@ function resetWaage() {
 
 // Accordion functionality
 let currentOpenSection = 'kontrativ';
+let currentOpenHelp = null;
 
 function toggleAccordion(sectionName) {
   const content = document.getElementById(`content-${sectionName}`);
@@ -805,6 +1050,47 @@ function toggleAccordion(sectionName) {
   currentOpenSection = sectionName;
 }
 
+// Help toggle functionality
+function toggleHelp(helpId, event) {
+  const helpPanel = document.getElementById(helpId);
+  const helpIcon = event.currentTarget;
+
+  // If clicking already open help, close it
+  if (currentOpenHelp === helpId) {
+    helpPanel.classList.add('collapsed');
+    helpIcon.classList.remove('active');
+    helpIcon.setAttribute('aria-expanded', 'false');
+    currentOpenHelp = null;
+    return;
+  }
+
+  // Close previously open help
+  if (currentOpenHelp) {
+    const oldPanel = document.getElementById(currentOpenHelp);
+    const oldIcon = document.querySelector(`[onclick*="${currentOpenHelp}"]`);
+
+    if (oldPanel) oldPanel.classList.add('collapsed');
+    if (oldIcon) {
+      oldIcon.classList.remove('active');
+      oldIcon.setAttribute('aria-expanded', 'false');
+    }
+  }
+
+  // Open clicked help
+  helpPanel.classList.remove('collapsed');
+  helpIcon.classList.add('active');
+  helpIcon.setAttribute('aria-expanded', 'true');
+  currentOpenHelp = helpId;
+
+  // Smooth scroll to keep help in view
+  setTimeout(() => {
+    helpPanel.scrollIntoView({
+      behavior: 'smooth',
+      block: 'nearest'
+    });
+  }, 150);
+}
+
 // Info toggle functionality
 function toggleInfo() {
   const content = document.getElementById('infoContent');
@@ -826,6 +1112,11 @@ document.addEventListener('DOMContentLoaded', function() {
   if (infoContent) {
     infoContent.classList.add('collapsed');
   }
+
+  // Initialize all help panels as collapsed
+  document.querySelectorAll('.help-panel').forEach(panel => {
+    panel.classList.add('collapsed');
+  });
 });
 
 // Initiale Anzeige
