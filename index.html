@@ -78,82 +78,6 @@
     60% { transform: translateY(-5px); }
   }
 
-  .info-toggle {
-    background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
-    color: #fff;
-    border: 1px solid #4b5563;
-    padding: 12px 20px;
-    min-height: 48px;
-    width: calc(100% - 16px);
-    max-width: 90%;
-    margin: 15px auto;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 0.95em;
-    touch-action: manipulation;
-    -webkit-tap-highlight-color: rgba(255, 255, 255, 0.1);
-  }
-
-  .info-toggle:active {
-    transform: scale(0.98);
-    background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
-  }
-
-  .info-toggle .info-label {
-    flex-grow: 1;
-    text-align: left;
-    margin-left: 8px;
-    font-weight: 600;
-  }
-
-  .info-toggle .info-icon {
-    font-size: 1.2em;
-  }
-
-  .info-toggle .info-arrow {
-    font-size: 1em;
-    transition: transform 0.3s ease;
-    display: inline-block;
-  }
-
-  .info-toggle.active .info-arrow {
-    transform: rotate(180deg);
-  }
-
-  .info-content {
-    max-height: 500px;
-    overflow: hidden;
-    transition: max-height 0.4s ease-in-out, opacity 0.3s ease, margin-bottom 0.3s ease;
-    opacity: 1;
-    margin-bottom: 15px;
-    will-change: max-height;
-    transform: translateZ(0);
-  }
-
-  .info-content.collapsed {
-    max-height: 0;
-    opacity: 0;
-    margin-bottom: 0;
-  }
-
-  .info-content .disclaimer {
-    margin-top: 0;
-  }
-
-  .disclaimer {
-    font-size: 0.8em;
-    color: #ffa500;
-    background-color: rgba(255, 165, 0, 0.1);
-    border: 1px solid #ffa500;
-    border-radius: 5px;
-    padding: 10px;
-    margin: 15px auto;
-    max-width: 90%;
-  }
-
   .waage {
     position: relative;
     margin: 15px auto;
@@ -725,7 +649,6 @@
     h1 { font-size: 2em; }
     h2 { font-size: 1.7em; }
     .subtitle { font-size: 1.1em; }
-    .disclaimer { font-size: 0.9em; max-width: 600px; }
 
     .header-row {
       flex-direction: row;
@@ -739,15 +662,6 @@
     .reset {
       min-width: 180px;
       padding: 12px 28px;
-    }
-
-    .info-toggle {
-      max-width: 600px;
-      font-size: 1em;
-    }
-
-    .info-content .disclaimer {
-      max-width: 600px;
     }
 
     .cta-hero {
@@ -865,19 +779,6 @@
     Wähle unten eine Maßnahme und beobachte,<br>
     wie sich die Waage bewegt!
   </p>
-</div>
-
-<button class="info-toggle" onclick="toggleInfo()" id="infoToggle">
-  <span class="info-icon">ℹ️</span>
-  <span class="info-label">Wichtige Hinweise</span>
-  <span class="info-arrow">▼</span>
-</button>
-
-<div class="info-content collapsed" id="infoContent">
-  <div class="disclaimer">
-    ⚠️ Vereinfachtes didaktisches Modell zur Veranschaulichung monetaristischer Grundkonzepte.
-    In der Realität sind die Zusammenhänge komplexer (z.B. Umlaufgeschwindigkeit, Erwartungen).
-  </div>
 </div>
 
 <div class="waage">
@@ -1233,15 +1134,6 @@ function toggleHelp(helpId, event) {
   }, 150);
 }
 
-// Info toggle functionality
-function toggleInfo() {
-  const content = document.getElementById('infoContent');
-  const toggle = document.getElementById('infoToggle');
-
-  content.classList.toggle('collapsed');
-  toggle.classList.toggle('active');
-}
-
 // Disclaimer Modal functions
 function closeDisclaimerModal() {
   const modal = document.getElementById('disclaimerModal');
@@ -1267,12 +1159,6 @@ document.addEventListener('DOMContentLoaded', function() {
   const firstToggle = document.querySelector('#section-kontrativ .accordion-toggle');
   if (firstToggle) {
     firstToggle.classList.add('active');
-  }
-
-  // Initialize info as collapsed
-  const infoContent = document.getElementById('infoContent');
-  if (infoContent) {
-    infoContent.classList.add('collapsed');
   }
 
   // Initialize all help panels as collapsed
