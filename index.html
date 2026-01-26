@@ -186,7 +186,7 @@
   <div class="pan right" id="rightPan">📦<br>4,500 Bio€</div>
 </div>
 
-<div class="result" id="inflationStatus">Geldmengenüberhang: 22%</div>
+<div class="result" id="inflationStatus">Inflation: 22%</div>
 
 <h2>Geldpolitik gegen Inflation</h2>
 <button class="kontraktiv" onclick="adjustMoney(2)">Leitzins erhöhen (-2%)</button>
@@ -234,20 +234,20 @@ function updateWaage() {
   document.getElementById("chainLeft").style.height = `${baseChainHeight - tilt * 1.5}px`;
   document.getElementById("chainRight").style.height = `${baseChainHeight + tilt * 1.5}px`;
 
-  // Geldmengenüberhang/-defizit berechnen
-  let status = ratio > 1 ? "Geldmengenüberhang" : "Geldmenge unter BIP-Niveau";
+  // Inflation/Deflation berechnen
+  let status = ratio > 1 ? "Inflation" : "Deflation";
   let percentage = Math.round(Math.abs((ratio - 1) * 100));
 
   // Interpretation hinzufügen
   let interpretation = "";
   if (ratio > 1.3) {
-    interpretation = " → Starker inflationärer Druck";
+    interpretation = " (starker Druck)";
   } else if (ratio > 1.1) {
-    interpretation = " → Moderater inflationärer Druck";
+    interpretation = " (moderater Druck)";
   } else if (ratio >= 0.9 && ratio <= 1.1) {
-    interpretation = " → Ausgewogen";
+    interpretation = " (ausgewogen)";
   } else if (ratio < 0.9) {
-    interpretation = " → Deflationärer Druck";
+    interpretation = " (starker Druck)";
   }
 
   document.getElementById("inflationStatus").textContent = `${status}: ${percentage}%${interpretation}`;
