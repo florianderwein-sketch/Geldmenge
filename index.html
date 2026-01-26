@@ -25,6 +25,17 @@
     margin-bottom: 20px;
   }
 
+  .disclaimer {
+    font-size: 0.8em;
+    color: #ffa500;
+    background-color: rgba(255, 165, 0, 0.1);
+    border: 1px solid #ffa500;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 15px auto;
+    max-width: 90%;
+  }
+
   .waage {
     position: relative;
     margin: 30px auto;
@@ -78,14 +89,17 @@
     cursor: pointer;
   }
 
-  .geld { background-color: #2d6a4f; color: white; }
-  .bip { background-color: #9c6644; color: white; }
+  .kontraktiv { background-color: #c1121f; color: white; }
+  .expansiv { background-color: #2d6a4f; color: white; }
+  .fiskal { background-color: #9c6644; color: white; }
+  .reset { background-color: #555; color: white; margin-top: 15px; padding: 12px 20px; font-size: 16px; }
 
   /* Größere Bildschirme */
   @media(min-width: 600px) {
     h1 { font-size: 2em; }
     h2 { font-size: 1.7em; }
     .subtitle { font-size: 1.1em; }
+    .disclaimer { font-size: 0.9em; max-width: 600px; }
     .pan { width: 80px; height: 80px; font-size: 20px; }
     .result { font-size: 1.5em; padding: 15px; }
   }
@@ -95,29 +109,47 @@
 
 <h1>Monetarismus: Interaktive Waage</h1>
 <p class="subtitle">Bundesrepublik Deutschland Ende 2025</p>
+
+<div class="disclaimer">
+  ⚠️ Vereinfachtes didaktisches Modell zur Veranschaulichung monetaristischer Grundkonzepte.
+  In der Realität sind die Zusammenhänge komplexer (z.B. Umlaufgeschwindigkeit, Erwartungen).
+</div>
+
 <div class="waage">
   <div class="beam" id="beam"></div>
-  <div class="pan left" id="leftPan">💶💶💶<br>4,10 Bio€</div>
+  <div class="pan left" id="leftPan">💶💶💶<br>5,50 Bio€</div>
   <div class="pan right" id="rightPan">📦<br>4,500 Bio€</div>
 </div>
 
-<div class="result" id="inflationStatus">Geldmengendefizit: 9%</div>
+<div class="result" id="inflationStatus">Geldmengenüberhang: 22%</div>
 
-<h2>Geldpolitik</h2>
-<button class="geld" onclick="adjustMoney(2)">Leitzins erhöhen (-2%)</button>
-<button class="geld" onclick="adjustMoney(3)">Staatsanleihen verkaufen (-3%)</button>
-<button class="geld" onclick="adjustMoney(2)">Mindestreserven erhöhen (-2%)</button>
-<button class="geld" onclick="adjustMoney(1.5)">Liquidität verringern (-1.5%)</button>
+<h2>Kontraktive Geldpolitik (gegen Inflation)</h2>
+<button class="kontraktiv" onclick="adjustMoney(2)">Leitzins erhöhen (-2%)</button>
+<button class="kontraktiv" onclick="adjustMoney(3)">Staatsanleihen verkaufen (-3%)</button>
+<button class="kontraktiv" onclick="adjustMoney(2)">Mindestreserven erhöhen (-2%)</button>
+<button class="kontraktiv" onclick="adjustMoney(1.5)">Liquidität verringern (-1.5%)</button>
 
-<h2>BIP-Maßnahmen</h2>
-<button class="bip" onclick="adjustBIP(2)">Investitionen fördern (+2%)</button>
-<button class="bip" onclick="adjustBIP(2.5)">Konsum stimulieren (+2.5%)</button>
-<button class="bip" onclick="adjustBIP(1.5)">Steuern senken (+1.5%)</button>
-<button class="bip" onclick="adjustBIP(1.5)">Subventionen erhöhen (+1.5%)</button>
+<h2>Expansive Geldpolitik (gegen Deflation)</h2>
+<button class="expansiv" onclick="adjustMoney(-2)">Leitzins senken (+2%)</button>
+<button class="expansiv" onclick="adjustMoney(-3)">Staatsanleihen kaufen (+3%)</button>
+<button class="expansiv" onclick="adjustMoney(-2)">Mindestreserven senken (+2%)</button>
+<button class="expansiv" onclick="adjustMoney(-1.5)">Liquidität erhöhen (+1.5%)</button>
+
+<h2>Fiskalpolitik (Regierung)</h2>
+<button class="fiskal" onclick="adjustBIP(2)">Investitionen fördern (+2%)</button>
+<button class="fiskal" onclick="adjustBIP(2.5)">Konsum stimulieren (+2.5%)</button>
+<button class="fiskal" onclick="adjustBIP(1.5)">Steuern senken (+1.5%)</button>
+<button class="fiskal" onclick="adjustBIP(1.5)">Subventionen erhöhen (+1.5%)</button>
+
+<button class="reset" onclick="resetWaage()">🔄 Zurücksetzen</button>
 
 <script>
-let geldMenge = 4.1; // Billionen € (M3 Geldmenge, Stand 2025)
-let bip = 4.5; // Billionen € (Jahres-BIP Deutschland 2025)
+// Ausgangswerte speichern
+const INITIAL_GELDMENGE = 5.5; // Billionen € (vereinfachter Wert für Demonstration)
+const INITIAL_BIP = 4.5; // Billionen € (Jahres-BIP Deutschland 2025)
+
+let geldMenge = INITIAL_GELDMENGE;
+let bip = INITIAL_BIP;
 
 function updateWaage() {
   const ratio = geldMenge / bip;
@@ -128,8 +160,8 @@ function updateWaage() {
   document.getElementById("leftPan").style.top = `${100 - tilt}px`;
   document.getElementById("rightPan").style.top = `${100 + tilt}px`;
 
-  // Geldmengenüberhang berechnen (nicht direkt Inflation!)
-  let status = ratio > 1 ? "Geldmengenüberhang" : "Geldmengendefizit";
+  // Geldmengenüberhang/-defizit berechnen
+  let status = ratio > 1 ? "Geldmengenüberhang" : "Geldmenge unter BIP-Niveau";
   let percentage = Math.round(Math.abs((ratio - 1) * 100));
 
   // Interpretation hinzufügen
@@ -151,14 +183,20 @@ function updateWaage() {
   document.getElementById("rightPan").innerHTML = `📦<br>${bip.toFixed(3)} Bio€`;
 }
 
-// KORRIGIERT: Geldpolitik SENKT die Geldmenge (kontraktiv)
+// Geldpolitik: positive percent = Reduktion, negative percent = Erhöhung
 function adjustMoney(percent) {
-  geldMenge *= (1 - percent / 100);  // Minus statt Plus!
+  geldMenge *= (1 - percent / 100);
   updateWaage();
 }
 
 function adjustBIP(percent) {
   bip *= (1 + percent / 100);
+  updateWaage();
+}
+
+function resetWaage() {
+  geldMenge = INITIAL_GELDMENGE;
+  bip = INITIAL_BIP;
   updateWaage();
 }
 
