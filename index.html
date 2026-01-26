@@ -38,39 +38,92 @@
 
   .waage {
     position: relative;
-    margin: 30px auto;
+    margin: 40px auto;
     width: 90%;
-    max-width: 400px;
-    height: 180px;
+    max-width: 500px;
+    height: 220px;
+  }
+
+  /* Zentraler Stützpunkt */
+  .waage::before {
+    content: '';
+    position: absolute;
+    width: 4px;
+    height: 80px;
+    background: linear-gradient(to bottom, #888, #555);
+    left: 50%;
+    top: 0;
+    transform: translateX(-50%);
+    border-radius: 2px;
+  }
+
+  /* Dreieck am oberen Ende (Drehpunkt) */
+  .waage::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-left: 12px solid transparent;
+    border-right: 12px solid transparent;
+    border-top: 15px solid gold;
+    left: 50%;
+    top: 70px;
+    transform: translateX(-50%);
   }
 
   .beam {
     width: 100%;
-    height: 10px;
-    background-color: gold;
+    height: 4px;
+    background: linear-gradient(to right, #b8860b, gold, #b8860b);
     position: absolute;
-    top: 85px;
+    top: 80px;
     left: 0;
     transform-origin: center;
-    transition: transform 0.5s;
+    transition: transform 0.5s ease-in-out;
+    border-radius: 2px;
+    box-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
   }
 
-  .pan {
-    width: 70px;
-    height: 70px;
-    border-radius: 50%;
+  /* Aufhängungen (Ketten) */
+  .chain {
     position: absolute;
-    top: 100px;
+    width: 2px;
+    height: 30px;
+    background: linear-gradient(to bottom, #ccc, #888);
+    top: 80px;
+    transition: height 0.5s;
+  }
+
+  .chain.left { left: 10%; }
+  .chain.right { right: 10%; }
+
+  .pan {
+    width: 90px;
+    height: 35px;
+    border-radius: 0 0 45px 45px;
+    border: 3px solid;
+    position: absolute;
+    top: 115px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 18px;
+    font-size: 14px;
     font-weight: bold;
-    transition: top 0.5s, width 0.5s, height 0.5s;
+    transition: top 0.5s ease-in-out;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
   }
 
-  .left { background-color: #2d6a4f; left: 0; }
-  .right { background-color: #9c6644; right: 0; }
+  .left {
+    background: linear-gradient(to bottom, #2d6a4f, #1e4d3a);
+    border-color: #4a9d7a;
+    left: 5%;
+  }
+
+  .right {
+    background: linear-gradient(to bottom, #9c6644, #7d5236);
+    border-color: #c17a57;
+    right: 5%;
+  }
 
   .result {
     margin-top: 30px;
@@ -100,7 +153,17 @@
     h2 { font-size: 1.7em; }
     .subtitle { font-size: 1.1em; }
     .disclaimer { font-size: 0.9em; max-width: 600px; }
-    .pan { width: 80px; height: 80px; font-size: 20px; }
+    .waage { height: 260px; }
+    .waage::before { height: 100px; }
+    .waage::after { top: 90px; }
+    .beam { top: 100px; }
+    .chain { top: 100px; height: 35px; }
+    .pan {
+      width: 110px;
+      height: 40px;
+      font-size: 16px;
+      top: 140px;
+    }
     .result { font-size: 1.5em; padding: 15px; }
   }
 </style>
@@ -117,7 +180,9 @@
 
 <div class="waage">
   <div class="beam" id="beam"></div>
-  <div class="pan left" id="leftPan">💶💶💶<br>5,50 Bio€</div>
+  <div class="chain left" id="chainLeft"></div>
+  <div class="chain right" id="chainRight"></div>
+  <div class="pan left" id="leftPan">💶<br>5,50 Bio€</div>
   <div class="pan right" id="rightPan">📦<br>4,500 Bio€</div>
 </div>
 
@@ -156,9 +221,18 @@ function updateWaage() {
   const tilt = Math.min(Math.max((ratio - 1) * 15, -15), 15);
   document.getElementById("beam").style.transform = `rotate(${tilt}deg)`;
 
-  // Pan-Positionen proportional zur Rotation
-  document.getElementById("leftPan").style.top = `${100 - tilt}px`;
-  document.getElementById("rightPan").style.top = `${100 + tilt}px`;
+  // Pan-Positionen und Ketten-Längen proportional zur Rotation
+  const baseTop = 115; // Basis-Position
+  const leftTop = baseTop - tilt * 1.5;
+  const rightTop = baseTop + tilt * 1.5;
+
+  document.getElementById("leftPan").style.top = `${leftTop}px`;
+  document.getElementById("rightPan").style.top = `${rightTop}px`;
+
+  // Ketten-Längen anpassen
+  const baseChainHeight = 30;
+  document.getElementById("chainLeft").style.height = `${baseChainHeight - tilt * 1.5}px`;
+  document.getElementById("chainRight").style.height = `${baseChainHeight + tilt * 1.5}px`;
 
   // Geldmengenüberhang/-defizit berechnen
   let status = ratio > 1 ? "Geldmengenüberhang" : "Geldmenge unter BIP-Niveau";
@@ -179,7 +253,7 @@ function updateWaage() {
   document.getElementById("inflationStatus").textContent = `${status}: ${percentage}%${interpretation}`;
 
   // Werte auf den Pans anzeigen
-  document.getElementById("leftPan").innerHTML = `💶💶💶<br>${geldMenge.toFixed(2)} Bio€`;
+  document.getElementById("leftPan").innerHTML = `💶<br>${geldMenge.toFixed(2)} Bio€`;
   document.getElementById("rightPan").innerHTML = `📦<br>${bip.toFixed(3)} Bio€`;
 }
 
