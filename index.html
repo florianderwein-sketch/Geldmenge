@@ -139,6 +139,24 @@
     font-size: 0.85em;
   }
 
+  .scenario-btn.live {
+    border-color: rgba(255, 69, 0, 0.5);
+    background: linear-gradient(135deg, rgba(255, 69, 0, 0.15) 0%, rgba(255, 140, 0, 0.1) 100%);
+  }
+
+  .scenario-btn.live .scenario-flag::after {
+    content: ' 🔴';
+    font-size: 0.5em;
+    position: relative;
+    top: -8px;
+    animation: pulse-dot 2s infinite;
+  }
+
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
   /* Toast Notification */
   .toast {
     position: fixed;
@@ -854,12 +872,12 @@
     }
 
     .scenario-buttons {
-      flex-direction: row;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
       gap: 12px;
     }
 
     .scenario-btn {
-      flex: 1;
       flex-direction: column;
       padding: 16px 14px;
       gap: 8px;
@@ -895,6 +913,12 @@
 
     .scenario-btn:active {
       transform: translateY(-1px);
+    }
+
+    .scenario-btn.live:hover {
+      border-color: #ff4500;
+      background: linear-gradient(135deg, rgba(255, 69, 0, 0.25) 0%, rgba(255, 140, 0, 0.15) 100%);
+      box-shadow: 0 4px 12px rgba(255, 69, 0, 0.5);
     }
   }
 </style>
@@ -1151,6 +1175,10 @@
       <span class="scenario-flag">🇯🇵</span>
       <span class="scenario-name">Japan <span class="scenario-year">(2024)</span></span>
     </button>
+    <button class="scenario-btn live" onclick="loadScenario('ecb_live')">
+      <span class="scenario-flag">🇪🇺</span>
+      <span class="scenario-name">EZB Live <span class="scenario-year">(Nov 2025)</span></span>
+    </button>
   </div>
 </div>
 
@@ -1168,6 +1196,10 @@ let geldMenge = INITIAL_GELDMENGE;
 let bip = INITIAL_BIP;
 
 // Scenario data
+// ECB Live data source: https://data.ecb.europa.eu/
+// M3 Money Supply: https://www.ecb.europa.eu/press/stats/md/
+// Note: For production, use ECB Data Portal API (data-api.ecb.europa.eu)
+// Current implementation uses hard-coded values (Nov 2025) to avoid CORS issues
 const scenarios = {
   weimar: {
     name: 'Weimarer Republik 1923',
@@ -1189,6 +1221,13 @@ const scenarios = {
     geldmenge: 3.5,
     bip: 4.2,
     description: 'Deflationsgefahr: Trotz niedriger Zinsen und hoher Geldmenge bleibt die Inflation niedrig. Strukturelle Probleme.'
+  },
+  ecb_live: {
+    name: 'EZB Live Daten (Nov 2025)',
+    icon: '🔴',
+    geldmenge: 17.2,
+    bip: 14.5,
+    description: 'Eurozone aktuell: M3 Geldmenge €17,2 Bio (Nov 2025), BIP ~€14,5 Bio. Ratio 1.19 → moderate Inflation ~19%.'
   }
 };
 
