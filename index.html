@@ -157,6 +157,131 @@
     50% { opacity: 0.3; }
   }
 
+  /* Challenge Section */
+  .challenge-section {
+    margin: 25px auto 20px;
+    max-width: 95%;
+  }
+
+  .challenge-toggle {
+    width: 100%;
+    min-height: 56px;
+    padding: 16px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 2px solid rgba(255, 215, 0, 0.4);
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 165, 0, 0.1) 100%);
+    font-weight: 700;
+    text-align: left;
+    border-radius: 12px;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .challenge-toggle:active {
+    transform: scale(0.98);
+  }
+
+  .challenge-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.05em;
+  }
+
+  .challenge-icon {
+    font-size: 1.3em;
+    display: inline-block;
+    min-width: 24px;
+  }
+
+  .challenge-content {
+    max-height: 1000px;
+    overflow: hidden;
+    transition: max-height 0.4s ease-in-out, opacity 0.3s ease, margin-top 0.3s ease;
+    opacity: 1;
+    margin-top: 12px;
+    will-change: max-height;
+    transform: translateZ(0);
+  }
+
+  .challenge-content.collapsed {
+    max-height: 0;
+    opacity: 0;
+    margin-top: 0;
+  }
+
+  .challenge-btn-wrapper {
+    margin: 10px 0;
+  }
+
+  .challenge-btn {
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.2) 0%, rgba(255, 165, 0, 0.15) 100%);
+    border: 2px solid rgba(255, 215, 0, 0.3);
+    color: #fff;
+    padding: 16px 18px;
+    font-size: 16px;
+    min-height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    touch-action: manipulation;
+    width: 100%;
+    text-align: left;
+  }
+
+  .challenge-btn:active {
+    transform: scale(0.98);
+  }
+
+  .challenge-btn-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+  }
+
+  .challenge-flag {
+    font-size: 1.5em;
+    flex-shrink: 0;
+  }
+
+  .challenge-info {
+    flex: 1;
+  }
+
+  .challenge-name {
+    font-weight: 700;
+    font-size: 1em;
+    margin-bottom: 4px;
+  }
+
+  .challenge-goal {
+    font-size: 0.85em;
+    color: #ffd700;
+    font-weight: 600;
+  }
+
+  .challenge-arrow {
+    font-size: 1.2em;
+    color: #ffd700;
+    flex-shrink: 0;
+  }
+
+  .challenge-btn.completed {
+    border-color: rgba(45, 106, 79, 0.5);
+    background: linear-gradient(135deg, rgba(45, 106, 79, 0.2) 0%, rgba(45, 106, 79, 0.1) 100%);
+  }
+
+  .challenge-btn.completed .challenge-arrow {
+    content: '✅';
+  }
+
   /* Toast Notification */
   .toast {
     position: fixed;
@@ -891,6 +1016,31 @@
     .toast {
       max-width: 500px;
     }
+
+    .challenge-section {
+      max-width: 600px;
+      margin: 30px auto 25px;
+    }
+
+    .challenge-toggle {
+      min-height: 60px;
+    }
+
+    .challenge-title {
+      font-size: 1.15em;
+    }
+
+    .challenge-btn {
+      padding: 18px 20px;
+    }
+
+    .challenge-name {
+      font-size: 1.05em;
+    }
+
+    .challenge-goal {
+      font-size: 0.9em;
+    }
   }
 
   /* Desktop mit Hover */
@@ -919,6 +1069,25 @@
       border-color: #ff4500;
       background: linear-gradient(135deg, rgba(255, 69, 0, 0.25) 0%, rgba(255, 140, 0, 0.15) 100%);
       box-shadow: 0 4px 12px rgba(255, 69, 0, 0.5);
+    }
+
+    .challenge-toggle:hover {
+      border-color: rgba(255, 215, 0, 0.6);
+      background: linear-gradient(135deg, rgba(255, 215, 0, 0.25) 0%, rgba(255, 165, 0, 0.15) 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4);
+    }
+
+    .challenge-btn:hover {
+      border-color: rgba(255, 215, 0, 0.5);
+      background: linear-gradient(135deg, rgba(255, 215, 0, 0.3) 0%, rgba(255, 165, 0, 0.2) 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4);
+    }
+
+    .challenge-btn.completed:hover {
+      border-color: rgba(45, 106, 79, 0.7);
+      background: linear-gradient(135deg, rgba(45, 106, 79, 0.3) 0%, rgba(45, 106, 79, 0.15) 100%);
     }
   }
 </style>
@@ -1182,6 +1351,71 @@
   </div>
 </div>
 
+<div class="challenge-section">
+  <button class="challenge-toggle" onclick="toggleChallenge()">
+    <span class="challenge-title">
+      <span class="challenge-icon">🎯</span>
+      Challenge-Modus
+    </span>
+    <span class="accordion-arrow" id="arrow-challenge">▼</span>
+  </button>
+  <div class="challenge-content collapsed" id="content-challenge">
+
+    <div class="challenge-btn-wrapper">
+      <button class="challenge-btn" onclick="startChallenge('weimar')" id="challenge-weimar">
+        <div class="challenge-btn-left">
+          <span class="challenge-flag">🇩🇪</span>
+          <div class="challenge-info">
+            <div class="challenge-name">Rettung Weimar 1923</div>
+            <div class="challenge-goal">🎯 Ziel: Hyperinflation auf &lt;5% senken</div>
+          </div>
+        </div>
+        <span class="challenge-arrow">▶</span>
+      </button>
+    </div>
+
+    <div class="challenge-btn-wrapper">
+      <button class="challenge-btn" onclick="startChallenge('venezuela')" id="challenge-venezuela">
+        <div class="challenge-btn-left">
+          <span class="challenge-flag">🇻🇪</span>
+          <div class="challenge-info">
+            <div class="challenge-name">Venezuela stabilisieren</div>
+            <div class="challenge-goal">🎯 Ziel: Inflation auf &lt;10% bringen</div>
+          </div>
+        </div>
+        <span class="challenge-arrow">▶</span>
+      </button>
+    </div>
+
+    <div class="challenge-btn-wrapper">
+      <button class="challenge-btn" onclick="startChallenge('japan')" id="challenge-japan">
+        <div class="challenge-btn-left">
+          <span class="challenge-flag">🇯🇵</span>
+          <div class="challenge-info">
+            <div class="challenge-name">Japan aktivieren</div>
+            <div class="challenge-goal">🎯 Ziel: Deflation beenden (0-3% Inflation)</div>
+          </div>
+        </div>
+        <span class="challenge-arrow">▶</span>
+      </button>
+    </div>
+
+    <div class="challenge-btn-wrapper">
+      <button class="challenge-btn" onclick="startChallenge('ecb_live')" id="challenge-ecb">
+        <div class="challenge-btn-left">
+          <span class="challenge-flag">🇪🇺</span>
+          <div class="challenge-info">
+            <div class="challenge-name">EZB-Ziel erreichen</div>
+            <div class="challenge-goal">🎯 Ziel: Perfekte Preisstabilität (1,5-2,5%)</div>
+          </div>
+        </div>
+        <span class="challenge-arrow">▶</span>
+      </button>
+    </div>
+
+  </div>
+</div>
+
 <div class="header-row">
   <p class="subtitle">Bundesrepublik Deutschland Ende 2025</p>
   <button class="reset" onclick="resetWaage()">🔄 Zurücksetzen</button>
@@ -1194,6 +1428,15 @@ const INITIAL_BIP = 4.5; // Billionen € (Jahres-BIP Deutschland 2025)
 
 let geldMenge = INITIAL_GELDMENGE;
 let bip = INITIAL_BIP;
+
+// Challenge tracking
+let activeChallenge = null;
+let challengeCompleted = {
+  weimar: false,
+  venezuela: false,
+  japan: false,
+  ecb_live: false
+};
 
 // Scenario data
 // ECB Live data source: https://data.ecb.europa.eu/
@@ -1228,6 +1471,34 @@ const scenarios = {
     geldmenge: 17.2,
     bip: 14.5,
     description: 'Eurozone aktuell: M3 Geldmenge €17,2 Bio (Nov 2025), BIP ~€14,5 Bio. Ratio 1.19 → moderate Inflation ~19%.'
+  }
+};
+
+// Challenge definitions
+const challenges = {
+  weimar: {
+    name: '🇩🇪 Rettung Weimar 1923',
+    goal: 'Senke die Hyperinflation auf unter 5%',
+    scenario: 'weimar',
+    checkSuccess: (inflationPercent) => inflationPercent < 5
+  },
+  venezuela: {
+    name: '🇻🇪 Venezuela stabilisieren',
+    goal: 'Bringe die Inflation auf unter 10%',
+    scenario: 'venezuela',
+    checkSuccess: (inflationPercent) => inflationPercent < 10
+  },
+  japan: {
+    name: '🇯🇵 Japan aktivieren',
+    goal: 'Beende die Deflation und erreiche 0-3% Inflation',
+    scenario: 'japan',
+    checkSuccess: (inflationPercent) => inflationPercent >= 0 && inflationPercent <= 3
+  },
+  ecb_live: {
+    name: '🇪🇺 EZB-Ziel erreichen',
+    goal: 'Erreiche perfekte Preisstabilität: 1,5-2,5% Inflation',
+    scenario: 'ecb_live',
+    checkSuccess: (inflationPercent) => inflationPercent >= 1.5 && inflationPercent <= 2.5
   }
 };
 
@@ -1345,6 +1616,11 @@ function updateWaage() {
 function adjustMoney(percent) {
   geldMenge *= (1 - percent / 100);
   updateWaage();
+
+  // Check challenge success after each action
+  if (activeChallenge) {
+    checkChallengeSuccess();
+  }
 }
 
 function resetWaage() {
@@ -1440,6 +1716,65 @@ function showDisclaimerModal() {
   setTimeout(() => {
     modal.classList.add('show');
   }, 10);
+}
+
+// Challenge functions
+function toggleChallenge() {
+  const content = document.getElementById('content-challenge');
+  const arrow = document.getElementById('arrow-challenge');
+
+  if (content.classList.contains('collapsed')) {
+    content.classList.remove('collapsed');
+    arrow.textContent = '▲';
+  } else {
+    content.classList.add('collapsed');
+    arrow.textContent = '▼';
+  }
+}
+
+function startChallenge(challengeId) {
+  const challenge = challenges[challengeId];
+  if (!challenge) return;
+
+  // Set active challenge
+  activeChallenge = challengeId;
+
+  // Load scenario
+  loadScenario(challenge.scenario);
+
+  // Show challenge start toast
+  showToast('🎯', challenge.name, challenge.goal);
+}
+
+function checkChallengeSuccess() {
+  if (!activeChallenge) return;
+
+  const challenge = challenges[activeChallenge];
+  const ratio = geldMenge / bip;
+  const inflationPercent = Math.abs((ratio - 1) * 100);
+
+  // Check if goal is met
+  const isSuccess = challenge.checkSuccess(inflationPercent);
+
+  if (isSuccess && !challengeCompleted[activeChallenge]) {
+    // Mark as completed
+    challengeCompleted[activeChallenge] = true;
+
+    // Update button style
+    const btn = document.getElementById(`challenge-${activeChallenge}`);
+    if (btn) {
+      btn.classList.add('completed');
+      btn.querySelector('.challenge-arrow').textContent = '✅';
+    }
+
+    // Show success toast
+    setTimeout(() => {
+      showToast('🏆', 'Challenge erfolgreich!', `${challenge.name} abgeschlossen! Versuche die nächste Challenge oder verbessere dein Ergebnis.`);
+    }, 500);
+
+    // Clear active challenge
+    activeChallenge = null;
+  }
 }
 
 // Initialize first section as open on page load
