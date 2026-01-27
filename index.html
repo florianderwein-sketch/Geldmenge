@@ -144,17 +144,19 @@
     background: linear-gradient(135deg, rgba(255, 69, 0, 0.15) 0%, rgba(255, 140, 0, 0.1) 100%);
   }
 
-  .scenario-btn.live .scenario-flag::after {
-    content: ' 🔴';
-    font-size: 0.5em;
-    position: relative;
-    top: -8px;
-    animation: pulse-dot 2s infinite;
+  .scenario-btn.live .scenario-flag {
+    animation: pulse-flag 2s infinite;
   }
 
-  @keyframes pulse-dot {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.3; }
+  @keyframes pulse-flag {
+    0%, 100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.6;
+      transform: scale(1.1);
+    }
   }
 
   /* Toast Notification */
