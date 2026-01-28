@@ -1,0 +1,1826 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="description" content="Didaktisches Simulationsmodell zur Veranschaulichung monetaristischer Konzepte. Bildungstool für Lernzwecke, keine fachliche Beratung.">
+<meta name="keywords" content="Monetarismus, Simulation, Geldpolitik, Bildung, didaktisches Modell, Inflation, EZB">
+<meta name="author" content="Bildungsprojekt">
+<meta name="robots" content="index, follow">
+<title>Monetarismus-Simulation: Interaktive Waage (Bildungsprojekt)</title>
+<style>
+  /* Mobile-First Basis */
+  body {
+    background-color: #0d1b2a;
+    color: #fff;
+    font-family: Arial, sans-serif;
+    font-size: 16px; /* iOS Auto-Zoom vermeiden */
+    text-align: center;
+    padding: 15px;
+    padding-bottom: 90px; /* Platz für fixed Status */
+    /* Safe-Area für Notch/Dynamic Island */
+    padding-left: max(15px, env(safe-area-inset-left));
+    padding-right: max(15px, env(safe-area-inset-right));
+    padding-top: max(15px, env(safe-area-inset-top));
+  }
+
+  h1, h2 {
+    font-size: 1.5em;
+  }
+
+  .subtitle {
+    font-size: 0.9em;
+    color: #a0a0a0;
+    margin-top: -10px;
+    margin-bottom: 0;
+  }
+
+  .header-row {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    margin-top: 30px;
+    margin-bottom: 20px;
+    width: 100%;
+    max-width: 95%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .cta-hero {
+    background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+    border-radius: 12px;
+    padding: 20px 15px;
+    margin: 20px auto;
+    max-width: 90%;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  }
+
+  .cta-icon {
+    font-size: 2em;
+    margin-bottom: 8px;
+    animation: bounce 2s infinite;
+  }
+
+  .cta-title {
+    font-size: 1.2em;
+    margin: 8px 0;
+    color: #fff;
+  }
+
+  .cta-text {
+    font-size: 0.95em;
+    color: #e0e7ff;
+    margin: 8px 0 0 0;
+    line-height: 1.4;
+  }
+
+  @keyframes bounce {
+    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-10px); }
+    60% { transform: translateY(-5px); }
+  }
+
+  /* Scenario Section */
+  .scenario-section {
+    margin: 25px auto 20px;
+    max-width: 95%;
+  }
+
+  .scenario-title {
+    font-size: 1.1em;
+    color: #a0a0a0;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+  }
+
+  .scenario-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 100%;
+  }
+
+  .scenario-btn {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+    border: 2px solid rgba(255, 255, 255, 0.25);
+    color: #fff;
+    padding: 14px 18px;
+    font-size: 16px;
+    min-height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  }
+
+  .scenario-btn:active {
+    transform: scale(0.97);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+  }
+
+  .scenario-flag {
+    font-size: 1.4em;
+    flex-shrink: 0;
+  }
+
+  .scenario-name {
+    flex: 1;
+    text-align: left;
+    font-weight: 600;
+  }
+
+  .scenario-year {
+    color: #a0a0a0;
+    font-size: 0.85em;
+  }
+
+  .scenario-btn.live {
+    border-color: rgba(255, 69, 0, 0.5);
+    background: linear-gradient(135deg, rgba(255, 69, 0, 0.15) 0%, rgba(255, 140, 0, 0.1) 100%);
+  }
+
+  .scenario-btn.live .scenario-flag::after {
+    content: ' 🔴';
+    font-size: 0.5em;
+    position: relative;
+    top: -8px;
+    animation: pulse-dot 2s infinite;
+  }
+
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  /* Challenge Section */
+  .challenge-section {
+    margin: 25px auto 20px;
+    max-width: 95%;
+  }
+
+  .challenge-toggle {
+    width: 100%;
+    min-height: 56px;
+    padding: 16px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 2px solid rgba(255, 215, 0, 0.4);
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 165, 0, 0.1) 100%);
+    font-weight: 700;
+    text-align: left;
+    border-radius: 12px;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .challenge-toggle:active {
+    transform: scale(0.98);
+  }
+
+  .challenge-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.05em;
+  }
+
+  .challenge-icon {
+    font-size: 1.3em;
+    display: inline-block;
+    min-width: 24px;
+  }
+
+  .challenge-content {
+    max-height: 1000px;
+    overflow: hidden;
+    transition: max-height 0.4s ease-in-out, opacity 0.3s ease, margin-top 0.3s ease;
+    opacity: 1;
+    margin-top: 12px;
+    will-change: max-height;
+    transform: translateZ(0);
+  }
+
+  .challenge-content.collapsed {
+    max-height: 0;
+    opacity: 0;
+    margin-top: 0;
+  }
+
+  .challenge-btn-wrapper {
+    margin: 10px 0;
+  }
+
+  .challenge-btn {
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.2) 0%, rgba(255, 165, 0, 0.15) 100%);
+    border: 2px solid rgba(255, 215, 0, 0.3);
+    color: #fff;
+    padding: 16px 18px;
+    font-size: 16px;
+    min-height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    touch-action: manipulation;
+    width: 100%;
+    text-align: left;
+  }
+
+  .challenge-btn:active {
+    transform: scale(0.98);
+  }
+
+  .challenge-btn-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+  }
+
+  .challenge-flag {
+    font-size: 1.5em;
+    flex-shrink: 0;
+  }
+
+  .challenge-info {
+    flex: 1;
+  }
+
+  .challenge-name {
+    font-weight: 700;
+    font-size: 1em;
+    margin-bottom: 4px;
+  }
+
+  .challenge-goal {
+    font-size: 0.85em;
+    color: #ffd700;
+    font-weight: 600;
+  }
+
+  .challenge-arrow {
+    font-size: 1.2em;
+    color: #ffd700;
+    flex-shrink: 0;
+  }
+
+  .challenge-btn.completed {
+    border-color: rgba(45, 106, 79, 0.5);
+    background: linear-gradient(135deg, rgba(45, 106, 79, 0.2) 0%, rgba(45, 106, 79, 0.1) 100%);
+  }
+
+  .challenge-btn.completed .challenge-arrow {
+    content: '✅';
+  }
+
+  /* Toast Notification */
+  .toast {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-100px);
+    z-index: 2000;
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    border: 2px solid #ffa500;
+    border-radius: 12px;
+    padding: 16px 20px;
+    max-width: 90%;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+    opacity: 0;
+    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  }
+
+  .toast.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+  }
+
+  .toast-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .toast-icon {
+    font-size: 1.5em;
+    flex-shrink: 0;
+  }
+
+  .toast-text {
+    flex: 1;
+  }
+
+  .toast-title {
+    font-weight: 700;
+    font-size: 1em;
+    margin-bottom: 4px;
+    color: #ffa500;
+  }
+
+  .toast-message {
+    font-size: 0.9em;
+    line-height: 1.4;
+    color: #e0e0e0;
+  }
+
+  .waage {
+    position: relative;
+    margin: 15px auto;
+    width: 95%; /* Mehr Breite auf Mobile */
+    max-width: 500px;
+    height: min(45vh, 280px); /* Dynamisch, max 280px */
+    min-height: 200px; /* Minimum für Lesbarkeit */
+
+    /* Touch-Verhalten */
+    touch-action: none; /* Kein Pan/Zoom auf Waage */
+    user-select: none;
+  }
+
+  .pan-label {
+    position: absolute;
+    top: 0;
+    font-size: 0.85em;
+    font-weight: 600;
+    color: #d1d5db;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    z-index: 10;
+  }
+
+  .pan-label-left {
+    left: 5%;
+    transform: translateX(-10%);
+    color: #4a9d7a;
+  }
+
+  .pan-label-right {
+    right: 5%;
+    transform: translateX(10%);
+    color: #c17a57;
+  }
+
+  /* Zentraler Stützpunkt */
+  .waage::before {
+    content: '';
+    position: absolute;
+    width: 4px;
+    height: 80px;
+    background: linear-gradient(to bottom, #888, #555);
+    left: 50%;
+    top: 0;
+    transform: translateX(-50%);
+    border-radius: 2px;
+  }
+
+  /* Dreieck am oberen Ende (Drehpunkt) */
+  .waage::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-left: 12px solid transparent;
+    border-right: 12px solid transparent;
+    border-top: 15px solid gold;
+    left: 50%;
+    top: 70px;
+    transform: translateX(-50%);
+  }
+
+  .beam {
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(to right, #b8860b, gold, #b8860b);
+    position: absolute;
+    top: 80px;
+    left: 0;
+    transform-origin: center;
+    transition: transform 0.5s ease-in-out;
+    border-radius: 2px;
+    box-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
+
+    /* GPU-Beschleunigung */
+    will-change: transform;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+  }
+
+  /* Aufhängungen (Ketten) */
+  .chain {
+    position: absolute;
+    width: 2px;
+    height: 30px;
+    background: linear-gradient(to bottom, #ccc, #888);
+    top: 80px;
+    transition: height 0.5s;
+
+    /* GPU-Beschleunigung */
+    will-change: height;
+  }
+
+  .chain.left { left: 10%; }
+  .chain.right { right: 10%; }
+
+  .pan {
+    width: 90px;
+    height: 35px;
+    border-radius: 0 0 45px 45px;
+    border: 3px solid;
+    position: absolute;
+    top: 115px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px; /* iOS Auto-Zoom vermeiden */
+    font-weight: bold;
+    transition: top 0.5s ease-in-out;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+
+    /* GPU-Beschleunigung */
+    will-change: top, transform;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+  }
+
+  .left {
+    background: linear-gradient(to bottom, #2d6a4f, #1e4d3a);
+    border-color: #4a9d7a;
+    left: 5%;
+  }
+
+  .right {
+    background: linear-gradient(to bottom, #9c6644, #7d5236);
+    border-color: #c17a57;
+    right: 5%;
+  }
+
+  .result {
+    /* Fixed am unteren Rand (Thumb-Zone) */
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+
+    margin: 0;
+    padding: 16px;
+    padding-bottom: max(16px, env(safe-area-inset-bottom));
+    border-radius: 0;
+
+    font-size: 1.3em;
+    font-weight: 700;
+
+    background: linear-gradient(45deg, #ff4500, #ffa500);
+    box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.4);
+
+    /* Smooth transitions */
+    transition: background 0.3s, transform 0.2s;
+
+    /* Flexbox for icon + text */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+  }
+
+  .status-icon {
+    font-size: 1.5em;
+    display: inline-block;
+    transition: transform 0.3s ease;
+  }
+
+  .status-text {
+    display: inline-block;
+  }
+
+  /* Pulsing animation for extreme values */
+  .result.pulse {
+    animation: statusPulse 1.5s ease-in-out infinite;
+  }
+
+  .result.pulse .status-icon {
+    animation: iconBounce 1.5s ease-in-out infinite;
+  }
+
+  @keyframes statusPulse {
+    0%, 100% {
+      box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.4);
+    }
+    50% {
+      box-shadow: 0 -4px 20px rgba(255, 69, 0, 0.6);
+    }
+  }
+
+  @keyframes iconBounce {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+  }
+
+  /* Background gradient variations */
+  .result.inflation-high {
+    background: linear-gradient(45deg, #ff4500, #ff6347);
+  }
+
+  .result.inflation-moderate {
+    background: linear-gradient(45deg, #ffa500, #ffb347);
+  }
+
+  .result.balanced {
+    background: linear-gradient(45deg, #2d6a4f, #4a9d7a);
+  }
+
+  .result.deflation-moderate {
+    background: linear-gradient(45deg, #3b82f6, #60a5fa);
+  }
+
+  .result.deflation-high {
+    background: linear-gradient(45deg, #1e40af, #3b82f6);
+  }
+
+  button {
+    /* Mobile-First Touch-Optimierung */
+    margin: 8px 0;
+    padding: 16px 20px; /* Min 48px Höhe */
+    font-size: 16px; /* iOS Auto-Zoom vermeiden */
+    min-height: 48px; /* WCAG Touch-Target */
+    width: calc(100% - 16px);
+
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+
+    /* Touch-Verhalten */
+    touch-action: manipulation; /* Entfernt 300ms Delay */
+    -webkit-tap-highlight-color: rgba(255, 255, 255, 0.1);
+    user-select: none;
+
+    /* Performance */
+    transition: transform 0.1s ease-out, box-shadow 0.1s;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  /* Touch-Feedback States */
+  button:active {
+    transform: scale(0.98) translateY(1px);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    transition: transform 0.05s, box-shadow 0.05s;
+  }
+
+  .kontraktiv {
+    background-color: #c1121f;
+    color: white;
+  }
+
+  .kontraktiv:active {
+    background-color: #a00f1a;
+  }
+
+  .expansiv {
+    background-color: #2d6a4f;
+    color: white;
+  }
+
+  .expansiv:active {
+    background-color: #245740;
+  }
+
+  .reset {
+    background-color: #555;
+    color: white;
+    margin: 0;
+    padding: 12px 24px;
+    font-size: 16px;
+    min-height: 48px;
+    width: auto;
+    min-width: 160px;
+    flex-shrink: 0;
+  }
+
+  .reset:active {
+    background-color: #333;
+  }
+
+  .accordion-container {
+    margin: 10px auto;
+    max-width: 95%;
+  }
+
+  .accordion-section {
+    margin-bottom: 12px;
+  }
+
+  .accordion-toggle {
+    width: 100%;
+    min-height: 56px;
+    padding: 16px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    font-weight: 700;
+    text-align: left;
+    position: relative;
+  }
+
+  .accordion-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.05em;
+  }
+
+  .accordion-icon {
+    font-size: 1.2em;
+    display: inline-block;
+    min-width: 24px;
+  }
+
+  .accordion-arrow {
+    font-size: 1.2em;
+    transition: transform 0.3s ease;
+    display: inline-block;
+  }
+
+  .accordion-toggle.active .accordion-arrow {
+    transform: rotate(180deg);
+  }
+
+  .kontraktiv-header {
+    background: linear-gradient(135deg, #c1121f 0%, #a00f1a 100%);
+    color: white;
+  }
+
+  .expansiv-header {
+    background: linear-gradient(135deg, #2d6a4f 0%, #1e4d3a 100%);
+    color: white;
+  }
+
+  .accordion-content {
+    max-height: 1000px;
+    overflow: hidden;
+    transition: max-height 0.4s ease-in-out, opacity 0.3s ease, margin-top 0.3s ease;
+    opacity: 1;
+    margin-top: 8px;
+    will-change: max-height;
+    transform: translateZ(0);
+  }
+
+  .accordion-content.collapsed {
+    max-height: 0;
+    opacity: 0;
+    margin-top: 0;
+  }
+
+  .accordion-content button {
+    margin: 6px 0;
+  }
+
+  /* Button with Help System */
+  .button-with-help {
+    position: relative;
+    margin: 6px 0;
+  }
+
+  .button-with-help button {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-right: 12px;
+    position: relative;
+  }
+
+  .button-text {
+    flex: 1;
+    text-align: left;
+    padding-right: 8px;
+  }
+
+  .help-icon {
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.15);
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-left: 8px;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: rgba(255, 255, 255, 0.2);
+  }
+
+  .help-icon:active {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(0.95);
+  }
+
+  .help-icon.active {
+    background: rgba(255, 255, 255, 0.25);
+    transform: rotate(180deg);
+  }
+
+  .help-panel {
+    max-height: 300px;
+    overflow: hidden;
+    transition: max-height 0.3s ease-in-out, opacity 0.2s ease, margin-top 0.2s ease;
+    opacity: 1;
+    margin-top: -2px;
+    margin-left: 8px;
+    margin-right: 8px;
+    padding: 12px 16px;
+    border-radius: 0 0 8px 8px;
+    font-size: 0.85em;
+    line-height: 1.5;
+    color: #e0e0e0;
+    will-change: max-height;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+  }
+
+  .help-panel.collapsed {
+    max-height: 0;
+    opacity: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-top: 0;
+  }
+
+  .help-panel::before {
+    content: '💡 ';
+    display: inline-block;
+    margin-right: 4px;
+  }
+
+  #section-kontrativ .help-panel {
+    background: rgba(193, 18, 31, 0.2);
+    border-left: 3px solid #c1121f;
+  }
+
+  #section-expansiv .help-panel {
+    background: rgba(45, 106, 79, 0.2);
+    border-left: 3px solid #2d6a4f;
+  }
+
+  /* Modal Overlay */
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(4px);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .modal-overlay.show {
+    opacity: 1;
+  }
+
+  .modal-overlay.hidden {
+    display: none;
+  }
+
+  .modal-box {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    border-radius: 16px;
+    max-width: 500px;
+    width: 100%;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 165, 0, 0.3);
+    transform: scale(0.9);
+    transition: transform 0.3s ease;
+  }
+
+  .modal-overlay.show .modal-box {
+    transform: scale(1);
+  }
+
+  .modal-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 24px 24px 16px 24px;
+    border-bottom: 1px solid rgba(255, 165, 0, 0.2);
+  }
+
+  .modal-header-icon {
+    font-size: 24px;
+    flex-shrink: 0;
+  }
+
+  .modal-title {
+    font-size: 1.3em;
+    font-weight: 700;
+    color: #fff;
+    margin: 0;
+  }
+
+  .modal-content {
+    padding: 24px;
+  }
+
+  .modal-warning {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    background: rgba(255, 165, 0, 0.1);
+    border-left: 4px solid #ffa500;
+    border-radius: 8px;
+    padding: 16px;
+  }
+
+  .modal-warning-icon {
+    font-size: 20px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .modal-warning-text {
+    font-size: 0.95em;
+    line-height: 1.6;
+    color: #e0e0e0;
+  }
+
+  .modal-footer {
+    padding: 16px 24px 24px 24px;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .modal-button {
+    background: linear-gradient(135deg, #ffa500 0%, #ff8c00 100%);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 14px 32px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    min-height: 48px;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: rgba(255, 255, 255, 0.2);
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(255, 165, 0, 0.3);
+  }
+
+  .modal-button:active {
+    transform: scale(0.98);
+    box-shadow: 0 2px 6px rgba(255, 165, 0, 0.3);
+  }
+
+  @media(min-width: 600px) {
+    .modal-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(255, 165, 0, 0.4);
+    }
+  }
+
+  /* Tablet & Desktop */
+  @media(min-width: 600px) {
+    body {
+      padding: 30px;
+      padding-bottom: 110px;
+    }
+
+    h1 { font-size: 2em; }
+    h2 { font-size: 1.7em; }
+    .subtitle { font-size: 1.1em; }
+
+    .header-row {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 90%;
+      gap: 20px;
+      margin-top: 40px;
+    }
+
+    .reset {
+      min-width: 180px;
+      padding: 12px 28px;
+    }
+
+    .cta-hero {
+      max-width: 600px;
+      padding: 25px 20px;
+    }
+    .cta-title { font-size: 1.4em; }
+    .cta-text { font-size: 1.05em; }
+
+    .waage {
+      height: min(50vh, 320px);
+      margin: 30px auto;
+    }
+    .waage::before { height: 100px; }
+    .waage::after { top: 90px; }
+    .beam { top: 100px; }
+    .chain { top: 100px; height: 35px; }
+    .pan {
+      width: 110px;
+      height: 40px;
+      font-size: 16px;
+      top: 140px;
+    }
+
+    .pan-label {
+      font-size: 0.95em;
+      top: 5px;
+    }
+
+    button {
+      width: auto;
+      min-width: 200px;
+      padding: 14px 24px;
+      margin: 8px 6px;
+    }
+
+    .result {
+      font-size: 1.6em;
+      padding: 20px;
+      gap: 16px;
+    }
+
+    .status-icon {
+      font-size: 1.8em;
+    }
+
+    .accordion-container {
+      max-width: 600px;
+    }
+
+    .accordion-toggle {
+      min-height: 60px;
+    }
+
+    .accordion-title {
+      font-size: 1.15em;
+    }
+
+    .help-icon {
+      width: 36px;
+      height: 36px;
+      font-size: 18px;
+    }
+
+    .help-panel {
+      font-size: 0.9em;
+      padding: 14px 18px;
+      margin-left: 12px;
+      margin-right: 12px;
+    }
+
+    .scenario-section {
+      max-width: 600px;
+      margin: 30px auto 25px;
+    }
+
+    .scenario-title {
+      font-size: 1.2em;
+    }
+
+    .scenario-buttons {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .scenario-btn {
+      flex-direction: column;
+      padding: 16px 14px;
+      gap: 8px;
+    }
+
+    .scenario-name {
+      text-align: center;
+      font-size: 0.95em;
+    }
+
+    .toast {
+      max-width: 500px;
+    }
+
+    .challenge-section {
+      max-width: 600px;
+      margin: 30px auto 25px;
+    }
+
+    .challenge-toggle {
+      min-height: 60px;
+    }
+
+    .challenge-title {
+      font-size: 1.15em;
+    }
+
+    .challenge-btn {
+      padding: 18px 20px;
+    }
+
+    .challenge-name {
+      font-size: 1.05em;
+    }
+
+    .challenge-goal {
+      font-size: 0.9em;
+    }
+  }
+
+  /* Desktop mit Hover */
+  @media(min-width: 900px) and (hover: hover) {
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    .scenario-btn:hover {
+      border-color: #ffa500;
+      background: linear-gradient(135deg, rgba(255, 165, 0, 0.2) 0%, rgba(255, 165, 0, 0.1) 100%);
+      transform: translateY(-3px);
+      box-shadow: 0 4px 12px rgba(255, 165, 0, 0.4);
+    }
+
+    .scenario-btn:active {
+      transform: translateY(-1px);
+    }
+
+    .scenario-btn.live:hover {
+      border-color: #ff4500;
+      background: linear-gradient(135deg, rgba(255, 69, 0, 0.25) 0%, rgba(255, 140, 0, 0.15) 100%);
+      box-shadow: 0 4px 12px rgba(255, 69, 0, 0.5);
+    }
+
+    .challenge-toggle:hover {
+      border-color: rgba(255, 215, 0, 0.6);
+      background: linear-gradient(135deg, rgba(255, 215, 0, 0.25) 0%, rgba(255, 165, 0, 0.15) 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4);
+    }
+
+    .challenge-btn:hover {
+      border-color: rgba(255, 215, 0, 0.5);
+      background: linear-gradient(135deg, rgba(255, 215, 0, 0.3) 0%, rgba(255, 165, 0, 0.2) 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4);
+    }
+
+    .challenge-btn.completed:hover {
+      border-color: rgba(45, 106, 79, 0.7);
+      background: linear-gradient(135deg, rgba(45, 106, 79, 0.3) 0%, rgba(45, 106, 79, 0.15) 100%);
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="modal-overlay hidden" id="disclaimerModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <span class="modal-header-icon">ℹ️</span>
+      <h2 class="modal-title">Wichtige Hinweise</h2>
+    </div>
+    <div class="modal-content">
+      <div class="modal-warning">
+        <span class="modal-warning-icon">⚠️</span>
+        <p class="modal-warning-text">
+          <strong>Didaktisches Simulationsmodell – Keine fachliche Beratung</strong>
+          <br><br>
+          Dieses Tool dient ausschließlich zu Bildungszwecken und stellt eine stark vereinfachte Simulation monetaristischer Konzepte dar.
+          <br><br>
+          <strong>Wichtige Vereinfachungen:</strong>
+          <br>• Umlaufgeschwindigkeit (V) wird als konstant (=1) angenommen
+          <br>• Erwartungsbildung, Zeitverzögerungen und strukturelle Faktoren sind nicht modelliert
+          <br>• Historische Szenarien verwenden modellierte, keine exakten historischen Daten
+          <br>• Das angezeigte M3/BIP-Verhältnis entspricht nicht direkt der realen Inflationsrate
+          <br><br>
+          <strong>Haftungsausschluss:</strong> Dieses Tool stellt keine wirtschafts- oder finanzwissenschaftliche Beratung dar und ersetzt nicht das Studium von Fachliteratur. Für vertieftes Verständnis konsultieren Sie bitte wissenschaftliche Quellen zur Geldtheorie und Geldpolitik.
+        </p>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="modal-button" onclick="closeDisclaimerModal()">Verstanden</button>
+    </div>
+  </div>
+</div>
+
+<h1>Monetarismus-Simulation: Interaktive Waage</h1>
+
+<div class="cta-hero">
+  <div class="cta-icon">👇</div>
+  <h3 class="cta-title">So funktioniert's</h3>
+  <p class="cta-text">
+    Wähle unten eine Maßnahme und beobachte,<br>
+    wie sich die Waage bewegt!
+  </p>
+</div>
+
+<div id="toast" class="toast">
+  <div class="toast-content">
+    <span class="toast-icon" id="toastIcon">📊</span>
+    <div class="toast-text">
+      <div class="toast-title" id="toastTitle">Szenario geladen</div>
+      <div class="toast-message" id="toastMessage">Szenario wurde geladen.</div>
+    </div>
+  </div>
+</div>
+
+<div class="waage">
+  <div class="pan-label pan-label-left">Geldmenge M3</div>
+  <div class="pan-label pan-label-right">BIP (Wirtschaft)</div>
+  <div class="beam" id="beam"></div>
+  <div class="chain left" id="chainLeft"></div>
+  <div class="chain right" id="chainRight"></div>
+  <div class="pan left" id="leftPan">💶<br>5,50 Bio€</div>
+  <div class="pan right" id="rightPan">📦<br>4,500 Bio€</div>
+</div>
+
+<div class="result" id="inflationStatus">
+  <span class="status-icon" id="statusIcon">⚖️</span>
+  <span class="status-text" id="statusText">Inflation: 22%</span>
+</div>
+
+<div class="accordion-container">
+
+  <div class="accordion-section" id="section-kontrativ">
+    <button class="accordion-toggle kontraktiv-header" onclick="toggleAccordion('kontrativ')">
+      <span class="accordion-title">
+        <span class="accordion-icon">🔴</span>
+        Geldpolitik gegen Inflation
+      </span>
+      <span class="accordion-arrow" id="arrow-kontrativ">▼</span>
+    </button>
+    <div class="accordion-content" id="content-kontrativ">
+      <div class="button-with-help">
+        <button class="kontraktiv" onclick="adjustMoney(2)">
+          <span class="button-text">Leitzins erhöhen (-2%)</span>
+          <span class="help-icon"
+                onclick="event.stopPropagation(); toggleHelp('help-leitzins-erhoehen', event)"
+                role="button"
+                tabindex="0"
+                aria-label="Mehr Informationen"
+                aria-expanded="false"
+                aria-controls="help-leitzins-erhoehen">ℹ️</span>
+        </button>
+        <div class="help-panel collapsed"
+             id="help-leitzins-erhoehen"
+             role="region"
+             aria-label="Erklärung: Leitzins erhöhen">
+          Der Leitzins ist der Zinssatz, zu dem Geschäftsbanken Geld bei der Zentralbank leihen. Ein höherer Leitzins verteuert Kredite und reduziert die Geldmenge im Umlauf.
+        </div>
+      </div>
+
+      <div class="button-with-help">
+        <button class="kontraktiv" onclick="adjustMoney(3)">
+          <span class="button-text">Staatsanleihen verkaufen (-3%)</span>
+          <span class="help-icon"
+                onclick="event.stopPropagation(); toggleHelp('help-staatsanleihen-verkaufen', event)"
+                role="button"
+                tabindex="0"
+                aria-label="Mehr Informationen"
+                aria-expanded="false"
+                aria-controls="help-staatsanleihen-verkaufen">ℹ️</span>
+        </button>
+        <div class="help-panel collapsed"
+             id="help-staatsanleihen-verkaufen"
+             role="region"
+             aria-label="Erklärung: Staatsanleihen verkaufen">
+          Die Zentralbank verkauft Staatsanleihen an Banken und entzieht ihnen damit Geld. Diese Offenmarktpolitik verringert die Liquidität im Bankensystem direkt.
+        </div>
+      </div>
+
+      <div class="button-with-help">
+        <button class="kontraktiv" onclick="adjustMoney(2)">
+          <span class="button-text">Mindestreserven erhöhen (-2%)</span>
+          <span class="help-icon"
+                onclick="event.stopPropagation(); toggleHelp('help-mindestreserven-erhoehen', event)"
+                role="button"
+                tabindex="0"
+                aria-label="Mehr Informationen"
+                aria-expanded="false"
+                aria-controls="help-mindestreserven-erhoehen">ℹ️</span>
+        </button>
+        <div class="help-panel collapsed"
+             id="help-mindestreserven-erhoehen"
+             role="region"
+             aria-label="Erklärung: Mindestreserven erhöhen">
+          Banken müssen einen Teil ihrer Einlagen als Reserve bei der Zentralbank halten. Höhere Mindestreserven bedeuten: Banken können weniger Geld als Kredite vergeben.
+        </div>
+      </div>
+
+      <div class="button-with-help">
+        <button class="kontraktiv" onclick="adjustMoney(1.5)">
+          <span class="button-text">Liquidität verringern (-1.5%)</span>
+          <span class="help-icon"
+                onclick="event.stopPropagation(); toggleHelp('help-liquiditaet-verringern', event)"
+                role="button"
+                tabindex="0"
+                aria-label="Mehr Informationen"
+                aria-expanded="false"
+                aria-controls="help-liquiditaet-verringern">ℹ️</span>
+        </button>
+        <div class="help-panel collapsed"
+             id="help-liquiditaet-verringern"
+             role="region"
+             aria-label="Erklärung: Liquidität verringern">
+          Die Zentralbank reduziert die verfügbare Geldmenge durch verschiedene Maßnahmen (z.B. Einlagefazilität). Weniger Liquidität bremst die Kreditvergabe.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="accordion-section" id="section-expansiv">
+    <button class="accordion-toggle expansiv-header" onclick="toggleAccordion('expansiv')">
+      <span class="accordion-title">
+        <span class="accordion-icon">🟢</span>
+        Geldpolitik gegen Deflation
+      </span>
+      <span class="accordion-arrow" id="arrow-expansiv">▼</span>
+    </button>
+    <div class="accordion-content collapsed" id="content-expansiv">
+      <div class="button-with-help">
+        <button class="expansiv" onclick="adjustMoney(-2)">
+          <span class="button-text">Leitzins senken (+2%)</span>
+          <span class="help-icon"
+                onclick="event.stopPropagation(); toggleHelp('help-leitzins-senken', event)"
+                role="button"
+                tabindex="0"
+                aria-label="Mehr Informationen"
+                aria-expanded="false"
+                aria-controls="help-leitzins-senken">ℹ️</span>
+        </button>
+        <div class="help-panel collapsed"
+             id="help-leitzins-senken"
+             role="region"
+             aria-label="Erklärung: Leitzins senken">
+          Ein niedrigerer Leitzins macht Kredite günstiger. Banken leihen mehr Geld von der Zentralbank und geben mehr Kredite an Unternehmen und Privathaushalte.
+        </div>
+      </div>
+
+      <div class="button-with-help">
+        <button class="expansiv" onclick="adjustMoney(-3)">
+          <span class="button-text">Staatsanleihen kaufen (+3%)</span>
+          <span class="help-icon"
+                onclick="event.stopPropagation(); toggleHelp('help-staatsanleihen-kaufen', event)"
+                role="button"
+                tabindex="0"
+                aria-label="Mehr Informationen"
+                aria-expanded="false"
+                aria-controls="help-staatsanleihen-kaufen">ℹ️</span>
+        </button>
+        <div class="help-panel collapsed"
+             id="help-staatsanleihen-kaufen"
+             role="region"
+             aria-label="Erklärung: Staatsanleihen kaufen">
+          Die Zentralbank kauft Staatsanleihen und gibt Banken damit frisches Geld. Diese Offenmarktpolitik erhöht die Liquidität im Bankensystem direkt.
+        </div>
+      </div>
+
+      <div class="button-with-help">
+        <button class="expansiv" onclick="adjustMoney(-2)">
+          <span class="button-text">Mindestreserven senken (+2%)</span>
+          <span class="help-icon"
+                onclick="event.stopPropagation(); toggleHelp('help-mindestreserven-senken', event)"
+                role="button"
+                tabindex="0"
+                aria-label="Mehr Informationen"
+                aria-expanded="false"
+                aria-controls="help-mindestreserven-senken">ℹ️</span>
+        </button>
+        <div class="help-panel collapsed"
+             id="help-mindestreserven-senken"
+             role="region"
+             aria-label="Erklärung: Mindestreserven senken">
+          Banken müssen weniger Geld als Reserve halten und können mehr Kredite vergeben. Dies erhöht die Geldmenge im Wirtschaftskreislauf.
+        </div>
+      </div>
+
+      <div class="button-with-help">
+        <button class="expansiv" onclick="adjustMoney(-1.5)">
+          <span class="button-text">Liquidität erhöhen (+1.5%)</span>
+          <span class="help-icon"
+                onclick="event.stopPropagation(); toggleHelp('help-liquiditaet-erhoehen', event)"
+                role="button"
+                tabindex="0"
+                aria-label="Mehr Informationen"
+                aria-expanded="false"
+                aria-controls="help-liquiditaet-erhoehen">ℹ️</span>
+        </button>
+        <div class="help-panel collapsed"
+             id="help-liquiditaet-erhoehen"
+             role="region"
+             aria-label="Erklärung: Liquidität erhöhen">
+          Die Zentralbank stellt mehr Geld zur Verfügung (z.B. durch günstige Refinanzierungsgeschäfte). Mehr Liquidität erleichtert Banken die Kreditvergabe.
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="scenario-section">
+  <h3 class="scenario-title">📖 Historische & Aktuelle Szenarien</h3>
+  <div class="scenario-buttons">
+    <button class="scenario-btn" onclick="loadScenario('weimar')">
+      <span class="scenario-flag">🇩🇪</span>
+      <span class="scenario-name">Weimarer Republik <span class="scenario-year">(1923)</span></span>
+    </button>
+    <button class="scenario-btn" onclick="loadScenario('venezuela')">
+      <span class="scenario-flag">🇻🇪</span>
+      <span class="scenario-name">Venezuela <span class="scenario-year">(2023)</span></span>
+    </button>
+    <button class="scenario-btn" onclick="loadScenario('japan')">
+      <span class="scenario-flag">🇯🇵</span>
+      <span class="scenario-name">Japan <span class="scenario-year">(2024)</span></span>
+    </button>
+    <button class="scenario-btn live" onclick="loadScenario('ecb_live')">
+      <span class="scenario-flag">🇪🇺</span>
+      <span class="scenario-name">EZB Live <span class="scenario-year">(Nov 2025)</span></span>
+    </button>
+  </div>
+</div>
+
+<div class="challenge-section">
+  <button class="challenge-toggle" onclick="toggleChallenge()">
+    <span class="challenge-title">
+      <span class="challenge-icon">🎯</span>
+      Challenge-Modus
+    </span>
+    <span class="accordion-arrow" id="arrow-challenge">▼</span>
+  </button>
+  <div class="challenge-content collapsed" id="content-challenge">
+
+    <div class="challenge-btn-wrapper">
+      <button class="challenge-btn" onclick="startChallenge('weimar')" id="challenge-weimar">
+        <div class="challenge-btn-left">
+          <span class="challenge-flag">🇩🇪</span>
+          <div class="challenge-info">
+            <div class="challenge-name">Rettung Weimar 1923</div>
+            <div class="challenge-goal">🎯 Ziel: Hyperinflation auf &lt;5% senken</div>
+          </div>
+        </div>
+        <span class="challenge-arrow">▶</span>
+      </button>
+    </div>
+
+    <div class="challenge-btn-wrapper">
+      <button class="challenge-btn" onclick="startChallenge('venezuela')" id="challenge-venezuela">
+        <div class="challenge-btn-left">
+          <span class="challenge-flag">🇻🇪</span>
+          <div class="challenge-info">
+            <div class="challenge-name">Venezuela stabilisieren</div>
+            <div class="challenge-goal">🎯 Ziel: Inflation auf &lt;10% bringen</div>
+          </div>
+        </div>
+        <span class="challenge-arrow">▶</span>
+      </button>
+    </div>
+
+    <div class="challenge-btn-wrapper">
+      <button class="challenge-btn" onclick="startChallenge('japan')" id="challenge-japan">
+        <div class="challenge-btn-left">
+          <span class="challenge-flag">🇯🇵</span>
+          <div class="challenge-info">
+            <div class="challenge-name">Japan aktivieren</div>
+            <div class="challenge-goal">🎯 Ziel: Deflation beenden (0-3% Inflation)</div>
+          </div>
+        </div>
+        <span class="challenge-arrow">▶</span>
+      </button>
+    </div>
+
+    <div class="challenge-btn-wrapper">
+      <button class="challenge-btn" onclick="startChallenge('ecb_live')" id="challenge-ecb">
+        <div class="challenge-btn-left">
+          <span class="challenge-flag">🇪🇺</span>
+          <div class="challenge-info">
+            <div class="challenge-name">EZB-Ziel erreichen</div>
+            <div class="challenge-goal">🎯 Ziel: Preisstabilität (1-3% Inflation)</div>
+          </div>
+        </div>
+        <span class="challenge-arrow">▶</span>
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<div class="header-row">
+  <button class="reset" onclick="resetWaage()">🔄 Zurücksetzen</button>
+</div>
+
+<div style="text-align: center; padding: 20px; color: #666; font-size: 0.75em; max-width: 600px; margin: 20px auto;">
+  <p style="margin: 0 0 15px 0;">
+    📚 Didaktisches Bildungsprojekt zur Veranschaulichung monetaristischer Konzepte<br>
+    Keine fachliche Beratung • Vereinfachtes Simulationsmodell<br>
+    Für vertieftes Verständnis konsultieren Sie bitte wissenschaftliche Fachliteratur
+  </p>
+  <p style="margin: 0;">
+    <a href="faq.html" style="color: #4af; text-decoration: none; font-weight: 600;">❓ FAQ – Häufig gestellte Fragen</a>
+  </p>
+</div>
+
+<script>
+// Ausgangswerte speichern
+const INITIAL_GELDMENGE = 5.5; // Billionen € (vereinfachter Wert für Demonstration)
+const INITIAL_BIP = 4.5; // Billionen € (Jahres-BIP Deutschland 2025)
+
+let geldMenge = INITIAL_GELDMENGE;
+let bip = INITIAL_BIP;
+
+// Challenge tracking
+let activeChallenge = null;
+let challengeCompleted = {
+  weimar: false,
+  venezuela: false,
+  japan: false,
+  ecb_live: false
+};
+
+// Scenario data
+// ECB Live data source: https://data.ecb.europa.eu/
+// M3 Money Supply: https://www.ecb.europa.eu/press/stats/md/
+// Note: For production, use ECB Data Portal API (data-api.ecb.europa.eu)
+// Current implementation uses hard-coded values (Nov 2025) to avoid CORS issues
+const scenarios = {
+  weimar: {
+    name: 'Weimarer Republik 1923',
+    icon: '💸',
+    geldmenge: 500,
+    bip: 0.8,
+    description: 'Extreme Hyperinflation: Die Papiermark wurde massenhaft gedruckt, während die Wirtschaft kollabierte. Inflation >1000%/Tag.'
+  },
+  venezuela: {
+    name: 'Venezuela 2023',
+    icon: '📉',
+    geldmenge: 15,
+    bip: 0.5,
+    description: 'Aktuelle Hyperinflation: Jahrelanger Währungsverfall durch übermäßige Geldschöpfung. Inflation >3000%/Jahr.'
+  },
+  japan: {
+    name: 'Japan 2024',
+    icon: '🏦',
+    geldmenge: 3.5,
+    bip: 4.2,
+    description: 'Deflationsgefahr: Trotz niedriger Zinsen und hoher Geldmenge bleibt die Inflation niedrig. Strukturelle Probleme.'
+  },
+  ecb_live: {
+    name: 'EZB Live Daten (Nov 2025)',
+    icon: '🔴',
+    geldmenge: 17.2,
+    bip: 14.5,
+    description: 'Eurozone aktuell: M3 Geldmenge €17,2 Bio (Nov 2025), BIP ~€14,5 Bio. Ratio 1.19 → moderate Inflation ~19%.'
+  }
+};
+
+// Challenge definitions
+const challenges = {
+  weimar: {
+    name: '🇩🇪 Rettung Weimar 1923',
+    goal: 'Senke die Hyperinflation auf unter 5%',
+    scenario: 'weimar',
+    checkSuccess: (inflationPercent) => inflationPercent < 5
+  },
+  venezuela: {
+    name: '🇻🇪 Venezuela stabilisieren',
+    goal: 'Bringe die Inflation auf unter 10%',
+    scenario: 'venezuela',
+    checkSuccess: (inflationPercent) => inflationPercent < 10
+  },
+  japan: {
+    name: '🇯🇵 Japan aktivieren',
+    goal: 'Beende die Deflation und erreiche 0-3% Inflation',
+    scenario: 'japan',
+    checkSuccess: (inflationPercent) => inflationPercent >= 0 && inflationPercent <= 3
+  },
+  ecb_live: {
+    name: '🇪🇺 EZB-Ziel erreichen',
+    goal: 'Erreiche Preisstabilität: 1-3% Inflation (EZB-Zielkorridor)',
+    scenario: 'ecb_live',
+    checkSuccess: (inflationPercent) => inflationPercent >= 1 && inflationPercent <= 3
+  }
+};
+
+// Toast notification system
+let toastTimeout = null;
+
+function showToast(icon, title, message) {
+  const toast = document.getElementById('toast');
+  const toastIcon = document.getElementById('toastIcon');
+  const toastTitle = document.getElementById('toastTitle');
+  const toastMessage = document.getElementById('toastMessage');
+
+  // Clear existing timeout
+  if (toastTimeout) {
+    clearTimeout(toastTimeout);
+  }
+
+  // Set content
+  toastIcon.textContent = icon;
+  toastTitle.textContent = title;
+  toastMessage.textContent = message;
+
+  // Show toast
+  toast.classList.add('show');
+
+  // Auto-hide after 5 seconds
+  toastTimeout = setTimeout(() => {
+    toast.classList.remove('show');
+  }, 5000);
+}
+
+// Load scenario
+function loadScenario(scenarioId) {
+  const scenario = scenarios[scenarioId];
+  if (!scenario) return;
+
+  // Update values
+  geldMenge = scenario.geldmenge;
+  bip = scenario.bip;
+
+  // Update waage
+  updateWaage();
+
+  // Show toast
+  showToast(scenario.icon, scenario.name, scenario.description);
+}
+
+function updateWaage() {
+  const ratio = geldMenge / bip;
+  const tilt = Math.min(Math.max((ratio - 1) * 15, -15), 15);
+  document.getElementById("beam").style.transform = `rotate(${tilt}deg)`;
+
+  // Pan-Positionen und Ketten-Längen proportional zur Rotation
+  const baseTop = 115; // Basis-Position
+  const leftTop = baseTop - tilt * 1.5;
+  const rightTop = baseTop + tilt * 1.5;
+
+  document.getElementById("leftPan").style.top = `${leftTop}px`;
+  document.getElementById("rightPan").style.top = `${rightTop}px`;
+
+  // Ketten-Längen anpassen
+  const baseChainHeight = 30;
+  document.getElementById("chainLeft").style.height = `${baseChainHeight - tilt * 1.5}px`;
+  document.getElementById("chainRight").style.height = `${baseChainHeight + tilt * 1.5}px`;
+
+  // Inflation/Deflation berechnen
+  let status = ratio > 1 ? "Inflation" : "Deflation";
+  let percentage = Math.round(Math.abs((ratio - 1) * 1000)) / 10;  // FIXED: 1 Dezimalstelle für Präzision
+
+  // Enhanced status feedback with icons and states
+  const statusBar = document.getElementById("inflationStatus");
+  const statusIcon = document.getElementById("statusIcon");
+  const statusText = document.getElementById("statusText");
+
+  // Remove all state classes
+  statusBar.classList.remove('pulse', 'inflation-high', 'inflation-moderate',
+                             'balanced', 'deflation-moderate', 'deflation-high');
+
+  // Determine icon and state based on severity
+  if (percentage < 3) {
+    // Balanced (< 3%)
+    statusIcon.textContent = '✅';
+    statusBar.classList.add('balanced');
+    statusText.textContent = `${status}: ${percentage.toFixed(1)}% (Stabil)`;
+  } else if (ratio > 1) {
+    // Inflation
+    if (percentage >= 10) {
+      statusIcon.textContent = '🔥';
+      statusBar.classList.add('inflation-high', 'pulse');
+      statusText.textContent = `${status}: ${percentage.toFixed(1)}% (Kritisch!)`;
+    } else {
+      statusIcon.textContent = '📈';
+      statusBar.classList.add('inflation-moderate');
+      statusText.textContent = `${status}: ${percentage.toFixed(1)}%`;
+    }
+  } else {
+    // Deflation
+    if (percentage >= 10) {
+      statusIcon.textContent = '❄️';
+      statusBar.classList.add('deflation-high', 'pulse');
+      statusText.textContent = `${status}: ${percentage.toFixed(1)}% (Kritisch!)`;
+    } else {
+      statusIcon.textContent = '📉';
+      statusBar.classList.add('deflation-moderate');
+      statusText.textContent = `${status}: ${percentage.toFixed(1)}%`;
+    }
+  }
+
+  // Werte auf den Pans anzeigen
+  document.getElementById("leftPan").innerHTML = `💶<br>${geldMenge.toFixed(2)} Bio€`;
+  document.getElementById("rightPan").innerHTML = `📦<br>${bip.toFixed(3)} Bio€`;
+}
+
+// Geldpolitik: positive percent = Reduktion, negative percent = Erhöhung
+function adjustMoney(percent) {
+  geldMenge *= (1 - percent / 100);
+  updateWaage();
+
+  // Check challenge success after each action
+  if (activeChallenge) {
+    checkChallengeSuccess();
+  }
+}
+
+function resetWaage() {
+  geldMenge = INITIAL_GELDMENGE;
+  bip = INITIAL_BIP;
+  updateWaage();
+}
+
+// Accordion functionality
+let currentOpenSection = 'kontrativ';
+let currentOpenHelp = null;
+
+function toggleAccordion(sectionName) {
+  const content = document.getElementById(`content-${sectionName}`);
+  const toggle = content.previousElementSibling;
+
+  // If clicking already open section, just keep it open
+  if (currentOpenSection === sectionName) {
+    return;
+  }
+
+  // Close previously open section
+  if (currentOpenSection) {
+    const oldContent = document.getElementById(`content-${currentOpenSection}`);
+    const oldToggle = oldContent.previousElementSibling;
+
+    oldContent.classList.add('collapsed');
+    oldToggle.classList.remove('active');
+  }
+
+  // Open clicked section
+  content.classList.remove('collapsed');
+  toggle.classList.add('active');
+  currentOpenSection = sectionName;
+}
+
+// Help toggle functionality
+function toggleHelp(helpId, event) {
+  const helpPanel = document.getElementById(helpId);
+  const helpIcon = event.currentTarget;
+
+  // If clicking already open help, close it
+  if (currentOpenHelp === helpId) {
+    helpPanel.classList.add('collapsed');
+    helpIcon.classList.remove('active');
+    helpIcon.setAttribute('aria-expanded', 'false');
+    currentOpenHelp = null;
+    return;
+  }
+
+  // Close previously open help
+  if (currentOpenHelp) {
+    const oldPanel = document.getElementById(currentOpenHelp);
+    const oldIcon = document.querySelector(`[onclick*="${currentOpenHelp}"]`);
+
+    if (oldPanel) oldPanel.classList.add('collapsed');
+    if (oldIcon) {
+      oldIcon.classList.remove('active');
+      oldIcon.setAttribute('aria-expanded', 'false');
+    }
+  }
+
+  // Open clicked help
+  helpPanel.classList.remove('collapsed');
+  helpIcon.classList.add('active');
+  helpIcon.setAttribute('aria-expanded', 'true');
+  currentOpenHelp = helpId;
+
+  // Smooth scroll to keep help in view
+  setTimeout(() => {
+    helpPanel.scrollIntoView({
+      behavior: 'smooth',
+      block: 'nearest'
+    });
+  }, 150);
+}
+
+// Disclaimer Modal functions
+function closeDisclaimerModal() {
+  const modal = document.getElementById('disclaimerModal');
+  modal.classList.remove('show');
+
+  setTimeout(() => {
+    modal.classList.add('hidden');
+  }, 300);
+}
+
+function showDisclaimerModal() {
+  const modal = document.getElementById('disclaimerModal');
+  modal.classList.remove('hidden');
+
+  // Trigger animation
+  setTimeout(() => {
+    modal.classList.add('show');
+  }, 10);
+}
+
+// Challenge functions
+function toggleChallenge() {
+  const content = document.getElementById('content-challenge');
+  const arrow = document.getElementById('arrow-challenge');
+
+  if (content.classList.contains('collapsed')) {
+    content.classList.remove('collapsed');
+    arrow.textContent = '▲';
+  } else {
+    content.classList.add('collapsed');
+    arrow.textContent = '▼';
+  }
+}
+
+function startChallenge(challengeId) {
+  const challenge = challenges[challengeId];
+  if (!challenge) return;
+
+  // Set active challenge
+  activeChallenge = challengeId;
+
+  // Load scenario
+  loadScenario(challenge.scenario);
+
+  // Show challenge start toast
+  showToast('🎯', challenge.name, challenge.goal);
+}
+
+function checkChallengeSuccess() {
+  if (!activeChallenge) return;
+
+  const challenge = challenges[activeChallenge];
+  const ratio = geldMenge / bip;
+  const inflationPercent = (ratio - 1) * 100;  // FIXED: Ohne abs() für korrekte Vorzeichen
+
+  // Check if goal is met
+  const isSuccess = challenge.checkSuccess(inflationPercent);
+
+  if (isSuccess && !challengeCompleted[activeChallenge]) {
+    // Mark as completed
+    challengeCompleted[activeChallenge] = true;
+
+    // Update button style
+    const btn = document.getElementById(`challenge-${activeChallenge}`);
+    if (btn) {
+      btn.classList.add('completed');
+      btn.querySelector('.challenge-arrow').textContent = '✅';
+    }
+
+    // Show success toast
+    setTimeout(() => {
+      showToast('🏆', 'Challenge erfolgreich!', `${challenge.name} abgeschlossen! Versuche die nächste Challenge oder verbessere dein Ergebnis.`);
+    }, 500);
+
+    // Clear active challenge
+    activeChallenge = null;
+  }
+}
+
+// Initialize first section as open on page load
+document.addEventListener('DOMContentLoaded', function() {
+  const firstToggle = document.querySelector('#section-kontrativ .accordion-toggle');
+  if (firstToggle) {
+    firstToggle.classList.add('active');
+  }
+
+  // Initialize all help panels as collapsed
+  document.querySelectorAll('.help-panel').forEach(panel => {
+    panel.classList.add('collapsed');
+  });
+
+  // Show disclaimer modal on page load
+  setTimeout(() => {
+    showDisclaimerModal();
+  }, 500);
+});
+
+// Initiale Anzeige
+updateWaage();
+</script>
+
+</body>
+</html>
