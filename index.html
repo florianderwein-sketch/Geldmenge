@@ -90,11 +90,12 @@
 
   .scenario-title {
     font-size: 1.1em;
-    color: #a0a0a0;
+    color: #d1d5db;
     margin-bottom: 12px;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
-    font-weight: 600;
+    letter-spacing: 0.08em;
+    font-weight: 700;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
   }
 
   .scenario-buttons {
@@ -105,8 +106,8 @@
   }
 
   .scenario-btn {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
-    border: 2px solid rgba(255, 255, 255, 0.25);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.04) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.2);
     color: #fff;
     padding: 14px 18px;
     font-size: 16px;
@@ -119,7 +120,8 @@
     transition: all 0.3s ease;
     touch-action: manipulation;
     -webkit-tap-highlight-color: rgba(255, 255, 255, 0.1);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(8px);
   }
 
   .scenario-btn:active {
@@ -174,14 +176,16 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border: 2px solid rgba(255, 215, 0, 0.4);
-    background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 165, 0, 0.1) 100%);
+    border: 1px solid rgba(255, 215, 0, 0.35);
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.12) 0%, rgba(255, 165, 0, 0.08) 100%);
     font-weight: 700;
     text-align: left;
     border-radius: 12px;
     color: #fff;
     cursor: pointer;
     transition: all 0.3s ease;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.1);
   }
 
   .challenge-toggle:active {
@@ -222,8 +226,8 @@
   }
 
   .challenge-btn {
-    background: linear-gradient(135deg, rgba(255, 215, 0, 0.2) 0%, rgba(255, 165, 0, 0.15) 100%);
-    border: 2px solid rgba(255, 215, 0, 0.3);
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 165, 0, 0.1) 100%);
+    border: 1px solid rgba(255, 215, 0, 0.3);
     color: #fff;
     padding: 16px 18px;
     font-size: 16px;
@@ -237,6 +241,7 @@
     touch-action: manipulation;
     width: 100%;
     text-align: left;
+    backdrop-filter: blur(8px);
   }
 
   .challenge-btn:active {
@@ -351,25 +356,32 @@
 
   .pan-label {
     position: absolute;
-    top: 0;
+    top: 8px;
     font-size: 0.85em;
-    font-weight: 600;
-    color: #d1d5db;
-    letter-spacing: 0.02em;
+    font-weight: 700;
+    letter-spacing: 0.03em;
     text-transform: uppercase;
     z-index: 10;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    padding: 4px 8px;
+    border-radius: 6px;
+    backdrop-filter: blur(4px);
   }
 
   .pan-label-left {
     left: 5%;
     transform: translateX(-10%);
-    color: #4a9d7a;
+    color: #fff;
+    background: rgba(74, 157, 122, 0.25);
+    border: 1px solid rgba(74, 157, 122, 0.4);
   }
 
   .pan-label-right {
     right: 5%;
     transform: translateX(10%);
-    color: #c17a57;
+    color: #fff;
+    background: rgba(193, 122, 87, 0.25);
+    border: 1px solid rgba(193, 122, 87, 0.4);
   }
 
   /* Zentraler Stützpunkt */
@@ -579,21 +591,27 @@
   }
 
   .kontraktiv {
-    background-color: #c1121f;
+    background: linear-gradient(135deg, rgba(193, 18, 31, 0.25) 0%, rgba(160, 15, 26, 0.2) 100%);
     color: white;
+    border: 1px solid rgba(193, 18, 31, 0.4);
+    backdrop-filter: blur(8px);
   }
 
   .kontraktiv:active {
-    background-color: #a00f1a;
+    background: linear-gradient(135deg, rgba(193, 18, 31, 0.35) 0%, rgba(160, 15, 26, 0.3) 100%);
+    border-color: rgba(193, 18, 31, 0.6);
   }
 
   .expansiv {
-    background-color: #2d6a4f;
+    background: linear-gradient(135deg, rgba(45, 106, 79, 0.25) 0%, rgba(30, 77, 58, 0.2) 100%);
     color: white;
+    border: 1px solid rgba(45, 106, 79, 0.4);
+    backdrop-filter: blur(8px);
   }
 
   .expansiv:active {
-    background-color: #245740;
+    background: linear-gradient(135deg, rgba(45, 106, 79, 0.35) 0%, rgba(30, 77, 58, 0.3) 100%);
+    border-color: rgba(45, 106, 79, 0.6);
   }
 
   .reset {
@@ -628,10 +646,18 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border: 2px solid rgba(255, 255, 255, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.15);
     font-weight: 700;
     text-align: left;
     position: relative;
+    backdrop-filter: blur(8px);
+    transition: all 0.3s ease;
+  }
+
+  .accordion-toggle:hover {
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   }
 
   .accordion-title {
@@ -658,19 +684,24 @@
   }
 
   .kontraktiv-header {
-    background: linear-gradient(135deg, #c1121f 0%, #a00f1a 100%);
+    background: linear-gradient(135deg, rgba(193, 18, 31, 0.2) 0%, rgba(160, 15, 26, 0.15) 100%);
     color: white;
+    border-color: rgba(193, 18, 31, 0.5) !important;
+    box-shadow: 0 0 20px rgba(193, 18, 31, 0.15);
   }
 
   .expansiv-header {
-    background: linear-gradient(135deg, #2d6a4f 0%, #1e4d3a 100%);
+    background: linear-gradient(135deg, rgba(45, 106, 79, 0.2) 0%, rgba(30, 77, 58, 0.15) 100%);
     color: white;
+    border-color: rgba(45, 106, 79, 0.5) !important;
+    box-shadow: 0 0 20px rgba(45, 106, 79, 0.15);
   }
 
   .fiscal-header {
-    background: linear-gradient(135deg, #15803d 0%, #166534 100%);
+    background: linear-gradient(135deg, rgba(21, 128, 61, 0.2) 0%, rgba(22, 101, 52, 0.15) 100%);
     color: white;
-    border: 2px solid rgba(74, 222, 128, 0.3);
+    border-color: rgba(74, 222, 128, 0.5) !important;
+    box-shadow: 0 0 20px rgba(21, 128, 61, 0.15);
   }
 
   .fiscal-warning {
@@ -687,12 +718,15 @@
   }
 
   .fiscal-btn {
-    background: linear-gradient(135deg, #15803d 0%, #166534 100%);
+    background: linear-gradient(135deg, rgba(21, 128, 61, 0.25) 0%, rgba(22, 101, 52, 0.2) 100%);
     color: white;
+    border: 1px solid rgba(21, 128, 61, 0.4);
+    backdrop-filter: blur(8px);
   }
 
   .fiscal-btn:active {
-    background: linear-gradient(135deg, #166534 0%, #14532d 100%);
+    background: linear-gradient(135deg, rgba(21, 128, 61, 0.35) 0%, rgba(22, 101, 52, 0.3) 100%);
+    border-color: rgba(21, 128, 61, 0.6);
   }
 
   .accordion-content {
@@ -979,7 +1013,8 @@
 
     .pan-label {
       font-size: 0.95em;
-      top: 5px;
+      top: 12px;
+      padding: 6px 12px;
     }
 
     button {
@@ -1031,6 +1066,7 @@
 
     .scenario-title {
       font-size: 1.2em;
+      letter-spacing: 0.1em;
     }
 
     .scenario-buttons {
@@ -1808,17 +1844,18 @@ function updateWaage() {
   document.getElementById("beam").style.transform = `rotate(${tilt}deg)`;
 
   // Pan-Positionen und Ketten-Längen proportional zur Rotation
+  // FIXED: Schwerere Seite sinkt (umgekehrte Vorzeichen)
   const baseTop = 115; // Basis-Position
-  const leftTop = baseTop - tilt * 1.5;
-  const rightTop = baseTop + tilt * 1.5;
+  const leftTop = baseTop + tilt * 1.5;  // + statt - (schwerer = runter)
+  const rightTop = baseTop - tilt * 1.5; // - statt + (leichter = hoch)
 
   document.getElementById("leftPan").style.top = `${leftTop}px`;
   document.getElementById("rightPan").style.top = `${rightTop}px`;
 
-  // Ketten-Längen anpassen
+  // Ketten-Längen anpassen (schwerere Seite = längere Kette)
   const baseChainHeight = 30;
-  document.getElementById("chainLeft").style.height = `${baseChainHeight - tilt * 1.5}px`;
-  document.getElementById("chainRight").style.height = `${baseChainHeight + tilt * 1.5}px`;
+  document.getElementById("chainLeft").style.height = `${baseChainHeight + tilt * 1.5}px`;
+  document.getElementById("chainRight").style.height = `${baseChainHeight - tilt * 1.5}px`;
 
   // Inflation/Deflation berechnen
   let status = ratio > 1 ? "Inflation" : "Deflation";
