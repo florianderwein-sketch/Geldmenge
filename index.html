@@ -1406,7 +1406,7 @@
           <span class="challenge-flag">🇪🇺</span>
           <div class="challenge-info">
             <div class="challenge-name">EZB-Ziel erreichen</div>
-            <div class="challenge-goal">🎯 Ziel: Perfekte Preisstabilität (1,5-2,5%)</div>
+            <div class="challenge-goal">🎯 Ziel: Preisstabilität (1-3% Inflation)</div>
           </div>
         </div>
         <span class="challenge-arrow">▶</span>
@@ -1496,9 +1496,9 @@ const challenges = {
   },
   ecb_live: {
     name: '🇪🇺 EZB-Ziel erreichen',
-    goal: 'Erreiche perfekte Preisstabilität: 1,5-2,5% Inflation',
+    goal: 'Erreiche Preisstabilität: 1-3% Inflation (EZB-Zielkorridor)',
     scenario: 'ecb_live',
-    checkSuccess: (inflationPercent) => inflationPercent >= 1.5 && inflationPercent <= 2.5
+    checkSuccess: (inflationPercent) => inflationPercent >= 1 && inflationPercent <= 3
   }
 };
 
@@ -1566,7 +1566,7 @@ function updateWaage() {
 
   // Inflation/Deflation berechnen
   let status = ratio > 1 ? "Inflation" : "Deflation";
-  let percentage = Math.round(Math.abs((ratio - 1) * 100));
+  let percentage = Math.round(Math.abs((ratio - 1) * 1000)) / 10;  // FIXED: 1 Dezimalstelle für Präzision
 
   // Enhanced status feedback with icons and states
   const statusBar = document.getElementById("inflationStatus");
@@ -1582,28 +1582,28 @@ function updateWaage() {
     // Balanced (< 3%)
     statusIcon.textContent = '✅';
     statusBar.classList.add('balanced');
-    statusText.textContent = `${status}: ${percentage}% (Stabil)`;
+    statusText.textContent = `${status}: ${percentage.toFixed(1)}% (Stabil)`;
   } else if (ratio > 1) {
     // Inflation
     if (percentage >= 10) {
       statusIcon.textContent = '🔥';
       statusBar.classList.add('inflation-high', 'pulse');
-      statusText.textContent = `${status}: ${percentage}% (Kritisch!)`;
+      statusText.textContent = `${status}: ${percentage.toFixed(1)}% (Kritisch!)`;
     } else {
       statusIcon.textContent = '📈';
       statusBar.classList.add('inflation-moderate');
-      statusText.textContent = `${status}: ${percentage}%`;
+      statusText.textContent = `${status}: ${percentage.toFixed(1)}%`;
     }
   } else {
     // Deflation
     if (percentage >= 10) {
       statusIcon.textContent = '❄️';
       statusBar.classList.add('deflation-high', 'pulse');
-      statusText.textContent = `${status}: ${percentage}% (Kritisch!)`;
+      statusText.textContent = `${status}: ${percentage.toFixed(1)}% (Kritisch!)`;
     } else {
       statusIcon.textContent = '📉';
       statusBar.classList.add('deflation-moderate');
-      statusText.textContent = `${status}: ${percentage}%`;
+      statusText.textContent = `${status}: ${percentage.toFixed(1)}%`;
     }
   }
 
@@ -1751,7 +1751,7 @@ function checkChallengeSuccess() {
 
   const challenge = challenges[activeChallenge];
   const ratio = geldMenge / bip;
-  const inflationPercent = Math.abs((ratio - 1) * 100);
+  const inflationPercent = (ratio - 1) * 100;  // FIXED: Ohne abs() für korrekte Vorzeichen
 
   // Check if goal is met
   const isSuccess = challenge.checkSuccess(inflationPercent);
