@@ -1918,8 +1918,11 @@ function toggleAccordion(sectionName) {
   const content = document.getElementById(`content-${sectionName}`);
   const toggle = content.previousElementSibling;
 
-  // If clicking already open section, just keep it open
+  // If clicking already open section, close it
   if (currentOpenSection === sectionName) {
+    content.classList.add('collapsed');
+    toggle.classList.remove('active');
+    currentOpenSection = null;
     return;
   }
 
