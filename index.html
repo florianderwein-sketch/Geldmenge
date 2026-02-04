@@ -1284,7 +1284,6 @@
 <div class="waage">
   <div class="pan-label pan-label-left">Geldmenge M3</div>
   <div class="pan-label pan-label-right">BIP (Wirtschaft)</div>
-  <div class="beam" id="beam"></div>
   <div class="chain left" id="chainLeft"></div>
   <div class="chain right" id="chainRight"></div>
   <div class="pan left" id="leftPan">💶<br>5,5 Bio€</div>
@@ -1904,7 +1903,6 @@ function loadScenario(scenarioId) {
 function updateWaage() {
   const ratio = geldMenge / bip;
   const tilt = Math.min(Math.max((ratio - 1) * 15, -15), 15);
-  document.getElementById("beam").style.transform = `rotate(${tilt}deg)`;
 
   // Pan-Positionen und Ketten-Längen proportional zur Rotation
   // FIXED: Schwerere Seite sinkt (umgekehrte Vorzeichen)
