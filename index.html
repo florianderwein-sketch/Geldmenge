@@ -526,6 +526,35 @@
     margin-top: 2px;
   }
 
+  /* Meme Easter Egg Overlay */
+  #memeOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.85);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease-in-out;
+  }
+
+  #memeOverlay.show {
+    opacity: 1;
+  }
+
+  #memeImage {
+    max-width: 90vw;
+    max-height: 90vh;
+    object-fit: contain;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8);
+  }
+
   .result {
     /* Dynamic Island Style - Floating Pill */
     position: fixed;
@@ -1870,6 +1899,48 @@ function haptic(type = 'light') {
   }
 }
 
+// ============================================
+// MEME EASTER EGG
+// ============================================
+let memeShown = false; // Track if meme was already shown
+
+// Placeholder Base64 image - replace with actual image later
+// To convert your image: base64 -w 0 /path/to/your/image.jpg
+const MEME_IMAGE_BASE64 = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="400"%3E%3Crect fill="%23333" width="400" height="400"/%3E%3Ctext x="50%25" y="50%25" fill="white" font-size="24" text-anchor="middle" dominant-baseline="middle"%3EMEME PLACEHOLDER%3C/text%3E%3C/svg%3E';
+
+function showMemeFlash() {
+  if (memeShown) return; // Nur einmal zeigen
+
+  const overlay = document.getElementById('memeOverlay');
+  const img = document.getElementById('memeImage');
+
+  // Set image source
+  img.src = MEME_IMAGE_BASE64;
+
+  // Show overlay
+  overlay.style.display = 'flex';
+
+  // Fade in
+  setTimeout(() => {
+    overlay.classList.add('show');
+  }, 10);
+
+  // Vibration Pattern für Meme
+  haptic('triple'); // Dreifach-Vibration für Easter Egg
+
+  // Fade out after 1 second
+  setTimeout(() => {
+    overlay.classList.remove('show');
+
+    // Remove from DOM after animation
+    setTimeout(() => {
+      overlay.style.display = 'none';
+    }, 200);
+  }, 1000);
+
+  memeShown = true; // Mark as shown
+}
+
 // Ausgangswerte speichern
 const INITIAL_GELDMENGE = 5.5; // Billionen € (vereinfachter Wert für Demonstration)
 const INITIAL_BIP = 4.5; // Billionen € (Jahres-BIP Deutschland 2025)
@@ -2082,6 +2153,12 @@ function adjustMoney(percent) {
 // Fiskalpolitik: positive percent = BIP Erhöhung, negative percent = BIP Reduktion
 function adjustBIP(percent) {
   haptic('light'); // Haptisches Feedback
+
+  // Easter Egg: Show meme on first click on "Unternehmenssteuern senken" (4%)
+  if (percent === 4 && !memeShown) {
+    showMemeFlash();
+  }
+
   if (percent > 0) {
     bip *= (1 + percent / 100);
   } else {
@@ -2295,6 +2372,11 @@ document.addEventListener('DOMContentLoaded', function() {
 // Initiale Anzeige
 updateWaage();
 </script>
+
+<!-- Meme Easter Egg Overlay -->
+<div id="memeOverlay" style="display: none;">
+  <img id="memeImage" src="" alt="Meme">
+</div>
 
 </body>
 </html>
