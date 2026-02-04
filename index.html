@@ -1831,6 +1831,58 @@
 // ============================================
 // HAPTIC FEEDBACK SYSTEM
 // ============================================
+
+/**
+ * Get iOS version from User-Agent
+ * Returns iOS major version number, or 0 if not iOS
+ */
+function getIOSVersion() {
+  const match = navigator.userAgent.match(/OS (\d+)_/);
+  return match ? parseInt(match[1]) : 0;
+}
+
+/**
+ * Check if device supports native haptic feedback via switch attribute
+ * Requires iOS 18+ and Safari
+ */
+function supportsNativeHaptic() {
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+  const iosVersion = getIOSVersion();
+  return isIOS && iosVersion >= 18;
+}
+
+/**
+ * Trigger native iOS 18+ haptic feedback via switch attribute
+ * Uses hidden checkbox with switch attribute + label.click()
+ */
+function triggerNativeIOSHaptic(type) {
+  const label = document.querySelector('label[for="ios-haptic-trigger"]');
+  if (!label) return;
+
+  // Map haptic types to number of clicks
+  const clickCounts = {
+    'light': 1,
+    'subtle': 1,
+    'medium': 1,
+    'tap': 1,
+    'success': 2,      // Double tap
+    'victory': 7,      // Victory Fanfare (7 impulses)
+    'reset': 2,
+    'error': 1,
+    'triple': 3,
+    'notify': 3,
+  };
+
+  const clicks = clickCounts[type] || 1;
+
+  // Trigger haptic by clicking label
+  for (let i = 0; i < clicks; i++) {
+    setTimeout(() => {
+      label.click();
+    }, i * 100); // 100ms delay between clicks for patterns
+  }
+}
+
 /**
  * Haptisches Feedback via Vibration API
  * Verschiedene Muster für verschiedene Interaktionen
@@ -1840,8 +1892,13 @@ function haptic(type = 'light') {
   const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 
   if (isIOS) {
-    // iOS Haptic via Audio Playback
-    playHapticAudio(type);
+    // iOS 18+: Native Haptic via switch attribute
+    // iOS < 18: Fallback to Audio Playback
+    if (supportsNativeHaptic()) {
+      triggerNativeIOSHaptic(type);
+    } else {
+      playHapticAudio(type);
+    }
   } else if (navigator.vibrate) {
     // Android/Standard Vibration API
     const patterns = {
@@ -2372,6 +2429,10 @@ document.addEventListener('DOMContentLoaded', function() {
 // Initiale Anzeige
 updateWaage();
 </script>
+
+<!-- iOS 18+ Native Haptic Trigger (hidden) -->
+<input type="checkbox" switch id="ios-haptic-trigger" style="display: none;">
+<label for="ios-haptic-trigger" style="display: none;"></label>
 
 </body>
 </html>
