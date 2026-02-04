@@ -1287,8 +1287,8 @@
   <div class="beam" id="beam"></div>
   <div class="chain left" id="chainLeft"></div>
   <div class="chain right" id="chainRight"></div>
-  <div class="pan left" id="leftPan">💶<br>5,50 Bio€</div>
-  <div class="pan right" id="rightPan">📦<br>4,500 Bio€</div>
+  <div class="pan left" id="leftPan">💶<br>5,5 Bio€</div>
+  <div class="pan right" id="rightPan">📦<br>4,5 Bio€</div>
 </div>
 
 <div class="result" id="inflationStatus">
@@ -1963,9 +1963,9 @@ function updateWaage() {
     }
   }
 
-  // Werte auf den Pans anzeigen
-  document.getElementById("leftPan").innerHTML = `💶<br>${geldMenge.toFixed(2)} Bio€`;
-  document.getElementById("rightPan").innerHTML = `📦<br>${bip.toFixed(3)} Bio€`;
+  // Werte auf den Pans anzeigen (deutsches Format: Komma statt Punkt)
+  document.getElementById("leftPan").innerHTML = `💶<br>${geldMenge.toFixed(2).replace('.', ',')} Bio€`;
+  document.getElementById("rightPan").innerHTML = `📦<br>${bip.toFixed(1).replace('.', ',')} Bio€`;
 }
 
 // Geldpolitik: positive percent = Reduktion, negative percent = Erhöhung
