@@ -1828,6 +1828,48 @@
 </div>
 
 <script>
+// ============================================
+// HAPTIC FEEDBACK SYSTEM
+// ============================================
+/**
+ * Haptisches Feedback via Vibration API
+ * Verschiedene Muster für verschiedene Interaktionen
+ */
+function haptic(type = 'light') {
+  // Check if Vibration API is available
+  if (!navigator.vibrate) {
+    return; // Silently fail on unsupported devices
+  }
+
+  const patterns = {
+    // Leichte Interaktionen
+    'light': 10,              // Kurzer Tap (normale Buttons)
+    'subtle': 5,              // Sehr kurz (Slider-Änderungen)
+
+    // Mittlere Interaktionen
+    'medium': 20,             // Standard-Feedback (Accordion, Tabs)
+    'tap': 15,                // Leichter Tap
+
+    // Stärkere Interaktionen
+    'success': [30, 10, 30],  // Doppel-Tap (Challenge erfolgreich)
+    'reset': [20, 10, 20],    // Doppel-Tap (Reset)
+    'error': 50,              // Langer Buzz (Fehler, Critical State)
+
+    // Spezielle Muster
+    'triple': [15, 10, 15, 10, 15],  // Dreifach-Tap (Besondere Events)
+    'notify': [10, 5, 10, 5, 25],    // Notification Pattern
+  };
+
+  const pattern = patterns[type] || patterns.light;
+
+  try {
+    navigator.vibrate(pattern);
+  } catch (e) {
+    // Silently fail on error
+    console.debug('Vibration failed:', e);
+  }
+}
+
 // Ausgangswerte speichern
 const INITIAL_GELDMENGE = 5.5; // Billionen € (vereinfachter Wert für Demonstration)
 const INITIAL_BIP = 4.5; // Billionen € (Jahres-BIP Deutschland 2025)
@@ -1938,6 +1980,7 @@ function showToast(icon, title, message) {
 
 // Load scenario
 function loadScenario(scenarioId) {
+  haptic('medium'); // Mittleres Feedback für Szenario-Wechsel
   const scenario = scenarios[scenarioId];
   if (!scenario) return;
 
@@ -2026,6 +2069,7 @@ function updateWaage() {
 
 // Geldpolitik: positive percent = Reduktion, negative percent = Erhöhung
 function adjustMoney(percent) {
+  haptic('light'); // Haptisches Feedback
   geldMenge *= (1 - percent / 100);
   updateWaage();
 
@@ -2037,6 +2081,7 @@ function adjustMoney(percent) {
 
 // Fiskalpolitik: positive percent = BIP Erhöhung, negative percent = BIP Reduktion
 function adjustBIP(percent) {
+  haptic('light'); // Haptisches Feedback
   if (percent > 0) {
     bip *= (1 + percent / 100);
   } else {
@@ -2049,18 +2094,22 @@ function adjustBIP(percent) {
 
 // Fiscal policy info functions
 function showFiscalInfoModal() {
+  haptic('tap'); // Leichtes Feedback für Info-Icon
   showToast('🏛️', 'Fiskalpolitik', 'Staatliche Ausgaben und Steuern beeinflussen das BIP (rechte Waagschale), nicht die Geldmenge. Dies ist kein monetaristisches Instrument.');
 }
 
 function showExpansiveFiscalInfo() {
+  haptic('tap'); // Leichtes Feedback für Info-Icon
   showToast('📈', 'Expansive Fiskalpolitik', 'Der Staat erhöht Ausgaben oder senkt Steuern, um die Wirtschaft anzukurbeln. Das BIP steigt, aber die Staatsverschuldung kann zunehmen.');
 }
 
 function showContractiveFiscalInfo() {
+  haptic('tap'); // Leichtes Feedback für Info-Icon
   showToast('📉', 'Kontraktive Fiskalpolitik', 'Der Staat senkt Ausgaben oder erhöht Steuern, um die Wirtschaft abzukühlen. Das BIP sinkt, aber die Inflation kann gebremst werden.');
 }
 
 function resetWaage() {
+  haptic('reset'); // Doppel-Vibration für Reset
   geldMenge = INITIAL_GELDMENGE;
   bip = INITIAL_BIP;
   updateWaage();
@@ -2071,6 +2120,7 @@ let currentOpenSection = 'kontrativ';
 let currentOpenHelp = null;
 
 function toggleAccordion(sectionName) {
+  haptic('medium'); // Haptisches Feedback für Accordion
   const content = document.getElementById(`content-${sectionName}`);
   const toggle = content.previousElementSibling;
 
@@ -2099,6 +2149,7 @@ function toggleAccordion(sectionName) {
 
 // Help toggle functionality
 function toggleHelp(helpId, event) {
+  haptic('tap'); // Leichtes Feedback für Help-Icon
   const helpPanel = document.getElementById(helpId);
   const helpIcon = event.currentTarget;
 
@@ -2140,6 +2191,7 @@ function toggleHelp(helpId, event) {
 
 // Disclaimer Modal functions
 function closeDisclaimerModal() {
+  haptic('tap'); // Leichtes Feedback beim Modal-Schließen
   const modal = document.getElementById('disclaimerModal');
   modal.classList.remove('show');
 
@@ -2160,6 +2212,7 @@ function showDisclaimerModal() {
 
 // Challenge functions
 function toggleChallenge() {
+  haptic('medium'); // Haptisches Feedback für Challenge-Toggle
   const content = document.getElementById('content-challenge');
   const arrow = document.getElementById('arrow-challenge');
 
@@ -2173,6 +2226,7 @@ function toggleChallenge() {
 }
 
 function startChallenge(challengeId) {
+  haptic('medium'); // Mittleres Feedback für Challenge-Start
   const challenge = challenges[challengeId];
   if (!challenge) return;
 
@@ -2197,6 +2251,9 @@ function checkChallengeSuccess() {
   const isSuccess = challenge.checkSuccess(inflationPercent);
 
   if (isSuccess && !challengeCompleted[activeChallenge]) {
+    // Erfolgs-Vibration (Doppel-Tap)
+    haptic('success');
+
     // Mark as completed
     challengeCompleted[activeChallenge] = true;
 
