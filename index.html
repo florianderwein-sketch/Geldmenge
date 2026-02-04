@@ -467,41 +467,14 @@
   }
 
   /* Ketten in 3D */
-  .chain-3d {
-    position: absolute;
-    width: 2px;
-    height: 35px;
-    background: linear-gradient(to bottom,
-      rgba(187, 187, 187, 0.9) 0%,
-      rgba(119, 119, 119, 0.9) 100%);
-    top: 0;
-    transform-origin: top center;
-    transform-style: preserve-3d;
-    transition: height 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow:
-      1px 0 2px rgba(0, 0, 0, 0.3),
-      -1px 0 2px rgba(255, 255, 255, 0.2);
-    will-change: height;
-  }
-
-  .chain-3d.left {
-    left: 10%;
-    transform: translateZ(-10px);
-  }
-
-  .chain-3d.right {
-    right: 10%;
-    transform: translateZ(-10px);
-  }
-
-  /* Schalen in 3D */
+  /* Schalen in 3D - DIREKT am Balken */
   .pan-3d {
     position: absolute;
     width: 100px;
     height: 45px;
     border-radius: 0 0 50px 50px;
     border: 2px solid;
-    top: 35px;
+    top: 0; /* DIREKT am Balken */
     transform-style: preserve-3d;
     transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow:
@@ -1355,8 +1328,7 @@
 
     <!-- Balken (rotiert in 3D) -->
     <div class="beam-3d" id="beam3d">
-      <!-- Linke Kette & Schale -->
-      <div class="chain-3d left" id="chainLeft3d"></div>
+      <!-- Linke Schale - DIREKT am Balken -->
       <div class="pan-3d left" id="leftPan3d">
         <div class="pan-content">
           💶<br>
@@ -1364,8 +1336,7 @@
         </div>
       </div>
 
-      <!-- Rechte Kette & Schale -->
-      <div class="chain-3d right" id="chainRight3d"></div>
+      <!-- Rechte Schale - DIREKT am Balken -->
       <div class="pan-3d right" id="rightPan3d">
         <div class="pan-content">
           📦<br>
@@ -1993,49 +1964,15 @@ function updateWaage() {
   // Rechts schwerer (ratio < 1) → Balken kippt nach RECHTS (positiv)
   const tilt = Math.min(Math.max((1 - ratio) * 15, -15), 15);
 
-  // 3D-Rotation des Balkens (negativ = gegen Uhrzeigersinn = links runter)
+  // NUR Balken rotieren - Schalen folgen automatisch (sind Kinder)
   const beam = document.getElementById("beam3d");
   if (beam) {
     beam.style.transform = `rotateZ(${tilt}deg) translateZ(10px)`;
   }
 
-  // Schalen-Positionen (3D-Transform mit translateY)
-  const leftPan = document.getElementById("leftPan3d");
-  const rightPan = document.getElementById("rightPan3d");
-
-  // KORREKTE Physik: Direkter Vergleich der Werte
-  // Wenn Geldmenge > BIP: Links ist schwerer → sinkt nach unten
-  // Wenn Geldmenge < BIP: Rechts ist schwerer → sinkt nach unten
-  const movement = Math.abs(tilt) * 1.2;
-
-  if (leftPan && rightPan) {
-    if (geldMenge > bip) {
-      // Links ist größer → Links runter, Rechts hoch
-      leftPan.style.transform = `translateZ(-20px) rotateX(5deg) translateY(${movement}px)`;
-      rightPan.style.transform = `translateZ(-20px) rotateX(5deg) translateY(${-movement}px)`;
-    } else {
-      // Rechts ist größer → Links hoch, Rechts runter
-      leftPan.style.transform = `translateZ(-20px) rotateX(5deg) translateY(${-movement}px)`;
-      rightPan.style.transform = `translateZ(-20px) rotateX(5deg) translateY(${movement}px)`;
-    }
-  }
-
-  // Ketten-Längen anpassen (längere Kette = tiefere Schale)
-  const baseChainHeight = 35;
-  const chainLeft = document.getElementById("chainLeft3d");
-  const chainRight = document.getElementById("chainRight3d");
-
-  if (chainLeft && chainRight) {
-    if (geldMenge > bip) {
-      // Links ist größer → linke Kette länger
-      chainLeft.style.height = `${baseChainHeight + movement * 0.67}px`;
-      chainRight.style.height = `${baseChainHeight - movement * 0.67}px`;
-    } else {
-      // Rechts ist größer → rechte Kette länger
-      chainLeft.style.height = `${baseChainHeight - movement * 0.67}px`;
-      chainRight.style.height = `${baseChainHeight + movement * 0.67}px`;
-    }
-  }
+  // ❌ KEINE Ketten-Längen mehr!
+  // ❌ KEINE Schalen-Position Updates mehr!
+  // Die Schalen bewegen sich automatisch mit dem Balken!
 
   // Inflation/Deflation berechnen
   let status = ratio > 1 ? "Inflation" : "Deflation";
