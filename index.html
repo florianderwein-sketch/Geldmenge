@@ -2000,12 +2000,21 @@ function updateWaage() {
   const leftPan = document.getElementById("leftPan3d");
   const rightPan = document.getElementById("rightPan3d");
 
-  // Einfache Physik: tilt direkt verwenden
-  // Positiver tilt (Inflation): Links runter, Rechts hoch
-  // Negativer tilt (Deflation): Links hoch, Rechts runter
+  // KORREKTE Physik: Direkter Vergleich der Werte
+  // Wenn Geldmenge > BIP: Links ist schwerer → sinkt nach unten
+  // Wenn Geldmenge < BIP: Rechts ist schwerer → sinkt nach unten
+  const movement = Math.abs(tilt) * 1.2;
+
   if (leftPan && rightPan) {
-    leftPan.style.transform = `translateZ(-20px) rotateX(5deg) translateY(${tilt * 1.2}px)`;
-    rightPan.style.transform = `translateZ(-20px) rotateX(5deg) translateY(${-tilt * 1.2}px)`;
+    if (geldMenge > bip) {
+      // Links ist größer → Links runter, Rechts hoch
+      leftPan.style.transform = `translateZ(-20px) rotateX(5deg) translateY(${movement}px)`;
+      rightPan.style.transform = `translateZ(-20px) rotateX(5deg) translateY(${-movement}px)`;
+    } else {
+      // Rechts ist größer → Links hoch, Rechts runter
+      leftPan.style.transform = `translateZ(-20px) rotateX(5deg) translateY(${-movement}px)`;
+      rightPan.style.transform = `translateZ(-20px) rotateX(5deg) translateY(${movement}px)`;
+    }
   }
 
   // Ketten-Längen anpassen (längere Kette = tiefere Schale)
@@ -2014,8 +2023,15 @@ function updateWaage() {
   const chainRight = document.getElementById("chainRight3d");
 
   if (chainLeft && chainRight) {
-    chainLeft.style.height = `${baseChainHeight + tilt * 0.8}px`;
-    chainRight.style.height = `${baseChainHeight - tilt * 0.8}px`;
+    if (geldMenge > bip) {
+      // Links ist größer → linke Kette länger
+      chainLeft.style.height = `${baseChainHeight + movement * 0.67}px`;
+      chainRight.style.height = `${baseChainHeight - movement * 0.67}px`;
+    } else {
+      // Rechts ist größer → rechte Kette länger
+      chainLeft.style.height = `${baseChainHeight - movement * 0.67}px`;
+      chainRight.style.height = `${baseChainHeight + movement * 0.67}px`;
+    }
   }
 
   // Inflation/Deflation berechnen
