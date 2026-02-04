@@ -48,9 +48,9 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 12px;
-    margin-top: 30px;
-    margin-bottom: 20px;
+    gap: 16px;
+    margin-top: 32px;
+    margin-bottom: 24px;
     width: 100%;
     max-width: 95%;
     margin-left: auto;
@@ -58,12 +58,14 @@
   }
 
   .cta-hero {
-    background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+    background: linear-gradient(135deg, rgba(30, 58, 138, 0.15) 0%, rgba(59, 130, 246, 0.12) 100%);
     border-radius: 12px;
-    padding: 20px 15px;
+    padding: 24px 18px;
     margin: 20px auto;
     max-width: 90%;
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.15);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(59, 130, 246, 0.2);
   }
 
   .cta-icon {
@@ -76,13 +78,13 @@
     font-size: 1.2em;
     margin: 8px 0;
     color: #fff;
-    font-weight: 600;
+    font-weight: 500;
     letter-spacing: -0.01em;
   }
 
   .cta-text {
     font-size: 0.95em;
-    color: #e0e7ff;
+    color: #c7d2fe;
     margin: 8px 0 0 0;
     line-height: 1.5;
     font-weight: 400;
@@ -91,8 +93,8 @@
 
   @keyframes bounce {
     0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-    40% { transform: translateY(-10px); }
-    60% { transform: translateY(-5px); }
+    40% { transform: translateY(-6px); }
+    60% { transform: translateY(-3px); }
   }
 
   /* Scenario Section */
@@ -120,7 +122,7 @@
 
   .scenario-btn {
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.04) 100%);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 0.5px solid rgba(255, 255, 255, 0.18);
     color: #fff;
     padding: 14px 18px;
     font-size: 16px;
@@ -130,11 +132,11 @@
     align-items: center;
     gap: 10px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     touch-action: manipulation;
     -webkit-tap-highlight-color: rgba(255, 255, 255, 0.1);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-    backdrop-filter: blur(8px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(10px);
   }
 
   .scenario-btn:active {
@@ -189,16 +191,16 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border: 1px solid rgba(255, 215, 0, 0.35);
-    background: linear-gradient(135deg, rgba(255, 215, 0, 0.12) 0%, rgba(255, 165, 0, 0.08) 100%);
+    border: 0.5px solid rgba(255, 215, 0, 0.3);
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(255, 165, 0, 0.06) 100%);
     font-weight: 700;
     text-align: left;
     border-radius: 12px;
     color: #fff;
     cursor: pointer;
-    transition: all 0.3s ease;
-    backdrop-filter: blur(8px);
-    box-shadow: 0 0 20px rgba(255, 215, 0, 0.1);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.08);
   }
 
   .challenge-toggle:active {
@@ -239,8 +241,8 @@
   }
 
   .challenge-btn {
-    background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 165, 0, 0.1) 100%);
-    border: 1px solid rgba(255, 215, 0, 0.3);
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.12) 0%, rgba(255, 165, 0, 0.08) 100%);
+    border: 0.5px solid rgba(255, 215, 0, 0.25);
     color: #fff;
     padding: 16px 18px;
     font-size: 16px;
@@ -250,11 +252,11 @@
     align-items: center;
     justify-content: space-between;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     touch-action: manipulation;
     width: 100%;
     text-align: left;
-    backdrop-filter: blur(8px);
+    backdrop-filter: blur(10px);
   }
 
   .challenge-btn:active {
@@ -307,18 +309,19 @@
   /* Toast Notification */
   .toast {
     position: fixed;
-    top: 20px;
+    top: max(20px, env(safe-area-inset-top));
     left: 50%;
-    transform: translateX(-50%) translateY(-100px);
+    transform: translateX(-50%) translateY(-120px);
     z-index: 2000;
-    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-    border: 2px solid #ffa500;
-    border-radius: 12px;
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.95) 100%);
+    border: 1px solid rgba(255, 165, 0, 0.3);
+    border-radius: 16px;
     padding: 16px 20px;
     max-width: 90%;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
     opacity: 0;
-    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    backdrop-filter: blur(20px) saturate(180%);
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .toast.show {
@@ -356,7 +359,7 @@
 
   .waage {
     position: relative;
-    margin: 15px auto;
+    margin: 16px auto;
     width: 95%; /* Mehr Breite auf Mobile */
     max-width: 500px;
     height: min(45vh, 280px); /* Dynamisch, max 280px */
@@ -371,12 +374,12 @@
     position: absolute;
     top: 8px;
     font-size: 0.85em;
-    font-weight: 700;
+    font-weight: 600;
     letter-spacing: 0.03em;
     text-transform: uppercase;
     z-index: 10;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-    padding: 4px 8px;
+    padding: 3px 6px;
     border-radius: 6px;
     backdrop-filter: blur(4px);
   }
@@ -401,7 +404,7 @@
   .waage::before {
     content: '';
     position: absolute;
-    width: 4px;
+    width: 3px;
     height: 80px;
     background: linear-gradient(to bottom, #888, #555);
     left: 50%;
@@ -426,15 +429,15 @@
 
   .beam {
     width: 100%;
-    height: 4px;
+    height: 2px;
     background: linear-gradient(to right, #b8860b, gold, #b8860b);
     position: absolute;
     top: 80px;
     left: 0;
     transform-origin: center;
     transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-    border-radius: 2px;
-    box-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
+    border-radius: 1px;
+    box-shadow: 0 1px 6px rgba(255, 215, 0, 0.2);
 
     /* GPU-Beschleunigung */
     will-change: transform;
@@ -445,9 +448,9 @@
   /* Aufhängungen (Ketten) */
   .chain {
     position: absolute;
-    width: 2px;
+    width: 1.5px;
     height: 30px;
-    background: linear-gradient(to bottom, #ccc, #888);
+    background: linear-gradient(to bottom, #bbb, #777);
     top: 80px;
     transition: height 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 
@@ -462,7 +465,7 @@
     width: 90px;
     height: 35px;
     border-radius: 0 0 45px 45px;
-    border: 3px solid;
+    border: 2px solid;
     position: absolute;
     top: 115px;
     display: flex;
@@ -471,7 +474,7 @@
     font-size: 16px; /* iOS Auto-Zoom vermeiden */
     font-weight: bold;
     transition: top 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
 
     /* GPU-Beschleunigung */
     will-change: top, transform;
@@ -601,12 +604,12 @@
   button {
     /* Mobile-First Touch-Optimierung */
     margin: 8px 0;
-    padding: 16px 20px; /* Min 48px Höhe */
+    padding: 16px 24px; /* Min 48px Höhe */
     font-size: 16px; /* iOS Auto-Zoom vermeiden */
     min-height: 48px; /* WCAG Touch-Target */
     width: calc(100% - 16px);
 
-    border-radius: 8px;
+    border-radius: 12px;
     border: none;
     cursor: pointer;
 
@@ -652,7 +655,7 @@
   }
 
   .reset {
-    background-color: #555;
+    background: linear-gradient(135deg, rgba(85, 85, 85, 0.25) 0%, rgba(68, 68, 68, 0.2) 100%);
     color: white;
     margin: 0;
     padding: 12px 24px;
@@ -661,19 +664,22 @@
     width: auto;
     min-width: 160px;
     flex-shrink: 0;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(8px);
   }
 
   .reset:active {
-    background-color: #333;
+    background: linear-gradient(135deg, rgba(85, 85, 85, 0.35) 0%, rgba(68, 68, 68, 0.3) 100%);
+    border-color: rgba(255, 255, 255, 0.3);
   }
 
   .accordion-container {
-    margin: 10px auto;
+    margin: 16px auto;
     max-width: 95%;
   }
 
   .accordion-section {
-    margin-bottom: 12px;
+    margin-bottom: 16px;
   }
 
   .accordion-toggle {
@@ -683,18 +689,18 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border: 2px solid rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.15);
     font-weight: 700;
     text-align: left;
     position: relative;
     backdrop-filter: blur(8px);
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .accordion-toggle:hover {
     border-color: rgba(255, 255, 255, 0.3);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    transform: translateY(-0.5px);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25);
   }
 
   .accordion-title {
@@ -713,12 +719,20 @@
 
   .accordion-arrow {
     font-size: 1.2em;
-    transition: transform 0.3s ease;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     display: inline-block;
   }
 
   .accordion-toggle.active .accordion-arrow {
     transform: rotate(180deg);
+  }
+
+  .accordion-icon {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .accordion-toggle.active .accordion-icon {
+    transform: scale(1.05);
   }
 
   .kontraktiv-header {
@@ -815,22 +829,30 @@
     align-items: center;
     justify-content: center;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.15);
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.2);
     font-size: 16px;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     margin-left: 8px;
     touch-action: manipulation;
     -webkit-tap-highlight-color: rgba(255, 255, 255, 0.2);
   }
 
+  .help-icon:hover {
+    transform: scale(1.1);
+    border-color: rgba(255, 255, 255, 0.4);
+    background: rgba(255, 255, 255, 0.1);
+  }
+
   .help-icon:active {
-    background: rgba(255, 255, 255, 0.3);
-    transform: scale(0.95);
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.05);
   }
 
   .help-icon.active {
-    background: rgba(255, 255, 255, 0.25);
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.3);
     transform: rotate(180deg);
   }
 
@@ -909,13 +931,13 @@
 
   .modal-box {
     background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-    border-radius: 16px;
+    border-radius: 20px;
     max-width: 500px;
     width: 100%;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-    border: 1px solid rgba(255, 165, 0, 0.3);
+    border: 1px solid rgba(255, 165, 0, 0.2);
     transform: scale(0.9);
-    transition: transform 0.3s ease;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .modal-overlay.show .modal-box {
@@ -978,21 +1000,21 @@
     background: linear-gradient(135deg, #ffa500 0%, #ff8c00 100%);
     color: #fff;
     border: none;
-    border-radius: 8px;
+    border-radius: 12px;
     padding: 14px 32px;
     font-size: 16px;
-    font-weight: 700;
+    font-weight: 600;
     cursor: pointer;
     min-height: 48px;
     touch-action: manipulation;
     -webkit-tap-highlight-color: rgba(255, 255, 255, 0.2);
-    transition: all 0.2s ease;
-    box-shadow: 0 4px 12px rgba(255, 165, 0, 0.3);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 3px 10px rgba(255, 165, 0, 0.25);
   }
 
   .modal-button:active {
     transform: scale(0.98);
-    box-shadow: 0 2px 6px rgba(255, 165, 0, 0.3);
+    box-shadow: 0 2px 6px rgba(255, 165, 0, 0.25);
   }
 
   @media(min-width: 600px) {
@@ -1168,10 +1190,10 @@
     }
 
     .scenario-btn:hover {
-      border-color: rgba(255, 165, 0, 0.6);
-      background: linear-gradient(135deg, rgba(255, 165, 0, 0.15) 0%, rgba(255, 165, 0, 0.08) 100%);
-      transform: translateY(-2px) scale(1.01);
-      box-shadow: 0 6px 16px rgba(255, 165, 0, 0.25);
+      border-color: rgba(255, 165, 0, 0.5);
+      background: linear-gradient(135deg, rgba(255, 165, 0, 0.12) 0%, rgba(255, 165, 0, 0.06) 100%);
+      transform: translateY(-1px) scale(1.005);
+      box-shadow: 0 4px 12px rgba(255, 165, 0, 0.2);
     }
 
     .scenario-btn:active {
@@ -1186,17 +1208,17 @@
     }
 
     .challenge-toggle:hover {
-      border-color: rgba(255, 215, 0, 0.5);
-      background: linear-gradient(135deg, rgba(255, 215, 0, 0.18) 0%, rgba(255, 165, 0, 0.12) 100%);
-      transform: translateY(-1px) scale(1.005);
-      box-shadow: 0 6px 16px rgba(255, 215, 0, 0.25);
+      border-color: rgba(255, 215, 0, 0.4);
+      background: linear-gradient(135deg, rgba(255, 215, 0, 0.14) 0%, rgba(255, 165, 0, 0.09) 100%);
+      transform: translateY(-0.5px) scale(1.003);
+      box-shadow: 0 4px 12px rgba(255, 215, 0, 0.18);
     }
 
     .challenge-btn:hover {
-      border-color: rgba(255, 215, 0, 0.45);
-      background: linear-gradient(135deg, rgba(255, 215, 0, 0.22) 0%, rgba(255, 165, 0, 0.15) 100%);
-      transform: translateY(-1px) scale(1.005);
-      box-shadow: 0 6px 16px rgba(255, 215, 0, 0.25);
+      border-color: rgba(255, 215, 0, 0.35);
+      background: linear-gradient(135deg, rgba(255, 215, 0, 0.16) 0%, rgba(255, 165, 0, 0.11) 100%);
+      transform: translateY(-0.5px) scale(1.003);
+      box-shadow: 0 4px 12px rgba(255, 215, 0, 0.18);
     }
 
     .challenge-btn.completed:hover {
@@ -1743,14 +1765,14 @@
   <button class="reset" onclick="resetWaage()">🔄 Zurücksetzen</button>
 </div>
 
-<div style="text-align: center; padding: 20px; color: #666; font-size: 0.75em; max-width: 600px; margin: 20px auto;">
-  <p style="margin: 0 0 15px 0;">
+<div style="text-align: center; padding: 24px 20px; color: #6b7280; font-size: 0.7em; max-width: 600px; margin: 32px auto; line-height: 1.6; background: linear-gradient(to bottom, transparent 0%, rgba(13, 27, 42, 0.5) 100%); border-radius: 12px;">
+  <p style="margin: 0 0 16px 0; font-weight: 400;">
     📚 Didaktisches Bildungsprojekt zur Veranschaulichung monetaristischer Konzepte<br>
     Keine fachliche Beratung • Vereinfachtes Simulationsmodell<br>
     Für vertieftes Verständnis konsultieren Sie bitte wissenschaftliche Fachliteratur
   </p>
   <p style="margin: 0;">
-    <a href="faq.html" style="color: #4af; text-decoration: none; font-weight: 600;">❓ FAQ – Häufig gestellte Fragen</a>
+    <a href="faq.html" style="color: #60a5fa; text-decoration: none; font-weight: 500; display: inline-flex; align-items: center; gap: 6px;">❓ FAQ – Häufig gestellte Fragen <span style="font-size: 0.9em;">→</span></a>
   </p>
 </div>
 
