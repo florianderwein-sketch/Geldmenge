@@ -1988,9 +1988,12 @@ function loadScenario(scenarioId) {
 
 function updateWaage() {
   const ratio = geldMenge / bip;
-  const tilt = Math.min(Math.max((ratio - 1) * 15, -15), 15);
+  // HÄNGENDE Waage: Schwerere Seite zieht Balken nach unten
+  // Links schwerer (ratio > 1) → Balken kippt nach LINKS (negativ)
+  // Rechts schwerer (ratio < 1) → Balken kippt nach RECHTS (positiv)
+  const tilt = Math.min(Math.max((1 - ratio) * 15, -15), 15);
 
-  // 3D-Rotation des Balkens
+  // 3D-Rotation des Balkens (negativ = gegen Uhrzeigersinn = links runter)
   const beam = document.getElementById("beam3d");
   if (beam) {
     beam.style.transform = `rotateZ(${tilt}deg) translateZ(10px)`;
