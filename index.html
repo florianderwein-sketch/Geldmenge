@@ -526,35 +526,6 @@
     margin-top: 2px;
   }
 
-  /* Meme Easter Egg Overlay */
-  #memeOverlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    z-index: 9999;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(0, 0, 0, 0.85);
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.2s ease-in-out;
-  }
-
-  #memeOverlay.show {
-    opacity: 1;
-  }
-
-  #memeImage {
-    max-width: 90vw;
-    max-height: 90vh;
-    object-fit: contain;
-    border-radius: 12px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8);
-  }
-
   .result {
     /* Dynamic Island Style - Floating Pill */
     position: fixed;
@@ -1865,80 +1836,112 @@
  * Verschiedene Muster für verschiedene Interaktionen
  */
 function haptic(type = 'light') {
-  // Check if Vibration API is available
-  if (!navigator.vibrate) {
-    return; // Silently fail on unsupported devices
-  }
+  // iOS Detection
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 
-  const patterns = {
-    // Leichte Interaktionen
-    'light': 10,              // Kurzer Tap (normale Buttons)
-    'subtle': 5,              // Sehr kurz (Slider-Änderungen)
+  if (isIOS) {
+    // iOS Haptic via Audio Playback
+    playHapticAudio(type);
+  } else if (navigator.vibrate) {
+    // Android/Standard Vibration API
+    const patterns = {
+      'light': 10,
+      'subtle': 5,
+      'medium': 20,
+      'tap': 15,
+      'success': [30, 10, 30],
+      'reset': [20, 10, 20],
+      'error': 50,
+      'triple': [15, 10, 15, 10, 15],
+      'notify': [10, 5, 10, 5, 25],
+    };
 
-    // Mittlere Interaktionen
-    'medium': 20,             // Standard-Feedback (Accordion, Tabs)
-    'tap': 15,                // Leichter Tap
+    const pattern = patterns[type] || patterns.light;
 
-    // Stärkere Interaktionen
-    'success': [30, 10, 30],  // Doppel-Tap (Challenge erfolgreich)
-    'reset': [20, 10, 20],    // Doppel-Tap (Reset)
-    'error': 50,              // Langer Buzz (Fehler, Critical State)
-
-    // Spezielle Muster
-    'triple': [15, 10, 15, 10, 15],  // Dreifach-Tap (Besondere Events)
-    'notify': [10, 5, 10, 5, 25],    // Notification Pattern
-  };
-
-  const pattern = patterns[type] || patterns.light;
-
-  try {
-    navigator.vibrate(pattern);
-  } catch (e) {
-    // Silently fail on error
-    console.debug('Vibration failed:', e);
+    try {
+      navigator.vibrate(pattern);
+    } catch (e) {
+      console.debug('Vibration failed:', e);
+    }
   }
 }
 
-// ============================================
-// MEME EASTER EGG
-// ============================================
-let memeShown = false; // Track if meme was already shown
+// iOS Haptic Audio Playback
+let hapticAudioContext = null;
 
-// Placeholder Base64 image - replace with actual image later
-// To convert your image: base64 -w 0 /path/to/your/image.jpg
-const MEME_IMAGE_BASE64 = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="400"%3E%3Crect fill="%23333" width="400" height="400"/%3E%3Ctext x="50%25" y="50%25" fill="white" font-size="24" text-anchor="middle" dominant-baseline="middle"%3EMEME PLACEHOLDER%3C/text%3E%3C/svg%3E';
+function playHapticAudio(type) {
+  // Initialize AudioContext on first use (user interaction required)
+  if (!hapticAudioContext) {
+    try {
+      hapticAudioContext = new (window.AudioContext || window.webkitAudioContext)();
+    } catch (e) {
+      console.debug('AudioContext not supported:', e);
+      return;
+    }
+  }
 
-function showMemeFlash() {
-  if (memeShown) return; // Nur einmal zeigen
+  const ctx = hapticAudioContext;
 
-  const overlay = document.getElementById('memeOverlay');
-  const img = document.getElementById('memeImage');
+  // Resume context if suspended (iOS requirement)
+  if (ctx.state === 'suspended') {
+    ctx.resume();
+  }
 
-  // Set image source
-  img.src = MEME_IMAGE_BASE64;
+  // Map haptic types to audio durations (in seconds)
+  const durations = {
+    'light': 0.01,
+    'subtle': 0.005,
+    'medium': 0.02,
+    'tap': 0.015,
+    'error': 0.05,
+  };
 
-  // Show overlay
-  overlay.style.display = 'flex';
+  // For pattern types, play multiple pulses
+  const patternTypes = {
+    'success': [0.03, 0.01, 0.03],
+    'reset': [0.02, 0.01, 0.02],
+    'triple': [0.015, 0.01, 0.015, 0.01, 0.015],
+    'notify': [0.01, 0.005, 0.01, 0.005, 0.025],
+  };
 
-  // Fade in
-  setTimeout(() => {
-    overlay.classList.add('show');
-  }, 10);
+  if (patternTypes[type]) {
+    // Play pattern (multiple pulses)
+    const pattern = patternTypes[type];
+    let time = 0;
 
-  // Vibration Pattern für Meme
-  haptic('triple'); // Dreifach-Vibration für Easter Egg
+    pattern.forEach((duration, index) => {
+      if (index % 2 === 0) {
+        // Sound pulse
+        setTimeout(() => playImpulse(ctx, duration), time * 1000);
+      }
+      time += duration;
+    });
+  } else {
+    // Single pulse
+    const duration = durations[type] || durations.light;
+    playImpulse(ctx, duration);
+  }
+}
 
-  // Fade out after 1 second
-  setTimeout(() => {
-    overlay.classList.remove('show');
+function playImpulse(ctx, duration) {
+  try {
+    // Create very short, low-volume tone to trigger iOS haptics
+    const oscillator = ctx.createOscillator();
+    const gainNode = ctx.createGain();
 
-    // Remove from DOM after animation
-    setTimeout(() => {
-      overlay.style.display = 'none';
-    }, 200);
-  }, 1000);
+    oscillator.connect(gainNode);
+    gainNode.connect(ctx.destination);
 
-  memeShown = true; // Mark as shown
+    // Low frequency, low volume (just enough to trigger haptics)
+    oscillator.frequency.value = 10;
+    gainNode.gain.value = 0.01;
+
+    const now = ctx.currentTime;
+    oscillator.start(now);
+    oscillator.stop(now + duration);
+  } catch (e) {
+    console.debug('Haptic impulse failed:', e);
+  }
 }
 
 // Ausgangswerte speichern
@@ -2152,12 +2155,7 @@ function adjustMoney(percent) {
 
 // Fiskalpolitik: positive percent = BIP Erhöhung, negative percent = BIP Reduktion
 function adjustBIP(percent) {
-  // Easter Egg: Show meme on first click on "Unternehmenssteuern senken" (4%)
-  if (percent === 4 && !memeShown) {
-    showMemeFlash(); // haptic('triple') wird hier drin aufgerufen
-  } else {
-    haptic('light'); // Haptisches Feedback nur wenn kein Easter Egg
-  }
+  haptic('light'); // Haptisches Feedback
 
   if (percent > 0) {
     bip *= (1 + percent / 100);
@@ -2372,11 +2370,6 @@ document.addEventListener('DOMContentLoaded', function() {
 // Initiale Anzeige
 updateWaage();
 </script>
-
-<!-- Meme Easter Egg Overlay -->
-<div id="memeOverlay" style="display: none;">
-  <img id="memeImage" src="" alt="Meme">
-</div>
 
 </body>
 </html>
