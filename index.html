@@ -2152,11 +2152,11 @@ function adjustMoney(percent) {
 
 // Fiskalpolitik: positive percent = BIP Erhöhung, negative percent = BIP Reduktion
 function adjustBIP(percent) {
-  haptic('light'); // Haptisches Feedback
-
   // Easter Egg: Show meme on first click on "Unternehmenssteuern senken" (4%)
   if (percent === 4 && !memeShown) {
-    showMemeFlash();
+    showMemeFlash(); // haptic('triple') wird hier drin aufgerufen
+  } else {
+    haptic('light'); // Haptisches Feedback nur wenn kein Easter Egg
   }
 
   if (percent > 0) {
