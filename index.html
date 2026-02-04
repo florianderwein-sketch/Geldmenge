@@ -357,19 +357,30 @@
     color: #e0e0e0;
   }
 
-  .waage {
+  /* 3D-Waage Container mit Perspektive */
+  .waage-3d {
     position: relative;
     margin: 16px auto;
-    width: 95%; /* Mehr Breite auf Mobile */
+    width: 95%;
     max-width: 500px;
-    height: min(45vh, 280px); /* Dynamisch, max 280px */
-    min-height: 200px; /* Minimum für Lesbarkeit */
+    height: min(45vh, 300px);
+    min-height: 220px;
+    perspective: 1200px;
+    perspective-origin: center center;
 
     /* Touch-Verhalten */
-    touch-action: none; /* Kein Pan/Zoom auf Waage */
+    touch-action: none;
     user-select: none;
   }
 
+  .waage-3d-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+  }
+
+  /* Pan Labels (bleiben gleich, funktionieren mit neuer Struktur) */
   .pan-label {
     position: absolute;
     top: 8px;
@@ -377,7 +388,7 @@
     font-weight: 600;
     letter-spacing: 0.03em;
     text-transform: uppercase;
-    z-index: 10;
+    z-index: 50;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
     padding: 3px 6px;
     border-radius: 6px;
@@ -400,98 +411,146 @@
     border: 1px solid rgba(193, 122, 87, 0.4);
   }
 
-  /* Zentraler Stützpunkt */
-  .waage::before {
-    content: '';
+  /* Support-Pole (Stützstab) */
+  .support-pole {
     position: absolute;
-    width: 3px;
+    width: 4px;
     height: 80px;
-    background: linear-gradient(to bottom, #888, #555);
+    background: linear-gradient(to bottom,
+      rgba(136, 136, 136, 0.9) 0%,
+      rgba(85, 85, 85, 0.9) 100%);
     left: 50%;
     top: 0;
-    transform: translateX(-50%);
+    transform: translateX(-50%) translateZ(20px);
     border-radius: 2px;
+    box-shadow:
+      0 2px 8px rgba(0, 0, 0, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.3),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.2);
   }
 
-  /* Dreieck am oberen Ende (Drehpunkt) */
-  .waage::after {
-    content: '';
+  /* Fulcrum (Drehpunkt-Dreieck) */
+  .fulcrum {
     position: absolute;
     width: 0;
     height: 0;
-    border-left: 12px solid transparent;
-    border-right: 12px solid transparent;
-    border-top: 15px solid gold;
+    border-left: 14px solid transparent;
+    border-right: 14px solid transparent;
+    border-top: 18px solid gold;
     left: 50%;
     top: 70px;
-    transform: translateX(-50%);
+    transform: translateX(-50%) translateZ(30px);
+    filter: drop-shadow(0 4px 8px rgba(255, 215, 0, 0.4))
+            drop-shadow(0 2px 4px rgba(255, 215, 0, 0.6));
   }
 
-  .beam {
-    width: 100%;
-    height: 2px;
-    background: linear-gradient(to right, #b8860b, gold, #b8860b);
+  /* Balken in 3D */
+  .beam-3d {
     position: absolute;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(to right,
+      #b8860b 0%,
+      gold 50%,
+      #b8860b 100%);
     top: 80px;
     left: 0;
-    transform-origin: center;
+    transform-origin: center center;
+    transform-style: preserve-3d;
     transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-    border-radius: 1px;
-    box-shadow: 0 1px 6px rgba(255, 215, 0, 0.2);
-
-    /* GPU-Beschleunigung */
+    border-radius: 2px;
+    box-shadow:
+      0 2px 10px rgba(255, 215, 0, 0.3),
+      0 4px 20px rgba(255, 215, 0, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.4);
     will-change: transform;
-    transform: translateZ(0);
-    backface-visibility: hidden;
   }
 
-  /* Aufhängungen (Ketten) */
-  .chain {
+  /* Ketten in 3D */
+  .chain-3d {
     position: absolute;
-    width: 1.5px;
-    height: 30px;
-    background: linear-gradient(to bottom, #bbb, #777);
-    top: 80px;
+    width: 2px;
+    height: 35px;
+    background: linear-gradient(to bottom,
+      rgba(187, 187, 187, 0.9) 0%,
+      rgba(119, 119, 119, 0.9) 100%);
+    top: 0;
+    transform-origin: top center;
+    transform-style: preserve-3d;
     transition: height 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-
-    /* GPU-Beschleunigung */
+    box-shadow:
+      1px 0 2px rgba(0, 0, 0, 0.3),
+      -1px 0 2px rgba(255, 255, 255, 0.2);
     will-change: height;
   }
 
-  .chain.left { left: 10%; }
-  .chain.right { right: 10%; }
+  .chain-3d.left {
+    left: 10%;
+    transform: translateZ(-10px);
+  }
 
-  .pan {
-    width: 90px;
-    height: 35px;
-    border-radius: 0 0 45px 45px;
-    border: 2px solid;
+  .chain-3d.right {
+    right: 10%;
+    transform: translateZ(-10px);
+  }
+
+  /* Schalen in 3D */
+  .pan-3d {
     position: absolute;
-    top: 115px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 16px; /* iOS Auto-Zoom vermeiden */
-    font-weight: bold;
-    transition: top 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
-
-    /* GPU-Beschleunigung */
-    will-change: top, transform;
-    transform: translateZ(0);
+    width: 100px;
+    height: 45px;
+    border-radius: 0 0 50px 50px;
+    border: 2px solid;
+    top: 35px;
+    transform-style: preserve-3d;
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow:
+      0 4px 12px rgba(0, 0, 0, 0.3),
+      0 8px 24px rgba(0, 0, 0, 0.2),
+      inset 0 -2px 8px rgba(0, 0, 0, 0.2),
+      inset 0 2px 4px rgba(255, 255, 255, 0.1);
+    will-change: transform;
     backface-visibility: hidden;
   }
 
-  .left {
-    background: linear-gradient(to bottom, #2d6a4f, #1e4d3a);
-    border-color: #4a9d7a;
+  .pan-3d.left {
     left: 5%;
+    background: linear-gradient(135deg,
+      rgba(45, 106, 79, 0.9) 0%,
+      rgba(30, 77, 58, 0.9) 100%);
+    border-color: #4a9d7a;
+    transform: translateZ(-20px) rotateX(5deg);
   }
 
-  .right {
-    background: linear-gradient(to bottom, #9c6644, #7d5236);
-    border-color: #c17a57;
+  .pan-3d.right {
     right: 5%;
+    background: linear-gradient(135deg,
+      rgba(156, 102, 68, 0.9) 0%,
+      rgba(125, 82, 54, 0.9) 100%);
+    border-color: #c17a57;
+    transform: translateZ(-20px) rotateX(5deg);
+  }
+
+  .pan-content {
+    position: relative;
+    z-index: 10;
+    padding: 8px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 16px;
+    color: #fff;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+  }
+
+  .pan-value {
+    display: block;
+    font-size: 0.9em;
+    margin-top: 2px;
   }
 
   .result {
@@ -1281,13 +1340,40 @@
   </div>
 </div>
 
-<div class="waage">
+<div class="waage-3d">
+  <!-- Labels oben -->
   <div class="pan-label pan-label-left">Geldmenge M3</div>
   <div class="pan-label pan-label-right">BIP (Wirtschaft)</div>
-  <div class="chain left" id="chainLeft"></div>
-  <div class="chain right" id="chainRight"></div>
-  <div class="pan left" id="leftPan">💶<br>5,5 Bio€</div>
-  <div class="pan right" id="rightPan">📦<br>4,5 Bio€</div>
+
+  <!-- 3D-Container mit Perspektive -->
+  <div class="waage-3d-container">
+    <!-- Zentraler Support-Stab -->
+    <div class="support-pole"></div>
+
+    <!-- Drehpunkt (Fulcrum) -->
+    <div class="fulcrum"></div>
+
+    <!-- Balken (rotiert in 3D) -->
+    <div class="beam-3d" id="beam3d">
+      <!-- Linke Kette & Schale -->
+      <div class="chain-3d left" id="chainLeft3d"></div>
+      <div class="pan-3d left" id="leftPan3d">
+        <div class="pan-content">
+          💶<br>
+          <span class="pan-value">5,5 Bio€</span>
+        </div>
+      </div>
+
+      <!-- Rechte Kette & Schale -->
+      <div class="chain-3d right" id="chainRight3d"></div>
+      <div class="pan-3d right" id="rightPan3d">
+        <div class="pan-content">
+          📦<br>
+          <span class="pan-value">4,5 Bio€</span>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <div class="result" id="inflationStatus">
@@ -1904,23 +1990,51 @@ function updateWaage() {
   const ratio = geldMenge / bip;
   const tilt = Math.min(Math.max((ratio - 1) * 15, -15), 15);
 
-  // Pan-Positionen und Ketten-Längen proportional zur Rotation
-  // FIXED: Schwerere Seite sinkt (umgekehrte Vorzeichen)
-  const baseTop = 115; // Basis-Position
-  const leftTop = baseTop + tilt * 1.5;  // + statt - (schwerer = runter)
-  const rightTop = baseTop - tilt * 1.5; // - statt + (leichter = hoch)
+  // 3D-Rotation des Balkens
+  const beam = document.getElementById("beam3d");
+  if (beam) {
+    beam.style.transform = `rotateZ(${tilt}deg) translateZ(10px)`;
+  }
 
-  document.getElementById("leftPan").style.top = `${leftTop}px`;
-  document.getElementById("rightPan").style.top = `${rightTop}px`;
+  // Schalen-Positionen (3D-Transform mit translateY)
+  const leftPan = document.getElementById("leftPan3d");
+  const rightPan = document.getElementById("rightPan3d");
 
-  // Ketten-Längen anpassen (schwerere Seite = längere Kette)
-  const baseChainHeight = 30;
-  document.getElementById("chainLeft").style.height = `${baseChainHeight + tilt * 1.5}px`;
-  document.getElementById("chainRight").style.height = `${baseChainHeight - tilt * 1.5}px`;
+  // Physik: Größere Werte sinken nach unten (positives translateY = nach unten)
+  // Bei Inflation (ratio > 1): Geldmenge (links) ist größer → sinkt runter
+  // Bei Deflation (ratio < 1): BIP (rechts) ist größer → sinkt runter
+  if (leftPan && rightPan) {
+    if (ratio > 1) {
+      // Inflation: linke Schale (Geldmenge) sinkt
+      leftPan.style.transform = `translateZ(-20px) rotateX(5deg) translateY(${Math.abs(tilt) * 1.2}px)`;
+      rightPan.style.transform = `translateZ(-20px) rotateX(5deg) translateY(${-Math.abs(tilt) * 1.2}px)`;
+    } else {
+      // Deflation: rechte Schale (BIP) sinkt
+      leftPan.style.transform = `translateZ(-20px) rotateX(5deg) translateY(${-Math.abs(tilt) * 1.2}px)`;
+      rightPan.style.transform = `translateZ(-20px) rotateX(5deg) translateY(${Math.abs(tilt) * 1.2}px)`;
+    }
+  }
+
+  // Ketten-Längen anpassen (längere Kette = tiefere Schale)
+  const baseChainHeight = 35;
+  const chainLeft = document.getElementById("chainLeft3d");
+  const chainRight = document.getElementById("chainRight3d");
+
+  if (chainLeft && chainRight) {
+    if (ratio > 1) {
+      // Inflation: linke Kette länger
+      chainLeft.style.height = `${baseChainHeight + Math.abs(tilt) * 0.8}px`;
+      chainRight.style.height = `${baseChainHeight - Math.abs(tilt) * 0.8}px`;
+    } else {
+      // Deflation: rechte Kette länger
+      chainLeft.style.height = `${baseChainHeight - Math.abs(tilt) * 0.8}px`;
+      chainRight.style.height = `${baseChainHeight + Math.abs(tilt) * 0.8}px`;
+    }
+  }
 
   // Inflation/Deflation berechnen
   let status = ratio > 1 ? "Inflation" : "Deflation";
-  let percentage = Math.round(Math.abs((ratio - 1) * 1000)) / 10;  // FIXED: 1 Dezimalstelle für Präzision
+  let percentage = Math.round(Math.abs((ratio - 1) * 1000)) / 10;
 
   // Enhanced status feedback with icons and states
   const statusBar = document.getElementById("inflationStatus");
@@ -1962,8 +2076,15 @@ function updateWaage() {
   }
 
   // Werte auf den Pans anzeigen (deutsches Format: Komma statt Punkt)
-  document.getElementById("leftPan").innerHTML = `💶<br>${geldMenge.toFixed(2).replace('.', ',')} Bio€`;
-  document.getElementById("rightPan").innerHTML = `📦<br>${bip.toFixed(1).replace('.', ',')} Bio€`;
+  const leftValue = document.querySelector("#leftPan3d .pan-value");
+  const rightValue = document.querySelector("#rightPan3d .pan-value");
+
+  if (leftValue) {
+    leftValue.textContent = `${geldMenge.toFixed(2).replace('.', ',')} Bio€`;
+  }
+  if (rightValue) {
+    rightValue.textContent = `${bip.toFixed(1).replace('.', ',')} Bio€`;
+  }
 }
 
 // Geldpolitik: positive percent = Reduktion, negative percent = Erhöhung
