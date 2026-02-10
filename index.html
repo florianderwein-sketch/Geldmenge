@@ -1305,7 +1305,10 @@
     backdrop-filter: blur(10px);
     padding: 12px;
     padding-bottom: max(12px, env(safe-area-inset-bottom));
-    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     z-index: 900;
   }
@@ -2076,12 +2079,197 @@ function playImpulse(ctx, duration) {
   }
 }
 
+/**
+ * Sound Effects System
+ * Generiert verschiedene Sounds mit Web Audio API
+ */
+let soundEnabled = true; // Toggle via UI
+let soundContext = null;
+
+function initSoundContext() {
+  if (!soundContext) {
+    try {
+      soundContext = new (window.AudioContext || window.webkitAudioContext)();
+    } catch (e) {
+      console.debug('AudioContext not supported:', e);
+      return null;
+    }
+  }
+
+  // Resume context if suspended (iOS requirement)
+  if (soundContext.state === 'suspended') {
+    soundContext.resume();
+  }
+
+  return soundContext;
+}
+
+function playSound(type) {
+  if (!soundEnabled) return;
+
+  const ctx = initSoundContext();
+  if (!ctx) return;
+
+  try {
+    switch(type) {
+      case 'coins':
+        playCoinSound(ctx);
+        break;
+      case 'industry':
+        playIndustrySound(ctx);
+        break;
+      case 'victory':
+        playVictorySound(ctx);
+        break;
+      case 'creak':
+        playCreakSound(ctx);
+        break;
+    }
+  } catch (e) {
+    console.debug('Sound playback failed:', e);
+  }
+}
+
+// Münzen-Sound: Helle, klingelnde Töne
+function playCoinSound(ctx) {
+  const now = ctx.currentTime;
+
+  // Mehrere schnelle "Klingel"-Töne
+  for (let i = 0; i < 3; i++) {
+    const oscillator = ctx.createOscillator();
+    const gainNode = ctx.createGain();
+
+    oscillator.connect(gainNode);
+    gainNode.connect(ctx.destination);
+
+    // Hohe Frequenz für metallisches Klingen
+    oscillator.frequency.value = 800 + (i * 200);
+    oscillator.type = 'sine';
+
+    // Envelope: Schneller Attack, schneller Decay
+    gainNode.gain.setValueAtTime(0, now + i * 0.05);
+    gainNode.gain.linearRampToValueAtTime(0.15, now + i * 0.05 + 0.01);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, now + i * 0.05 + 0.1);
+
+    oscillator.start(now + i * 0.05);
+    oscillator.stop(now + i * 0.05 + 0.1);
+  }
+}
+
+// Industrie-Brummen: Tiefes, maschinelles Geräusch
+function playIndustrySound(ctx) {
+  const now = ctx.currentTime;
+
+  // Tiefer Brumm-Ton
+  const oscillator = ctx.createOscillator();
+  const gainNode = ctx.createGain();
+
+  oscillator.connect(gainNode);
+  gainNode.connect(ctx.destination);
+
+  // Tiefe Frequenz für maschinelles Brummen
+  oscillator.frequency.value = 60;
+  oscillator.type = 'sawtooth'; // Sawtooth für "hartes" Industrie-Gefühl
+
+  // Langsamer Fade-in und Fade-out
+  gainNode.gain.setValueAtTime(0, now);
+  gainNode.gain.linearRampToValueAtTime(0.2, now + 0.1);
+  gainNode.gain.linearRampToValueAtTime(0, now + 0.4);
+
+  oscillator.start(now);
+  oscillator.stop(now + 0.4);
+}
+
+// Triumph-Musik: Aufsteigende Fanfare
+function playVictorySound(ctx) {
+  const now = ctx.currentTime;
+
+  // Fanfare: C - E - G - C (höher)
+  const notes = [261.63, 329.63, 392.00, 523.25]; // C4, E4, G4, C5
+
+  notes.forEach((freq, i) => {
+    const oscillator = ctx.createOscillator();
+    const gainNode = ctx.createGain();
+
+    oscillator.connect(gainNode);
+    gainNode.connect(ctx.destination);
+
+    oscillator.frequency.value = freq;
+    oscillator.type = 'square'; // Square wave für "triumphalen" Sound
+
+    const startTime = now + i * 0.15;
+    const duration = i === notes.length - 1 ? 0.5 : 0.15; // Letzter Ton länger
+
+    gainNode.gain.setValueAtTime(0, startTime);
+    gainNode.gain.linearRampToValueAtTime(0.15, startTime + 0.01);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, startTime + duration);
+
+    oscillator.start(startTime);
+    oscillator.stop(startTime + duration);
+  });
+}
+
+// Knarzen: Tiefes, unregelmäßiges Holz-Knarren
+function playCreakSound(ctx) {
+  const now = ctx.currentTime;
+
+  // Niederfrequentes "Knarzen" mit Modulation
+  const oscillator = ctx.createOscillator();
+  const gainNode = ctx.createGain();
+  const lfo = ctx.createOscillator(); // Low Frequency Oscillator für Modulation
+  const lfoGain = ctx.createGain();
+
+  lfo.connect(lfoGain);
+  lfoGain.connect(oscillator.frequency);
+  oscillator.connect(gainNode);
+  gainNode.connect(ctx.destination);
+
+  // Grund-Frequenz
+  oscillator.frequency.value = 80;
+  oscillator.type = 'sawtooth';
+
+  // LFO für "unruhiges" Knarzen
+  lfo.frequency.value = 5;
+  lfoGain.gain.value = 20; // Modulations-Tiefe
+
+  // Kurzer Sound
+  gainNode.gain.setValueAtTime(0, now);
+  gainNode.gain.linearRampToValueAtTime(0.1, now + 0.05);
+  gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+
+  lfo.start(now);
+  oscillator.start(now);
+
+  lfo.stop(now + 0.3);
+  oscillator.stop(now + 0.3);
+}
+
+function toggleSound() {
+  soundEnabled = !soundEnabled;
+
+  // Update UI indicator
+  const btn = document.getElementById('soundToggle');
+  if (btn) {
+    btn.textContent = soundEnabled ? '🔊' : '🔇';
+    btn.title = soundEnabled ? 'Sound aus' : 'Sound an';
+  }
+
+  // Optional: Haptic feedback
+  haptic('tap');
+
+  // Test-Sound beim Einschalten
+  if (soundEnabled) {
+    playSound('coins');
+  }
+}
+
 // Ausgangswerte speichern
 const INITIAL_GELDMENGE = 5.5; // Billionen € (vereinfachter Wert für Demonstration)
 const INITIAL_BIP = 4.5; // Billionen € (Jahres-BIP Deutschland 2025)
 
 let geldMenge = INITIAL_GELDMENGE;
 let bip = INITIAL_BIP;
+let lastTilt = 0; // Für Sound-Trigger bei Waagen-Bewegung
 
 // Challenge tracking
 let activeChallenge = null;
@@ -2208,6 +2396,12 @@ function updateWaage() {
   // Rechts schwerer (ratio < 1) → Balken kippt nach RECHTS (positiv)
   const tilt = Math.min(Math.max((1 - ratio) * 15, -15), 15);
 
+  // Knarzen-Sound bei signifikanter Bewegung
+  if (Math.abs(tilt - lastTilt) > 1) {
+    playSound('creak');
+    lastTilt = tilt;
+  }
+
   // NUR Balken rotieren - Schalen folgen automatisch (sind Kinder)
   const beam = document.getElementById("beam3d");
   if (beam) {
@@ -2276,6 +2470,7 @@ function updateWaage() {
 // Geldpolitik: positive percent = Reduktion, negative percent = Erhöhung
 function adjustMoney(percent) {
   haptic('light'); // Haptisches Feedback
+  playSound('coins'); // Münzen-Sound für Geldmenge
   geldMenge *= (1 - percent / 100);
   updateWaage();
 
@@ -2288,6 +2483,7 @@ function adjustMoney(percent) {
 // Fiskalpolitik: positive percent = BIP Erhöhung, negative percent = BIP Reduktion
 function adjustBIP(percent) {
   haptic('light'); // Haptisches Feedback
+  playSound('industry'); // Industrie-Brummen für BIP
 
   if (percent > 0) {
     bip *= (1 + percent / 100);
@@ -2460,6 +2656,7 @@ function checkChallengeSuccess() {
   if (isSuccess && !challengeCompleted[activeChallenge]) {
     // Victory Fanfare - Epic celebration for challenge success!
     haptic('victory');
+    playSound('victory'); // Triumph-Musik
 
     // Mark as completed
     challengeCompleted[activeChallenge] = true;
@@ -2505,6 +2702,9 @@ updateWaage();
 <footer class="app-footer">
   <button class="footer-link" onclick="showDisclaimerModal()">
     ℹ️ Wichtige Hinweise & Disclaimer
+  </button>
+  <button class="footer-link" id="soundToggle" onclick="toggleSound()" title="Sound aus">
+    🔊
   </button>
 </footer>
 
