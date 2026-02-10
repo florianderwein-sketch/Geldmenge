@@ -1294,6 +1294,42 @@
       background: linear-gradient(135deg, rgba(45, 106, 79, 0.22) 0%, rgba(45, 106, 79, 0.12) 100%);
     }
   }
+
+  /* Footer */
+  .app-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(13, 27, 42, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 12px;
+    padding-bottom: max(12px, env(safe-area-inset-bottom));
+    text-align: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 900;
+  }
+
+  .footer-link {
+    background: transparent;
+    border: none;
+    color: #a0a0a0;
+    font-size: 0.85em;
+    cursor: pointer;
+    padding: 8px 16px;
+    transition: color 0.2s ease;
+    text-decoration: none;
+    display: inline-block;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .footer-link:hover {
+    color: #fff;
+  }
+
+  .footer-link:active {
+    color: #ffa500;
+  }
 </style>
 </head>
 <body>
@@ -2456,11 +2492,6 @@ document.addEventListener('DOMContentLoaded', function() {
   document.querySelectorAll('.help-panel').forEach(panel => {
     panel.classList.add('collapsed');
   });
-
-  // Show disclaimer modal on page load
-  setTimeout(() => {
-    showDisclaimerModal();
-  }, 500);
 });
 
 // Initiale Anzeige
@@ -2470,6 +2501,12 @@ updateWaage();
 <!-- iOS 18+ Native Haptic Trigger (hidden) -->
 <input type="checkbox" switch id="ios-haptic-trigger" style="display: none;">
 <label for="ios-haptic-trigger" style="display: none;"></label>
+
+<footer class="app-footer">
+  <button class="footer-link" onclick="showDisclaimerModal()">
+    ℹ️ Wichtige Hinweise & Disclaimer
+  </button>
+</footer>
 
 </body>
 </html>
