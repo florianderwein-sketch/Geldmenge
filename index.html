@@ -1248,18 +1248,79 @@
     100% { transform: scale(1); opacity: 1; }
   }
 
+  .breaking-news-headline {
+    font-size: 1.6em;
+    font-weight: 900;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 8px;
+    text-shadow: 0 0 20px rgba(255, 69, 0, 0.8);
+    animation: headlinePulse 1s ease-in-out infinite alternate;
+  }
+
+  @keyframes headlinePulse {
+    0% { text-shadow: 0 0 20px rgba(255, 69, 0, 0.5); }
+    100% { text-shadow: 0 0 30px rgba(255, 69, 0, 1); }
+  }
+
   .breaking-news-title {
-    font-size: 2em;
+    font-size: 1.4em;
     font-weight: 700;
     color: #ff6347;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
   }
 
   .breaking-news-description {
-    font-size: 1.2em;
+    font-size: 1em;
     color: #e0e0e0;
-    margin-bottom: 20px;
-    line-height: 1.5;
+    margin-bottom: 12px;
+    line-height: 1.4;
+  }
+
+  .breaking-news-details {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 20px 0;
+    text-align: left;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .breaking-news-details li {
+    font-size: 0.9em;
+    color: #ccc;
+    padding: 6px 0 6px 24px;
+    position: relative;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .breaking-news-details li:last-child {
+    border-bottom: none;
+  }
+
+  .breaking-news-details li::before {
+    content: '▸';
+    position: absolute;
+    left: 0;
+    color: #ff6347;
+    font-weight: bold;
+  }
+
+  .breaking-news-details.mystery li {
+    color: #888;
+    font-style: italic;
+  }
+
+  .breaking-news-details.reveal li {
+    animation: detailReveal 0.5s ease-out forwards;
+    opacity: 0;
+  }
+
+  @keyframes detailReveal {
+    from { opacity: 0; transform: translateX(-10px); }
+    to { opacity: 1; transform: translateX(0); }
   }
 
   .breaking-news-impact {
@@ -1487,6 +1548,171 @@
     .step-indicator,
     .click-counter {
       max-width: 600px;
+    }
+  }
+
+  /* ===========================================
+     RESULT MODAL
+     =========================================== */
+
+  .result-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    backdrop-filter: blur(8px);
+    z-index: 4000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .result-modal-overlay.show {
+    opacity: 1;
+  }
+
+  .result-modal {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    border-radius: 20px;
+    max-width: 400px;
+    width: 100%;
+    padding: 30px 24px;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    transform: scale(0.9);
+    animation: modalPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  }
+
+  @keyframes modalPop {
+    from { transform: scale(0.9); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+
+  .result-icon {
+    font-size: 4em;
+    margin-bottom: 12px;
+    animation: resultBounce 0.6s ease-out;
+  }
+
+  @keyframes resultBounce {
+    0% { transform: scale(0); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+  }
+
+  .result-title {
+    font-size: 2em;
+    font-weight: 900;
+    color: #fff;
+    margin-bottom: 4px;
+  }
+
+  .result-subtitle {
+    font-size: 1em;
+    color: #a0a0a0;
+    margin-bottom: 16px;
+  }
+
+  .result-stars {
+    font-size: 2em;
+    color: #ffd700;
+    letter-spacing: 4px;
+    margin-bottom: 20px;
+    text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+  }
+
+  .result-stats {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+
+  .result-stat.main {
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .result-stat.main .stat-value {
+    font-size: 2.5em;
+    font-weight: 700;
+    color: #fff;
+    display: block;
+  }
+
+  .result-stat.main .stat-label {
+    font-size: 0.9em;
+    color: #888;
+  }
+
+  .result-stat-row {
+    display: flex;
+    justify-content: space-around;
+  }
+
+  .result-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .result-stat .stat-value {
+    font-size: 1.3em;
+    font-weight: 700;
+    color: #fff;
+  }
+
+  .result-stat .stat-label {
+    font-size: 0.75em;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .result-target {
+    font-size: 0.85em;
+    color: #666;
+    margin-bottom: 20px;
+  }
+
+  .result-button {
+    background: linear-gradient(135deg, #ffa500 0%, #ff8c00 100%);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    padding: 16px 32px;
+    font-size: 1.1em;
+    font-weight: 700;
+    cursor: pointer;
+    min-height: 56px;
+    width: 100%;
+    touch-action: manipulation;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(255, 165, 0, 0.3);
+  }
+
+  .result-button:active {
+    transform: scale(0.98);
+  }
+
+  @media(min-width: 600px) {
+    .result-modal {
+      padding: 40px 32px;
+    }
+
+    .result-icon {
+      font-size: 5em;
+    }
+
+    .result-title {
+      font-size: 2.5em;
     }
   }
 
@@ -1857,11 +2083,16 @@
 
 <!-- Breaking News Overlay -->
 <div class="breaking-news-overlay" id="breakingNewsOverlay">
-  <div class="breaking-news-header">⚡ BREAKING NEWS ⚡</div>
+  <div class="breaking-news-header">⚡ EILMELDUNG ⚡</div>
   <div class="breaking-news-content">
     <div class="breaking-news-icon" id="breakingNewsIcon">⚡</div>
-    <div class="breaking-news-title" id="breakingNewsTitle">Schock-Ereignis</div>
+    <div class="breaking-news-headline" id="breakingNewsHeadline">SCHOCK-EREIGNIS</div>
+    <div class="breaking-news-title" id="breakingNewsTitle">Krise</div>
     <div class="breaking-news-description" id="breakingNewsDescription">Eine Krise erschüttert die Wirtschaft!</div>
+    <ul class="breaking-news-details" id="breakingNewsDetails">
+      <li>Detail 1</li>
+      <li>Detail 2</li>
+    </ul>
     <div class="breaking-news-impact" id="breakingNewsImpact">+5% Inflation</div>
     <div class="breaking-news-countdown" id="breakingNewsCountdown">Weiter in 3 Sekunden...</div>
   </div>
@@ -2842,34 +3073,66 @@ const CRISIS_SHOCKS = [
   {
     time: 45,
     id: 'energy',
-    icon: '⚡',
+    icon: '🔥',
     name: 'Energiekrise',
-    description: 'Gaslieferungen aus Russland gestoppt! Energiepreise explodieren.',
-    impact: 5 // +5% inflation
+    headline: 'GAZPROM STOPPT GASLIEFERUNGEN',
+    description: 'Nord Stream 1 auf unbestimmte Zeit geschlossen!',
+    details: [
+      'Nord Stream 1 auf unbestimmte Zeit geschlossen',
+      'Gaspreis steigt auf 340 €/MWh (+1.200%)',
+      'Bundesregierung ruft Alarmstufe aus',
+      'BASF und weitere Konzerne drosseln Produktion'
+    ],
+    impact: 5
   },
   {
     time: 90,
     id: 'chips',
-    icon: '🔌',
+    icon: '🚗',
     name: 'Chipkrise',
-    description: 'Globaler Halbleitermangel! Lieferketten brechen zusammen.',
-    impact: 3.5 // +3.5% inflation
+    headline: 'CHIPMANGEL LEGT AUTOINDUSTRIE LAHM',
+    description: 'Globaler Halbleitermangel zerstört Lieferketten!',
+    details: [
+      'VW, BMW und Mercedes stoppen Bänder',
+      'Lieferzeit für Neuwagen: 12-18 Monate',
+      'Gebrauchtwagenpreise +35% über Neupreis',
+      '100.000 Beschäftigte in Kurzarbeit'
+    ],
+    impact: 3.5
   },
   {
     time: 135,
     id: 'rail',
-    icon: '🚂',
+    icon: '🚆',
     name: 'Bahnstreik',
-    description: 'Unbefristeter Streik im Bahnverkehr! Logistik kollabiert.',
-    impact: 2.5 // +2.5% inflation
+    headline: 'GDL RUFT UNBEFRISTETEN STREIK AUS',
+    description: 'Kompletter Stillstand im Fernverkehr!',
+    details: [
+      'Kompletter Stillstand im Fernverkehr',
+      'Weselsky: "Solange es dauert, solange streiken wir"',
+      'Güterverkehr betroffen – Lieferketten unterbrochen',
+      'Autobahnen überlastet, Staus über 100 km'
+    ],
+    isMystery: true,
+    mysteryIcon: '❓',
+    mysteryName: 'Unbekannte Krise',
+    mysteryHeadline: 'EILMELDUNG: UNBEKANNTE KRISE',
+    impact: 2.5
   },
   {
     time: 180,
     id: 'corona',
     icon: '🦠',
-    name: 'Corona-Welle',
-    description: 'Neue Pandemie-Variante! Lockdowns und Wirtschaftseinbruch.',
-    impact: 6 // +6% inflation
+    name: 'Corona-Krise',
+    headline: 'NEUE CORONA-VARIANTE: LOCKDOWN DROHT',
+    description: 'RKI meldet 200.000 Neuinfektionen!',
+    details: [
+      'RKI meldet 200.000 Neuinfektionen – Variante "Pi"',
+      'Krankenhäuser am Limit, Bundeswehr im Einsatz',
+      'MPK beschließt Kontaktbeschränkungen ab Montag',
+      'Einzelhandel und Gastronomie vor Schließung'
+    ],
+    impact: 6
   }
 ];
 
@@ -2894,11 +3157,21 @@ function toggleCrisisMode() {
   }
 }
 
+// Crisis mode starting values (Deutschland-Edition)
+const CRISIS_START_INFLATION = 4.2; // 4.2% Start-Inflation
+const CRISIS_START_BIP = 4.5; // Billionen €
+
 function startCrisisMode() {
   crisisModeActive = true;
   crisisStartTime = Date.now();
   shocksFired = [];
   clickCount = 0;
+
+  // Set starting inflation to 4.2%
+  // Inflation = (M/BIP - 1) * 100 => M = BIP * (1 + Inflation/100)
+  bip = CRISIS_START_BIP;
+  geldMenge = bip * (1 + CRISIS_START_INFLATION / 100);
+  updateWaage();
 
   // Update UI
   const btn = document.getElementById('crisisModeBtn');
@@ -2918,6 +3191,9 @@ function startCrisisMode() {
 
   // Start timer
   crisisInterval = setInterval(updateCrisisTimer, 100);
+
+  // Play start sound
+  playSound('gameStart');
 
   // Show start toast
   showToast('🚨', 'Krisen-Modus gestartet!', 'Du hast 5 Minuten, um die Wirtschaft zu stabilisieren. Schocks kommen automatisch!');
@@ -3013,16 +3289,48 @@ function fireShock(shock, index) {
 
 function showBreakingNews(shock) {
   const overlay = document.getElementById('breakingNewsOverlay');
-  document.getElementById('breakingNewsIcon').textContent = shock.icon;
-  document.getElementById('breakingNewsTitle').textContent = shock.name;
-  document.getElementById('breakingNewsDescription').textContent = shock.description;
-  document.getElementById('breakingNewsImpact').textContent = `+${shock.impact}% Inflation`;
+  const headlineEl = document.getElementById('breakingNewsHeadline');
+  const iconEl = document.getElementById('breakingNewsIcon');
+  const titleEl = document.getElementById('breakingNewsTitle');
+  const descEl = document.getElementById('breakingNewsDescription');
+  const detailsEl = document.getElementById('breakingNewsDetails');
+  const impactEl = document.getElementById('breakingNewsImpact');
+  const countdownEl = document.getElementById('breakingNewsCountdown');
+
+  // Check if mystery shock
+  const isMystery = shock.isMystery;
+  let revealTimeout = null;
+
+  // Initial display (mystery or regular)
+  if (isMystery) {
+    iconEl.textContent = shock.mysteryIcon;
+    headlineEl.textContent = shock.mysteryHeadline;
+    titleEl.textContent = shock.mysteryName;
+    descEl.textContent = 'Was ist passiert?';
+    detailsEl.innerHTML = '<li>???</li><li>???</li><li>???</li>';
+    detailsEl.classList.add('mystery');
+    impactEl.textContent = '??? Inflation';
+
+    // Reveal after 1.5 seconds
+    revealTimeout = setTimeout(() => {
+      revealShock(shock, iconEl, headlineEl, titleEl, descEl, detailsEl, impactEl);
+    }, 1500);
+  } else {
+    displayShock(shock, iconEl, headlineEl, titleEl, descEl, detailsEl, impactEl);
+  }
 
   overlay.classList.add('show');
 
-  // Countdown
-  let countdown = 3;
-  const countdownEl = document.getElementById('breakingNewsCountdown');
+  // Play shock alert sound
+  playSound('shockAlert');
+
+  // Vibration for shock
+  if (navigator.vibrate) {
+    navigator.vibrate([100, 50, 100, 50, 200]);
+  }
+
+  // Countdown (5 seconds for mystery, 4 for regular)
+  let countdown = isMystery ? 5 : 4;
   countdownEl.textContent = `Weiter in ${countdown} Sekunden...`;
 
   const countdownInterval = setInterval(() => {
@@ -3032,8 +3340,54 @@ function showBreakingNews(shock) {
     } else {
       clearInterval(countdownInterval);
       overlay.classList.remove('show');
+      detailsEl.classList.remove('mystery', 'reveal');
     }
   }, 1000);
+}
+
+function displayShock(shock, iconEl, headlineEl, titleEl, descEl, detailsEl, impactEl) {
+  iconEl.textContent = shock.icon;
+  headlineEl.textContent = shock.headline || shock.name.toUpperCase();
+  titleEl.textContent = shock.name;
+  descEl.textContent = shock.description;
+
+  // Build details list
+  if (shock.details && shock.details.length > 0) {
+    detailsEl.innerHTML = shock.details.map(d => `<li>${d}</li>`).join('');
+  } else {
+    detailsEl.innerHTML = '';
+  }
+
+  impactEl.textContent = `+${shock.impact}% Inflation`;
+}
+
+function revealShock(shock, iconEl, headlineEl, titleEl, descEl, detailsEl, impactEl) {
+  // Dramatic reveal animation
+  detailsEl.classList.remove('mystery');
+  detailsEl.classList.add('reveal');
+
+  // Update content with animation
+  iconEl.style.animation = 'iconPop 0.5s ease-out';
+  iconEl.textContent = shock.icon;
+
+  setTimeout(() => {
+    headlineEl.textContent = shock.headline;
+    titleEl.textContent = shock.name;
+    descEl.textContent = shock.description;
+    impactEl.textContent = `+${shock.impact}% Inflation`;
+
+    // Reveal details one by one
+    if (shock.details && shock.details.length > 0) {
+      detailsEl.innerHTML = shock.details.map((d, i) =>
+        `<li style="animation-delay: ${i * 0.15}s">${d}</li>`
+      ).join('');
+    }
+  }, 300);
+
+  // Extra vibration for reveal
+  if (navigator.vibrate) {
+    navigator.vibrate([50, 30, 50]);
+  }
 }
 
 function applyShockImpact(impactPercent) {
@@ -3055,20 +3409,148 @@ function endCrisisGame() {
 
   // Calculate final result
   const ratio = geldMenge / bip;
-  const inflationPercent = Math.abs((ratio - 1) * 100);
-  const isStable = inflationPercent < 5;
+  const endInflation = (ratio - 1) * 100;
+  const elapsedSeconds = Math.floor((Date.now() - crisisStartTime) / 1000);
+
+  // Calculate score
+  const score = calculateScore(endInflation, elapsedSeconds, clickCount);
+  const stars = calculateStars(endInflation);
 
   // Update UI
   const btn = document.getElementById('crisisModeBtn');
   btn.classList.remove('active');
   document.getElementById('crisisProgressContainer').classList.remove('active');
+  document.getElementById('instrumentCarouselSection').classList.remove('active');
 
-  // Show result
-  if (isStable) {
-    showToast('🏆', 'Erfolgreich stabilisiert!', `Du hast die Wirtschaft mit ${clickCount} Aktionen auf ${inflationPercent.toFixed(1)}% Inflation gebracht!`);
+  // Show result modal
+  showResultModal(endInflation, elapsedSeconds, clickCount, score, stars);
+}
+
+// ===========================================
+// SCORING SYSTEM
+// ===========================================
+
+const SCORING = {
+  basis: 10000,
+  zeitMalusFaktor: 10,      // Pro Sekunde
+  zuegeMalusFaktor: 25,     // Pro Zug
+  abweichungsMalusFaktor: 1000  // Pro % Abweichung vom Ziel
+};
+
+function calculateScore(endInflation, timeSeconds, moves) {
+  const abweichung = Math.abs(endInflation - TARGET_INFLATION);
+
+  const zeitMalus = timeSeconds * SCORING.zeitMalusFaktor;
+  const zuegeMalus = moves * SCORING.zuegeMalusFaktor;
+  const abweichungsMalus = abweichung * SCORING.abweichungsMalusFaktor;
+
+  const score = Math.max(0, Math.round(
+    SCORING.basis - zeitMalus - zuegeMalus - abweichungsMalus
+  ));
+
+  return score;
+}
+
+function calculateStars(endInflation) {
+  const abweichung = Math.abs(endInflation - TARGET_INFLATION);
+
+  if (abweichung <= 0.1) return 5;      // Exakt 2.0% (±0.1)
+  if (abweichung <= 0.3) return 4;      // 1.7% - 2.3%
+  if (abweichung <= 0.5) return 3;      // 1.5% - 2.5%
+  if (abweichung <= 1.0) return 2;      // 1.0% - 3.0%
+  return 1;                              // Außerhalb
+}
+
+function getResultMessage(stars, endInflation) {
+  if (stars >= 4) {
+    return { icon: '🎉', title: 'GESCHAFFT!', subtitle: 'Hervorragende Zentralbank-Arbeit!' };
+  } else if (stars === 3) {
+    return { icon: '😅', title: 'Knapp!', subtitle: 'Fast im Zielbereich.' };
+  } else if (stars === 2) {
+    return { icon: '💪', title: 'Nächstes Mal!', subtitle: 'Übung macht den Meister.' };
   } else {
-    showToast('💥', 'Spiel beendet', `Die Inflation liegt bei ${inflationPercent.toFixed(1)}%. Mit ${clickCount} Aktionen war es nicht genug. Versuche es erneut!`);
+    return { icon: '📚', title: 'Weiter üben!', subtitle: 'Geldpolitik ist komplex.' };
   }
+}
+
+function showResultModal(endInflation, timeSeconds, moves, score, stars) {
+  const result = getResultMessage(stars, endInflation);
+  const minutes = Math.floor(timeSeconds / 60);
+  const seconds = timeSeconds % 60;
+  const timeStr = `${minutes}:${String(seconds).padStart(2, '0')}`;
+
+  // Create stars display
+  const starsDisplay = '★'.repeat(stars) + '☆'.repeat(5 - stars);
+
+  // Create modal HTML
+  const modalHTML = `
+    <div class="result-modal-overlay show" id="resultModal">
+      <div class="result-modal">
+        <div class="result-icon">${result.icon}</div>
+        <div class="result-title">${result.title}</div>
+        <div class="result-subtitle">${result.subtitle}</div>
+
+        <div class="result-stars">${starsDisplay}</div>
+
+        <div class="result-stats">
+          <div class="result-stat main">
+            <span class="stat-value">${endInflation.toFixed(1)}%</span>
+            <span class="stat-label">End-Inflation</span>
+          </div>
+          <div class="result-stat-row">
+            <div class="result-stat">
+              <span class="stat-value">${timeStr}</span>
+              <span class="stat-label">Zeit</span>
+            </div>
+            <div class="result-stat">
+              <span class="stat-value">${moves}</span>
+              <span class="stat-label">Züge</span>
+            </div>
+            <div class="result-stat">
+              <span class="stat-value">${score.toLocaleString()}</span>
+              <span class="stat-label">Punkte</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="result-target">
+          Ziel war: 2.0% (±0.5%)
+        </div>
+
+        <button class="result-button" onclick="closeResultModal()">
+          🔄 Nochmal spielen
+        </button>
+      </div>
+    </div>
+  `;
+
+  // Insert modal
+  document.body.insertAdjacentHTML('beforeend', modalHTML);
+
+  // Play result sound
+  if (stars >= 3) {
+    playSound('success');
+  } else {
+    playSound('failure');
+  }
+
+  // Vibration for result
+  if (navigator.vibrate) {
+    if (stars >= 4) {
+      navigator.vibrate([100, 50, 100, 50, 100, 50, 200]);
+    } else {
+      navigator.vibrate([200, 100, 200]);
+    }
+  }
+}
+
+function closeResultModal() {
+  const modal = document.getElementById('resultModal');
+  if (modal) {
+    modal.classList.remove('show');
+    setTimeout(() => modal.remove(), 300);
+  }
+  resetWaage();
 }
 
 // ===========================================
@@ -3502,6 +3984,112 @@ document.addEventListener('DOMContentLoaded', function() {
 //
 // - As inflation decreases, step size decreases too
 //   This creates the feel of "fine-tuning" near the target
+
+// ===========================================
+// SOUND DESIGN
+// ===========================================
+
+let soundEnabled = true;
+let audioContext = null;
+
+function initAudio() {
+  if (!audioContext) {
+    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  return audioContext;
+}
+
+function playTone(frequency, duration, type = 'sine', volume = 0.3) {
+  if (!soundEnabled) return;
+
+  try {
+    const ctx = initAudio();
+    if (ctx.state === 'suspended') {
+      ctx.resume();
+    }
+
+    const oscillator = ctx.createOscillator();
+    const gainNode = ctx.createGain();
+
+    oscillator.connect(gainNode);
+    gainNode.connect(ctx.destination);
+
+    oscillator.type = type;
+    oscillator.frequency.setValueAtTime(frequency, ctx.currentTime);
+
+    gainNode.gain.setValueAtTime(volume, ctx.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + duration);
+
+    oscillator.start(ctx.currentTime);
+    oscillator.stop(ctx.currentTime + duration);
+  } catch (e) {
+    console.log('Audio not available:', e);
+  }
+}
+
+function playSound(soundType) {
+  if (!soundEnabled) return;
+
+  switch(soundType) {
+    case 'click':
+      playTone(800, 0.05, 'sine', 0.1);
+      break;
+
+    case 'gameStart':
+      // Fanfare: Three ascending tones
+      playTone(523, 0.15, 'sine', 0.2); // C5
+      setTimeout(() => playTone(659, 0.15, 'sine', 0.2), 150); // E5
+      setTimeout(() => playTone(784, 0.3, 'sine', 0.25), 300); // G5
+      break;
+
+    case 'countdown':
+      playTone(440, 0.1, 'square', 0.15); // A4
+      break;
+
+    case 'shockAlert':
+      // Two-tone alarm
+      playTone(880, 0.15, 'sawtooth', 0.3); // A5
+      setTimeout(() => playTone(660, 0.15, 'sawtooth', 0.3), 200); // E5
+      setTimeout(() => playTone(880, 0.15, 'sawtooth', 0.3), 400);
+      setTimeout(() => playTone(660, 0.2, 'sawtooth', 0.3), 600);
+      break;
+
+    case 'success':
+      // Victory jingle
+      playTone(523, 0.1, 'sine', 0.2); // C5
+      setTimeout(() => playTone(659, 0.1, 'sine', 0.2), 100); // E5
+      setTimeout(() => playTone(784, 0.1, 'sine', 0.2), 200); // G5
+      setTimeout(() => playTone(1047, 0.3, 'sine', 0.25), 300); // C6
+      break;
+
+    case 'failure':
+      // Sad trombone (descending)
+      playTone(392, 0.2, 'sine', 0.2); // G4
+      setTimeout(() => playTone(349, 0.2, 'sine', 0.2), 200); // F4
+      setTimeout(() => playTone(330, 0.2, 'sine', 0.2), 400); // E4
+      setTimeout(() => playTone(294, 0.4, 'sine', 0.15), 600); // D4
+      break;
+
+    case 'gameEnd':
+      playTone(523, 0.4, 'sine', 0.2); // Gong-like
+      break;
+  }
+}
+
+// Toggle sound button (could be added to UI)
+function toggleSound() {
+  soundEnabled = !soundEnabled;
+  if (soundEnabled) {
+    playSound('click');
+  }
+  return soundEnabled;
+}
+
+// Initialize audio on first user interaction
+document.addEventListener('click', function initAudioOnClick() {
+  initAudio();
+  document.removeEventListener('click', initAudioOnClick);
+}, { once: true });
 
 // Initiale Anzeige
 updateWaage();
