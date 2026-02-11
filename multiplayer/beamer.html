@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beamer-Ansicht | Geldpolitik-Simulator</title>
+    <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --ecb-blue: #003399;
+            --ecb-yellow: #FFCC00;
+            --bg-dark: #0a1628;
+            --bg-card: #1a2744;
+            --text-primary: #ffffff;
+            --text-secondary: #a0aec0;
+            --success: #48bb78;
+            --danger: #f56565;
+            --warning: #ed8936;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        /* ==================== JOIN SCREEN ==================== */
+        .join-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .join-screen.hidden {
+            display: none;
+        }
+
+        .join-logo {
+            font-size: 6rem;
+            margin-bottom: 1rem;
+        }
+
+        .join-title {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--ecb-yellow), #ffd700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .join-form {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .join-input {
+            padding: 1rem 1.5rem;
+            font-size: 1.2rem;
+            border: 2px solid var(--bg-card);
+            border-radius: 12px;
+            background: var(--bg-card);
+            color: var(--text-primary);
+            width: 300px;
+        }
+
+        .join-input:focus {
+            outline: none;
+            border-color: var(--ecb-yellow);
+        }
+
+        .join-btn {
+            padding: 1rem 2rem;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--ecb-blue), #0044cc);
+            color: white;
+            cursor: pointer;
+        }
+
+        .join-status {
+            margin-top: 1rem;
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+        }
+
+        .join-status.error {
+            color: var(--danger);
+        }
+
+        /* ==================== MAIN DISPLAY ==================== */
+        .main-display {
+            display: none;
+            height: 100vh;
+            flex-direction: column;
+        }
+
+        .main-display.active {
+            display: flex;
+        }
+
+        /* Header */
+        .display-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            background: var(--bg-card);
+        }
+
+        .display-logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .display-logo .icon {
+            font-size: 2.5rem;
+        }
+
+        .display-logo h1 {
+            font-size: 1.5rem;
+        }
+
+        .display-timer {
+            font-size: 4rem;
+            font-weight: 700;
+            font-family: monospace;
+        }
+
+        .display-timer.warning { color: var(--warning); }
+        .display-timer.danger { color: var(--danger); animation: pulse 0.5s infinite; }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        .display-status {
+            padding: 0.75rem 1.5rem;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .display-status.lobby {
+            background: var(--warning);
+            color: #000;
+        }
+
+        .display-status.running {
+            background: var(--success);
+            color: #000;
+        }
+
+        /* Content */
+        .display-content {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            padding: 40px;
+        }
+
+        /* Leaderboard */
+        .leaderboard-section {
+            background: var(--bg-card);
+            border-radius: 24px;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .leaderboard-list {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .leaderboard-item {
+            display: grid;
+            grid-template-columns: 60px 1fr 100px 120px;
+            align-items: center;
+            padding: 16px 20px;
+            background: var(--bg-dark);
+            border-radius: 16px;
+            margin-bottom: 12px;
+            gap: 20px;
+            transition: transform 0.3s;
+        }
+
+        .leaderboard-item.highlight {
+            transform: scale(1.02);
+            box-shadow: 0 0 30px rgba(255, 204, 0, 0.3);
+        }
+
+        .rank {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .rank.gold { color: #ffd700; }
+        .rank.silver { color: #c0c0c0; }
+        .rank.bronze { color: #cd7f32; }
+
+        .player-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .player-name {
+            font-size: 1.4rem;
+            font-weight: 600;
+        }
+
+        .player-moves {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .player-inflation {
+            font-size: 1.3rem;
+            font-family: monospace;
+        }
+
+        .player-inflation.good { color: var(--success); }
+        .player-inflation.warning { color: var(--warning); }
+        .player-inflation.bad { color: var(--danger); }
+
+        .player-score {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--ecb-yellow);
+            text-align: right;
+        }
+
+        .empty-leaderboard {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+        }
+
+        .empty-leaderboard .icon {
+            font-size: 5rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Stats Section */
+        .stats-section {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border-radius: 24px;
+            padding: 30px;
+            flex: 1;
+        }
+
+        .stat-big {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .stat-big .icon {
+            font-size: 4rem;
+        }
+
+        .stat-big .value {
+            font-size: 4rem;
+            font-weight: 700;
+        }
+
+        .stat-big .label {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+        }
+
+        /* Shock History */
+        .shock-history {
+            background: var(--bg-card);
+            border-radius: 24px;
+            padding: 30px;
+        }
+
+        .shock-list {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+
+        .shock-item {
+            background: var(--bg-dark);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            opacity: 0.3;
+            transition: all 0.5s;
+        }
+
+        .shock-item.triggered {
+            opacity: 1;
+            border: 2px solid var(--danger);
+        }
+
+        .shock-item .icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .shock-item .name {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .shock-item .impact {
+            font-size: 0.9rem;
+            color: var(--danger);
+        }
+
+        /* ==================== BREAKING NEWS ==================== */
+        .breaking-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 1000;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .breaking-overlay.active {
+            display: flex;
+            animation: breakingIn 0.5s ease-out;
+        }
+
+        @keyframes breakingIn {
+            from {
+                opacity: 0;
+                transform: scale(1.1);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .breaking-badge {
+            background: var(--danger);
+            color: white;
+            padding: 1rem 3rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 4px;
+            margin-bottom: 2rem;
+            animation: flash 0.5s infinite;
+        }
+
+        @keyframes flash {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .breaking-icon {
+            font-size: 8rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .breaking-headline {
+            font-size: 3rem;
+            font-weight: 700;
+            max-width: 900px;
+            margin-bottom: 1rem;
+        }
+
+        .breaking-description {
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin-bottom: 1.5rem;
+        }
+
+        .breaking-details {
+            list-style: none;
+            text-align: left;
+            max-width: 600px;
+            margin-bottom: 2rem;
+        }
+
+        .breaking-details li {
+            padding: 0.5rem 0;
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+        }
+
+        .breaking-details li::before {
+            content: "• ";
+            color: var(--danger);
+        }
+
+        .breaking-impact {
+            font-size: 4rem;
+            font-weight: 700;
+            color: var(--danger);
+        }
+
+        /* Ticker */
+        .news-ticker {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--danger);
+            padding: 12px 0;
+            overflow: hidden;
+            display: none;
+        }
+
+        .news-ticker.active {
+            display: block;
+        }
+
+        .ticker-content {
+            display: flex;
+            animation: ticker 20s linear infinite;
+            white-space: nowrap;
+        }
+
+        @keyframes ticker {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+
+        .ticker-item {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: white;
+            padding: 0 3rem;
+        }
+
+        /* Hidden */
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- JOIN SCREEN -->
+    <div class="join-screen" id="joinScreen">
+        <div class="join-logo">📺</div>
+        <h1 class="join-title">Beamer-Ansicht</h1>
+        <p style="color: var(--text-secondary); font-size: 1.3rem;">
+            Verbinden Sie sich mit einer laufenden Session
+        </p>
+
+        <form class="join-form" onsubmit="connectToSession(event)">
+            <input
+                type="text"
+                class="join-input"
+                id="sessionInput"
+                placeholder="Session-ID eingeben"
+                autocomplete="off"
+            >
+            <button type="submit" class="join-btn">Verbinden</button>
+        </form>
+
+        <p class="join-status" id="joinStatus">
+            Die Session-ID finden Sie im Lehrkraft-Dashboard
+        </p>
+    </div>
+
+    <!-- MAIN DISPLAY -->
+    <div class="main-display" id="mainDisplay">
+        <div class="display-header">
+            <div class="display-logo">
+                <span class="icon">🏛️</span>
+                <h1>Geldpolitik-Simulator</h1>
+            </div>
+            <div class="display-timer" id="displayTimer">05:00</div>
+            <div class="display-status lobby" id="displayStatus">Lobby</div>
+        </div>
+
+        <div class="display-content">
+            <!-- Leaderboard -->
+            <div class="leaderboard-section">
+                <h2 class="section-title">🏆 Live-Rangliste</h2>
+                <div class="leaderboard-list" id="leaderboard">
+                    <div class="empty-leaderboard">
+                        <div class="icon">⏳</div>
+                        <p>Warte auf Spieler...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats -->
+            <div class="stats-section">
+                <div class="stat-card">
+                    <h2 class="section-title">👥 Spieler</h2>
+                    <div class="stat-big">
+                        <span class="icon">🎓</span>
+                        <div>
+                            <div class="value" id="playerCount">0</div>
+                            <div class="label">verbunden</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="shock-history">
+                    <h2 class="section-title">⚡ Krisen-Ereignisse</h2>
+                    <div class="shock-list" id="shockList">
+                        <!-- Filled by JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- BREAKING NEWS OVERLAY -->
+    <div class="breaking-overlay" id="breakingOverlay">
+        <div class="breaking-badge">⚡ BREAKING NEWS ⚡</div>
+        <div class="breaking-icon" id="breakingIcon">🔥</div>
+        <h1 class="breaking-headline" id="breakingHeadline">HEADLINE</h1>
+        <p class="breaking-description" id="breakingDescription">Description</p>
+        <ul class="breaking-details" id="breakingDetails"></ul>
+        <div class="breaking-impact" id="breakingImpact">+5.0%</div>
+    </div>
+
+    <!-- NEWS TICKER -->
+    <div class="news-ticker" id="newsTicker">
+        <div class="ticker-content" id="tickerContent">
+            <!-- Filled by JS -->
+        </div>
+    </div>
+
+    <script>
+        // ==================== CONFIGURATION ====================
+        const CRISIS_SHOCKS = [
+            {
+                id: 'energy',
+                icon: '🔥',
+                name: 'Energiekrise',
+                headline: 'GAZPROM STOPPT GASLIEFERUNGEN',
+                description: 'Nord Stream 1 auf unbestimmte Zeit geschlossen!',
+                details: [
+                    'Gaspreis steigt auf 340 €/MWh (+1.200%)',
+                    'Bundesregierung ruft Alarmstufe aus',
+                    'BASF und weitere Konzerne drosseln Produktion'
+                ],
+                impact: 5
+            },
+            {
+                id: 'chips',
+                icon: '🔌',
+                name: 'Chip-Krise',
+                headline: 'TAIWAN-KRISE VERSCHÄRFT CHIPMANGEL',
+                description: 'Automobilindustrie steht vor dem Kollaps!',
+                details: [
+                    'VW, BMW, Mercedes stoppen Produktion',
+                    'Lieferzeiten für Neuwagen: 18+ Monate',
+                    '100.000 Arbeiter in Kurzarbeit'
+                ],
+                impact: 3.5
+            },
+            {
+                id: 'rail',
+                icon: '🚂',
+                name: 'Bahn-Streik',
+                headline: 'GDL RUFT UNBEFRISTETEN STREIK AUS',
+                description: 'Deutschlands Lieferketten brechen zusammen!',
+                details: [
+                    'Güterverkehr komplett eingestellt',
+                    'Supermärkte melden erste Engpässe',
+                    'Industrie fordert Notstandsgesetz'
+                ],
+                impact: 2.5
+            },
+            {
+                id: 'corona',
+                icon: '🦠',
+                name: 'Neue Pandemie',
+                headline: 'WHO RUFT ERNEUT PANDEMIE AUS',
+                description: 'Neue Virusvariante zwingt zu Lockdowns!',
+                details: [
+                    'RKI meldet Rekord-Inzidenz von 2.500',
+                    'Krankenhäuser am Limit',
+                    'Wirtschaft fürchtet erneute Schließungen'
+                ],
+                impact: 6
+            }
+        ];
+
+        const TARGET_INFLATION = 2.0;
+        const GAME_DURATION = 300;
+
+        // ==================== STATE ====================
+        let peer = null;
+        let hostConnection = null;
+        let players = new Map();
+        let gameState = 'lobby';
+        let gameEndTime = null;
+        let timerInterval = null;
+        let triggeredShocks = new Set();
+        let tickerMessages = [];
+
+        // ==================== CONNECTION ====================
+        function getSessionFromUrl() {
+            const params = new URLSearchParams(window.location.search);
+            return params.get('session');
+        }
+
+        async function connectToSession(event) {
+            if (event) event.preventDefault();
+
+            let sessionId = document.getElementById('sessionInput').value.trim();
+            if (!sessionId) {
+                sessionId = getSessionFromUrl();
+            }
+
+            if (!sessionId) {
+                showStatus('Bitte Session-ID eingeben', true);
+                return;
+            }
+
+            showStatus('Verbinde...');
+
+            try {
+                await connect(sessionId);
+            } catch (err) {
+                showStatus('Verbindung fehlgeschlagen: ' + err.message, true);
+            }
+        }
+
+        async function connect(sessionId) {
+            return new Promise((resolve, reject) => {
+                peer = new Peer();
+
+                peer.on('open', (id) => {
+                    hostConnection = peer.connect(sessionId, { reliable: true });
+
+                    hostConnection.on('open', () => {
+                        hostConnection.send({ type: 'join', name: '📺 Beamer' });
+                        showMainDisplay();
+                        resolve();
+                    });
+
+                    hostConnection.on('data', handleMessage);
+
+                    hostConnection.on('error', reject);
+
+                    setTimeout(() => {
+                        if (!hostConnection.open) reject(new Error('Timeout'));
+                    }, 10000);
+                });
+
+                peer.on('error', reject);
+            });
+        }
+
+        function handleMessage(data) {
+            console.log('Message:', data);
+
+            switch (data.type) {
+                case 'welcome':
+                    if (data.gameState === 'running') {
+                        startGame(data.timeRemaining);
+                        data.shocks?.forEach(id => triggeredShocks.add(id));
+                        updateShockList();
+                    }
+                    break;
+
+                case 'player_joined':
+                    updatePlayerCount(data.count);
+                    break;
+
+                case 'game_start':
+                    startGame(data.duration);
+                    break;
+
+                case 'shock':
+                    showBreakingNews(data.shock);
+                    break;
+
+                case 'game_end':
+                    endGame();
+                    break;
+            }
+        }
+
+        // ==================== UI ====================
+        function showStatus(message, isError = false) {
+            const el = document.getElementById('joinStatus');
+            el.textContent = message;
+            el.classList.toggle('error', isError);
+        }
+
+        function showMainDisplay() {
+            document.getElementById('joinScreen').classList.add('hidden');
+            document.getElementById('mainDisplay').classList.add('active');
+            renderShockList();
+        }
+
+        function updatePlayerCount(count) {
+            // Subtract 1 for the beamer itself
+            const actualCount = Math.max(0, count - 1);
+            document.getElementById('playerCount').textContent = actualCount;
+        }
+
+        function renderShockList() {
+            const list = document.getElementById('shockList');
+            list.innerHTML = CRISIS_SHOCKS.map(shock => `
+                <div class="shock-item ${triggeredShocks.has(shock.id) ? 'triggered' : ''}" id="shock-${shock.id}">
+                    <div class="icon">${shock.icon}</div>
+                    <div class="name">${shock.name}</div>
+                    <div class="impact">+${shock.impact}%</div>
+                </div>
+            `).join('');
+        }
+
+        function updateShockList() {
+            CRISIS_SHOCKS.forEach(shock => {
+                const el = document.getElementById(`shock-${shock.id}`);
+                if (el) {
+                    el.classList.toggle('triggered', triggeredShocks.has(shock.id));
+                }
+            });
+        }
+
+        function updateLeaderboard(playerList) {
+            const container = document.getElementById('leaderboard');
+
+            if (playerList.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-leaderboard">
+                        <div class="icon">⏳</div>
+                        <p>Warte auf Spieler...</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const sorted = playerList.sort((a, b) => b.score - a.score);
+
+            container.innerHTML = sorted.slice(0, 10).map((player, i) => {
+                const rankClass = i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : '';
+                const deviation = Math.abs(player.inflation - TARGET_INFLATION);
+                const inflationClass = deviation <= 0.3 ? 'good' : deviation <= 1 ? 'warning' : 'bad';
+
+                return `
+                    <div class="leaderboard-item ${i < 3 ? 'highlight' : ''}">
+                        <span class="rank ${rankClass}">${i + 1}</span>
+                        <div class="player-info">
+                            <span class="player-name">${escapeHtml(player.name)}</span>
+                            <span class="player-moves">${player.moves} Züge</span>
+                        </div>
+                        <span class="player-inflation ${inflationClass}">${player.inflation.toFixed(1)}%</span>
+                        <span class="player-score">${player.score.toLocaleString()}</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // ==================== GAME ====================
+        function startGame(duration = GAME_DURATION) {
+            gameState = 'running';
+            gameEndTime = Date.now() + duration * 1000;
+            triggeredShocks.clear();
+
+            document.getElementById('displayStatus').textContent = 'Spiel läuft';
+            document.getElementById('displayStatus').className = 'display-status running';
+
+            updateShockList();
+            timerInterval = setInterval(updateTimer, 100);
+        }
+
+        function updateTimer() {
+            const remaining = Math.max(0, gameEndTime - Date.now());
+            const seconds = Math.ceil(remaining / 1000);
+            const m = Math.floor(seconds / 60);
+            const s = seconds % 60;
+
+            const timerEl = document.getElementById('displayTimer');
+            timerEl.textContent = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+
+            timerEl.className = 'display-timer';
+            if (seconds <= 30) {
+                timerEl.classList.add('danger');
+            } else if (seconds <= 60) {
+                timerEl.classList.add('warning');
+            }
+
+            if (remaining <= 0) {
+                endGame();
+            }
+        }
+
+        function endGame() {
+            gameState = 'finished';
+            clearInterval(timerInterval);
+
+            document.getElementById('displayStatus').textContent = 'Beendet';
+            document.getElementById('displayStatus').className = 'display-status lobby';
+        }
+
+        // ==================== BREAKING NEWS ====================
+        function showBreakingNews(shock) {
+            triggeredShocks.add(shock.id);
+            updateShockList();
+
+            // Update overlay content
+            document.getElementById('breakingIcon').textContent = shock.icon;
+            document.getElementById('breakingHeadline').textContent = shock.headline;
+            document.getElementById('breakingDescription').textContent = shock.description;
+            document.getElementById('breakingImpact').textContent = `+${shock.impact}% Inflation`;
+
+            const detailsList = document.getElementById('breakingDetails');
+            detailsList.innerHTML = (shock.details || []).map(d => `<li>${d}</li>`).join('');
+
+            // Show overlay
+            const overlay = document.getElementById('breakingOverlay');
+            overlay.classList.add('active');
+
+            // Add to ticker
+            tickerMessages.push(`${shock.icon} ${shock.headline} — ${shock.description}`);
+            updateTicker();
+
+            // Auto-hide after 6 seconds
+            setTimeout(() => {
+                overlay.classList.remove('active');
+            }, 6000);
+        }
+
+        function updateTicker() {
+            if (tickerMessages.length === 0) return;
+
+            const ticker = document.getElementById('newsTicker');
+            const content = document.getElementById('tickerContent');
+
+            content.innerHTML = tickerMessages.map(msg =>
+                `<span class="ticker-item">${msg}</span>`
+            ).join('');
+
+            ticker.classList.add('active');
+        }
+
+        // ==================== UTILITIES ====================
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // ==================== INIT ====================
+        document.addEventListener('DOMContentLoaded', () => {
+            // Check URL for session ID
+            const urlSession = getSessionFromUrl();
+            if (urlSession) {
+                document.getElementById('sessionInput').value = urlSession;
+                connectToSession();
+            }
+
+            // Listen for player updates (simulated - in real usage, host would broadcast)
+            // For demo, we'll update based on connection messages
+        });
+    </script>
+</body>
+</html>

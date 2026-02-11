@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Lehrkraft-Dashboard | Geldpolitik-Simulator</title>
+    <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+    <script src="https://unpkg.com/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --ecb-blue: #003399;
+            --ecb-yellow: #FFCC00;
+            --bg-dark: #0a1628;
+            --bg-card: #1a2744;
+            --text-primary: #ffffff;
+            --text-secondary: #a0aec0;
+            --success: #48bb78;
+            --danger: #f56565;
+            --warning: #ed8936;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .status-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .status-badge.connecting {
+            background: var(--warning);
+            color: #000;
+        }
+
+        .status-badge.ready {
+            background: var(--success);
+            color: #000;
+        }
+
+        .status-badge.running {
+            background: var(--danger);
+            color: #fff;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        @media (min-width: 900px) {
+            .main-grid {
+                grid-template-columns: 350px 1fr;
+            }
+        }
+
+        .card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* QR Section */
+        .qr-section {
+            text-align: center;
+        }
+
+        #qrcode {
+            background: white;
+            padding: 1rem;
+            border-radius: 12px;
+            display: inline-block;
+            margin: 1rem 0;
+        }
+
+        #qrcode canvas {
+            display: block;
+        }
+
+        .session-info {
+            background: var(--bg-dark);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+        }
+
+        .session-id {
+            font-family: monospace;
+            font-size: 1.2rem;
+            color: var(--ecb-yellow);
+            word-break: break-all;
+        }
+
+        .copy-btn {
+            margin-top: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--ecb-blue);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background 0.3s;
+        }
+
+        .copy-btn:hover {
+            background: #0044cc;
+        }
+
+        /* Lobby */
+        .player-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .player-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem;
+            background: var(--bg-dark);
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+        }
+
+        .player-name {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .player-status {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .player-status.ready {
+            color: var(--success);
+        }
+
+        .player-count {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Controls */
+        .control-btn {
+            width: 100%;
+            padding: 1rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .control-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-start {
+            background: linear-gradient(135deg, var(--success), #38a169);
+            color: white;
+        }
+
+        .btn-start:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(72, 187, 120, 0.4);
+        }
+
+        .btn-shock {
+            background: linear-gradient(135deg, var(--danger), #c53030);
+            color: white;
+        }
+
+        .btn-shock:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(245, 101, 101, 0.4);
+        }
+
+        .btn-end {
+            background: var(--bg-dark);
+            color: var(--text-secondary);
+            border: 1px solid var(--text-secondary);
+        }
+
+        /* Leaderboard */
+        .leaderboard {
+            width: 100%;
+        }
+
+        .leaderboard-item {
+            display: grid;
+            grid-template-columns: 40px 1fr 80px 100px;
+            align-items: center;
+            padding: 0.75rem;
+            background: var(--bg-dark);
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            gap: 1rem;
+        }
+
+        .leaderboard-item.header {
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        .rank {
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+
+        .rank.gold { color: #ffd700; }
+        .rank.silver { color: #c0c0c0; }
+        .rank.bronze { color: #cd7f32; }
+
+        .inflation {
+            font-family: monospace;
+        }
+
+        .inflation.good { color: var(--success); }
+        .inflation.warning { color: var(--warning); }
+        .inflation.bad { color: var(--danger); }
+
+        .score {
+            font-weight: 600;
+            color: var(--ecb-yellow);
+            text-align: right;
+        }
+
+        /* Timer */
+        .game-timer {
+            font-size: 3rem;
+            font-weight: 700;
+            text-align: center;
+            font-family: monospace;
+            margin: 1rem 0;
+        }
+
+        .game-timer.warning {
+            color: var(--warning);
+        }
+
+        .game-timer.danger {
+            color: var(--danger);
+            animation: pulse 0.5s infinite;
+        }
+
+        /* Shock List */
+        .shock-list {
+            display: grid;
+            gap: 0.5rem;
+        }
+
+        .shock-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            background: var(--bg-dark);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .shock-item:hover:not(.triggered):not(:disabled) {
+            border-color: var(--danger);
+        }
+
+        .shock-item.triggered {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .shock-icon {
+            font-size: 1.5rem;
+        }
+
+        .shock-info {
+            flex: 1;
+        }
+
+        .shock-name {
+            font-weight: 600;
+        }
+
+        .shock-impact {
+            font-size: 0.85rem;
+            color: var(--danger);
+        }
+
+        .shock-time {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        /* Hidden */
+        .hidden {
+            display: none !important;
+        }
+
+        /* Back link */
+        .back-link {
+            display: inline-block;
+            margin-top: 2rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+        }
+
+        .back-link:hover {
+            color: var(--ecb-yellow);
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-secondary);
+        }
+
+        .empty-state .icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>👨‍🏫 Lehrkraft-Dashboard</h1>
+        <span id="statusBadge" class="status-badge connecting">Verbinde...</span>
+    </div>
+
+    <div class="main-grid">
+        <!-- Left Column -->
+        <div class="left-column">
+            <!-- QR Code -->
+            <div class="card qr-section" id="qrSection">
+                <h3 class="card-title">📱 Session beitreten</h3>
+                <div id="qrcode"></div>
+                <div class="session-info">
+                    <small>Session-ID:</small>
+                    <div class="session-id" id="sessionId">Wird generiert...</div>
+                    <button class="copy-btn" onclick="copyLink()">🔗 Link kopieren</button>
+                </div>
+            </div>
+
+            <!-- Lobby -->
+            <div class="card" style="margin-top: 1.5rem;">
+                <h3 class="card-title">👥 Lobby</h3>
+                <div class="player-count" id="playerCount">0 Spieler:innen verbunden</div>
+                <div class="player-list" id="playerList">
+                    <div class="empty-state">
+                        <div class="icon">⏳</div>
+                        <p>Warte auf Spieler:innen...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column -->
+        <div class="right-column">
+            <!-- Game Controls -->
+            <div class="card">
+                <h3 class="card-title">🎮 Spielsteuerung</h3>
+
+                <div id="preGameControls">
+                    <button class="control-btn btn-start" id="startBtn" disabled onclick="startGame()">
+                        ▶️ Spiel starten
+                    </button>
+                    <p style="color: var(--text-secondary); text-align: center; font-size: 0.9rem;">
+                        Mindestens 1 Spieler:in benötigt
+                    </p>
+                </div>
+
+                <div id="inGameControls" class="hidden">
+                    <div class="game-timer" id="gameTimer">05:00</div>
+
+                    <h4 style="margin: 1rem 0 0.75rem;">Schocks auslösen:</h4>
+                    <div class="shock-list" id="shockList">
+                        <!-- Filled by JS -->
+                    </div>
+
+                    <button class="control-btn btn-end" onclick="endGame()" style="margin-top: 1rem;">
+                        ⏹️ Spiel beenden
+                    </button>
+                </div>
+            </div>
+
+            <!-- Leaderboard -->
+            <div class="card" style="margin-top: 1.5rem;">
+                <h3 class="card-title">🏆 Live-Rangliste</h3>
+                <div class="leaderboard" id="leaderboard">
+                    <div class="leaderboard-item header">
+                        <span>#</span>
+                        <span>Name</span>
+                        <span>Inflation</span>
+                        <span style="text-align: right;">Score</span>
+                    </div>
+                    <div class="empty-state" id="leaderboardEmpty">
+                        <p>Noch keine Ergebnisse</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <a href="index.html" class="back-link">← Zurück zur Übersicht</a>
+
+    <script>
+        // ==================== CONFIGURATION ====================
+        const CRISIS_SHOCKS = [
+            {
+                id: 'energy',
+                icon: '🔥',
+                name: 'Energiekrise',
+                headline: 'GAZPROM STOPPT GASLIEFERUNGEN',
+                description: 'Nord Stream 1 auf unbestimmte Zeit geschlossen!',
+                details: [
+                    'Gaspreis steigt auf 340 €/MWh (+1.200%)',
+                    'Bundesregierung ruft Alarmstufe aus',
+                    'BASF und weitere Konzerne drosseln Produktion'
+                ],
+                impact: 5,
+                autoTime: 45
+            },
+            {
+                id: 'chips',
+                icon: '🔌',
+                name: 'Chip-Krise',
+                headline: 'TAIWAN-KRISE VERSCHÄRFT CHIPMANGEL',
+                description: 'Automobilindustrie steht vor dem Kollaps!',
+                details: [
+                    'VW, BMW, Mercedes stoppen Produktion',
+                    'Lieferzeiten für Neuwagen: 18+ Monate',
+                    '100.000 Arbeiter in Kurzarbeit'
+                ],
+                impact: 3.5,
+                autoTime: 90
+            },
+            {
+                id: 'rail',
+                icon: '🚂',
+                name: 'Bahn-Streik',
+                headline: 'GDL RUFT UNBEFRISTETEN STREIK AUS',
+                description: 'Deutschlands Lieferketten brechen zusammen!',
+                details: [
+                    'Güterverkehr komplett eingestellt',
+                    'Supermärkte melden erste Engpässe',
+                    'Industrie fordert Notstandsgesetz'
+                ],
+                impact: 2.5,
+                autoTime: 135
+            },
+            {
+                id: 'corona',
+                icon: '🦠',
+                name: 'Neue Pandemie',
+                headline: 'WHO RUFT ERNEUT PANDEMIE AUS',
+                description: 'Neue Virusvariante zwingt zu Lockdowns!',
+                details: [
+                    'RKI meldet Rekord-Inzidenz von 2.500',
+                    'Krankenhäuser am Limit',
+                    'Wirtschaft fürchtet erneute Schließungen'
+                ],
+                impact: 6,
+                autoTime: 180
+            }
+        ];
+
+        const GAME_DURATION = 300; // 5 minutes in seconds
+        const TARGET_INFLATION = 2.0;
+
+        // ==================== STATE ====================
+        let peer = null;
+        let connections = new Map();
+        let players = new Map();
+        let gameState = 'lobby'; // lobby, running, finished
+        let gameStartTime = null;
+        let gameTimer = null;
+        let triggeredShocks = new Set();
+        let sessionId = null;
+
+        // ==================== PEER INITIALIZATION ====================
+        async function initPeer() {
+            return new Promise((resolve, reject) => {
+                // Generate a shorter, more readable ID
+                const shortId = 'geld-' + Math.random().toString(36).substring(2, 8);
+                peer = new Peer(shortId);
+
+                peer.on('open', (id) => {
+                    sessionId = id;
+                    console.log('Host started with ID:', id);
+                    updateStatus('ready');
+                    generateQRCode();
+                    resolve(id);
+                });
+
+                peer.on('connection', (conn) => {
+                    handleNewConnection(conn);
+                });
+
+                peer.on('error', (err) => {
+                    console.error('Peer error:', err);
+                    if (err.type === 'unavailable-id') {
+                        // Try again with new ID
+                        initPeer();
+                    } else {
+                        updateStatus('error');
+                    }
+                });
+            });
+        }
+
+        function handleNewConnection(conn) {
+            console.log('New connection:', conn.peer);
+
+            conn.on('open', () => {
+                connections.set(conn.peer, conn);
+
+                // Send current game state
+                conn.send({
+                    type: 'welcome',
+                    gameState: gameState,
+                    shocks: Array.from(triggeredShocks),
+                    timeRemaining: gameState === 'running' ? getRemainingTime() : GAME_DURATION
+                });
+            });
+
+            conn.on('data', (data) => {
+                handlePlayerMessage(conn.peer, data);
+            });
+
+            conn.on('close', () => {
+                connections.delete(conn.peer);
+                players.delete(conn.peer visitorId);
+                updatePlayerList();
+            });
+        }
+
+        function handlePlayerMessage(peerId, data) {
+            console.log('Message from', peerId, ':', data);
+
+            switch (data.type) {
+                case 'join':
+                    players.set(peerId, {
+                        id visitorId: peerId,
+                        name: data.name,
+                        inflation: 4.2,
+                        score: 0,
+                        moves: 0,
+                        ready: true
+                    });
+                    updatePlayerList();
+                    broadcast({ type: 'player_joined', name: data.name, count: players.size });
+                    break;
+
+                case 'update':
+                    const player = players.get(peerId);
+                    if (player) {
+                        player.inflation = data.inflation;
+                        player.score = data.score;
+                        player.moves = data.moves;
+                        updateLeaderboard();
+                    }
+                    break;
+
+                case 'finished':
+                    const finishedPlayer = players.get(peerId);
+                    if (finishedPlayer) {
+                        finishedPlayer.inflation = data.inflation;
+                        finishedPlayer.score = data.score;
+                        finishedPlayer.finished = true;
+                        updateLeaderboard();
+                    }
+                    break;
+            }
+        }
+
+        function broadcast(message) {
+            connections.forEach((conn) => {
+                if (conn.open) {
+                    conn.send(message);
+                }
+            });
+        }
+
+        // ==================== UI UPDATES ====================
+        function updateStatus(status) {
+            const badge = document.getElementById('statusBadge');
+            switch (status) {
+                case 'connecting':
+                    badge.textContent = 'Verbinde...';
+                    badge.className = 'status-badge connecting';
+                    break;
+                case 'ready':
+                    badge.textContent = 'Bereit';
+                    badge.className = 'status-badge ready';
+                    break;
+                case 'running':
+                    badge.textContent = 'Spiel läuft';
+                    badge.className = 'status-badge running';
+                    break;
+                case 'error':
+                    badge.textContent = 'Fehler';
+                    badge.className = 'status-badge connecting';
+                    break;
+            }
+        }
+
+        function generateQRCode() {
+            const joinUrl = window.location.href.replace('lehrer.html', 'schueler.html') + '?session=' + sessionId;
+
+            document.getElementById('sessionId').textContent = sessionId;
+
+            const qrContainer = document.getElementById('qrcode');
+            qrContainer.innerHTML = '';
+
+            QRCode.toCanvas(joinUrl, {
+                width: 200,
+                margin: 0,
+                color: { dark: '#003399', light: '#ffffff' }
+            }, (error, canvas) => {
+                if (error) {
+                    console.error(error);
+                    return;
+                }
+                qrContainer.appendChild(canvas);
+            });
+        }
+
+        function copyLink() {
+            const joinUrl = window.location.href.replace('lehrer.html', 'schueler.html') + '?session=' + sessionId;
+            navigator.clipboard.writeText(joinUrl).then(() => {
+                const btn = document.querySelector('.copy-btn');
+                btn.textContent = '✓ Kopiert!';
+                setTimeout(() => btn.textContent = '🔗 Link kopieren', 2000);
+            });
+        }
+
+        function updatePlayerList() {
+            const list = document.getElementById('playerList');
+            const count = document.getElementById('playerCount');
+            const startBtn = document.getElementById('startBtn');
+
+            count.textContent = `${players.size} Spieler:innen verbunden`;
+            startBtn.disabled = players.size === 0;
+
+            if (players.size === 0) {
+                list.innerHTML = `
+                    <div class="empty-state">
+                        <div class="icon">⏳</div>
+                        <p>Warte auf Spieler:innen...</p>
+                    </div>
+                `;
+                return;
+            }
+
+            list.innerHTML = Array.from(players.values()).map(p => `
+                <div class="player-item">
+                    <span class="player-name">
+                        <span>🎓</span>
+                        <span>${escapeHtml(p.name)}</span>
+                    </span>
+                    <span class="player-status ${p.ready ? 'ready' : ''}">
+                        ${p.ready ? '✓ Bereit' : 'Wartet...'}
+                    </span>
+                </div>
+            `).join('');
+        }
+
+        function updateLeaderboard() {
+            const leaderboard = document.getElementById('leaderboard');
+            const emptyState = document.getElementById('leaderboardEmpty');
+
+            const sortedPlayers = Array.from(players.values())
+                .sort((a, b) => b.score - a.score);
+
+            if (sortedPlayers.length === 0) {
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+
+            const header = `
+                <div class="leaderboard-item header">
+                    <span>#</span>
+                    <span>Name</span>
+                    <span>Inflation</span>
+                    <span style="text-align: right;">Score</span>
+                </div>
+            `;
+
+            const items = sortedPlayers.map((p, i) => {
+                const rankClass = i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : '';
+                const deviation = Math.abs(p.inflation - TARGET_INFLATION);
+                const inflationClass = deviation <= 0.3 ? 'good' : deviation <= 1 ? 'warning' : 'bad';
+
+                return `
+                    <div class="leaderboard-item">
+                        <span class="rank ${rankClass}">${i + 1}</span>
+                        <span>${escapeHtml(p.name)}</span>
+                        <span class="inflation ${inflationClass}">${p.inflation.toFixed(1)}%</span>
+                        <span class="score">${p.score.toLocaleString()}</span>
+                    </div>
+                `;
+            }).join('');
+
+            leaderboard.innerHTML = header + items;
+        }
+
+        function renderShockList() {
+            const list = document.getElementById('shockList');
+            list.innerHTML = CRISIS_SHOCKS.map(shock => `
+                <div class="shock-item ${triggeredShocks.has(shock.id) ? 'triggered' : ''}"
+                     onclick="triggerShock('${shock.id}')"
+                     ${triggeredShocks.has(shock.id) ? 'disabled' : ''}>
+                    <span class="shock-icon">${shock.icon}</span>
+                    <div class="shock-info">
+                        <div class="shock-name">${shock.name}</div>
+                        <div class="shock-impact">+${shock.impact}% Inflation</div>
+                    </div>
+                    <span class="shock-time">${shock.autoTime}s</span>
+                </div>
+            `).join('');
+        }
+
+        // ==================== GAME CONTROL ====================
+        function startGame() {
+            gameState = 'running';
+            gameStartTime = Date.now();
+            triggeredShocks.clear();
+
+            // Hide pre-game, show in-game controls
+            document.getElementById('preGameControls').classList.add('hidden');
+            document.getElementById('inGameControls').classList.remove('hidden');
+
+            updateStatus('running');
+            renderShockList();
+
+            // Start timer
+            gameTimer = setInterval(updateTimer, 1000);
+
+            // Schedule automatic shocks
+            CRISIS_SHOCKS.forEach(shock => {
+                setTimeout(() => {
+                    if (gameState === 'running' && !triggeredShocks.has(shock.id)) {
+                        triggerShock(shock.id, true);
+                    }
+                }, shock.autoTime * 1000);
+            });
+
+            // Broadcast game start
+            broadcast({
+                type: 'game_start',
+                duration: GAME_DURATION
+            });
+
+            // Reset player scores
+            players.forEach(p => {
+                p.inflation = 4.2;
+                p.score = 0;
+                p.moves = 0;
+                p.finished = false;
+            });
+            updateLeaderboard();
+        }
+
+        function getRemainingTime() {
+            if (!gameStartTime) return GAME_DURATION;
+            const elapsed = Math.floor((Date.now() - gameStartTime) / 1000);
+            return Math.max(0, GAME_DURATION - elapsed);
+        }
+
+        function updateTimer() {
+            const remaining = getRemainingTime();
+            const minutes = Math.floor(remaining / 60);
+            const seconds = remaining % 60;
+
+            const timerEl = document.getElementById('gameTimer');
+            timerEl.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+            // Color coding
+            timerEl.className = 'game-timer';
+            if (remaining <= 30) {
+                timerEl.classList.add('danger');
+            } else if (remaining <= 60) {
+                timerEl.classList.add('warning');
+            }
+
+            if (remaining <= 0) {
+                endGame();
+            }
+        }
+
+        function triggerShock(shockId, auto = false) {
+            if (triggeredShocks.has(shockId) || gameState !== 'running') return;
+
+            const shock = CRISIS_SHOCKS.find(s => s.id === shockId);
+            if (!shock) return;
+
+            triggeredShocks.add(shockId);
+            renderShockList();
+
+            // Broadcast shock to all players
+            broadcast({
+                type: 'shock',
+                shock: shock,
+                auto: auto
+            });
+
+            console.log('Shock triggered:', shock.name, auto ? '(auto)' : '(manual)');
+        }
+
+        function endGame() {
+            if (gameState !== 'running') return;
+
+            gameState = 'finished';
+            clearInterval(gameTimer);
+            updateStatus('ready');
+
+            broadcast({
+                type: 'game_end'
+            });
+
+            // Show final results
+            document.getElementById('inGameControls').classList.add('hidden');
+            document.getElementById('preGameControls').classList.remove('hidden');
+
+            // Reset for next game
+            triggeredShocks.clear();
+        }
+
+        // ==================== UTILITIES ====================
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // ==================== INIT ====================
+        document.addEventListener('DOMContentLoaded', () => {
+            initPeer();
+        });
+    </script>
+</body>
+</html>

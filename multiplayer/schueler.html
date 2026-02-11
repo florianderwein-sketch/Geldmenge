@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Schüler:in | Geldpolitik-Simulator</title>
+    <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --ecb-blue: #003399;
+            --ecb-yellow: #FFCC00;
+            --bg-dark: #0a1628;
+            --bg-card: #1a2744;
+            --text-primary: #ffffff;
+            --text-secondary: #a0aec0;
+            --success: #48bb78;
+            --danger: #f56565;
+            --warning: #ed8936;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            min-height: -webkit-fill-available;
+            overflow: hidden;
+        }
+
+        /* ==================== JOIN SCREEN ==================== */
+        .join-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .join-screen.hidden {
+            display: none;
+        }
+
+        .join-logo {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .join-title {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--ecb-yellow), #ffd700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .join-subtitle {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        .join-form {
+            width: 100%;
+            max-width: 320px;
+        }
+
+        .join-input {
+            width: 100%;
+            padding: 1rem;
+            font-size: 1.1rem;
+            border: 2px solid var(--bg-card);
+            border-radius: 12px;
+            background: var(--bg-card);
+            color: var(--text-primary);
+            text-align: center;
+            margin-bottom: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .join-input:focus {
+            outline: none;
+            border-color: var(--ecb-yellow);
+        }
+
+        .join-input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .join-btn {
+            width: 100%;
+            padding: 1rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--ecb-blue), #0044cc);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .join-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0, 51, 153, 0.4);
+        }
+
+        .join-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .join-status {
+            margin-top: 1rem;
+            padding: 0.75rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+
+        .join-status.error {
+            background: rgba(245, 101, 101, 0.2);
+            color: var(--danger);
+        }
+
+        .join-status.connecting {
+            background: rgba(237, 137, 54, 0.2);
+            color: var(--warning);
+        }
+
+        /* ==================== LOBBY SCREEN ==================== */
+        .lobby-screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .lobby-screen.active {
+            display: flex;
+        }
+
+        .lobby-icon {
+            font-size: 5rem;
+            margin-bottom: 1rem;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .lobby-message {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .lobby-submessage {
+            color: var(--text-secondary);
+        }
+
+        .player-count-badge {
+            margin-top: 2rem;
+            padding: 0.75rem 1.5rem;
+            background: var(--bg-card);
+            border-radius: 20px;
+            font-size: 0.95rem;
+        }
+
+        /* ==================== GAME SCREEN ==================== */
+        .game-screen {
+            display: none;
+            flex-direction: column;
+            height: 100vh;
+            height: -webkit-fill-available;
+        }
+
+        .game-screen.active {
+            display: flex;
+        }
+
+        /* Header */
+        .game-header {
+            padding: 12px 16px;
+            background: var(--bg-card);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .game-timer {
+            font-size: 1.5rem;
+            font-weight: 700;
+            font-family: monospace;
+        }
+
+        .game-timer.warning { color: var(--warning); }
+        .game-timer.danger { color: var(--danger); animation: pulse 0.5s infinite; }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        .game-score {
+            font-size: 1.1rem;
+            color: var(--ecb-yellow);
+        }
+
+        /* Inflation Display */
+        .inflation-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .inflation-value {
+            font-size: 5rem;
+            font-weight: 700;
+            line-height: 1;
+            transition: color 0.3s;
+        }
+
+        .inflation-value.good { color: var(--success); }
+        .inflation-value.warning { color: var(--warning); }
+        .inflation-value.bad { color: var(--danger); }
+
+        .inflation-label {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+        }
+
+        .target-indicator {
+            margin-top: 1rem;
+            padding: 0.5rem 1rem;
+            background: var(--bg-card);
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        .target-indicator span {
+            color: var(--success);
+            font-weight: 600;
+        }
+
+        /* Instrument Carousel */
+        .carousel-section {
+            padding: 16px;
+            background: var(--bg-card);
+        }
+
+        .carousel-container {
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: 8px;
+        }
+
+        .carousel-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        .instrument-card {
+            flex: 0 0 calc(50% - 6px);
+            min-width: 140px;
+            scroll-snap-align: start;
+            background: var(--bg-dark);
+            border-radius: 16px;
+            padding: 16px;
+            text-align: center;
+            border: 2px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .instrument-card.selected {
+            border-color: var(--ecb-yellow);
+        }
+
+        .instrument-card.cooldown {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        .instrument-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .instrument-name {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .instrument-effect {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .cooldown-bar {
+            height: 4px;
+            background: var(--bg-card);
+            border-radius: 2px;
+            margin-top: 8px;
+            overflow: hidden;
+        }
+
+        .cooldown-fill {
+            height: 100%;
+            background: var(--ecb-yellow);
+            transition: width 0.1s linear;
+        }
+
+        /* Action Buttons */
+        .action-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            padding: 16px;
+            background: var(--bg-card);
+        }
+
+        .action-btn {
+            padding: 20px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            border: none;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .action-btn:active:not(:disabled) {
+            transform: scale(0.95);
+        }
+
+        .action-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .action-btn.raise {
+            background: linear-gradient(135deg, var(--danger), #c53030);
+            color: white;
+        }
+
+        .action-btn.lower {
+            background: linear-gradient(135deg, var(--success), #38a169);
+            color: white;
+        }
+
+        .action-btn .icon {
+            font-size: 1.5rem;
+        }
+
+        /* ==================== BREAKING NEWS OVERLAY ==================== */
+        .breaking-news {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            text-align: center;
+            animation: fadeIn 0.3s;
+        }
+
+        .breaking-news.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .breaking-badge {
+            background: var(--danger);
+            color: white;
+            padding: 0.5rem 1.5rem;
+            font-size: 0.9rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            margin-bottom: 1rem;
+            animation: flash 0.5s infinite;
+        }
+
+        @keyframes flash {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .breaking-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .breaking-headline {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            max-width: 400px;
+        }
+
+        .breaking-description {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            max-width: 400px;
+        }
+
+        .breaking-impact {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--danger);
+        }
+
+        .breaking-dismiss {
+            margin-top: 2rem;
+            padding: 1rem 2rem;
+            background: var(--bg-card);
+            border: none;
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        /* ==================== RESULT SCREEN ==================== */
+        .result-screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .result-screen.active {
+            display: flex;
+        }
+
+        .result-stars {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .result-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .result-score {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--ecb-yellow);
+            margin: 1rem 0;
+        }
+
+        .result-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin: 1.5rem 0;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .result-stat {
+            background: var(--bg-card);
+            padding: 1rem;
+            border-radius: 12px;
+        }
+
+        .result-stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .result-stat-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .result-message {
+            color: var(--text-secondary);
+            max-width: 300px;
+            line-height: 1.5;
+        }
+
+        /* Hidden utility */
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- JOIN SCREEN -->
+    <div class="join-screen" id="joinScreen">
+        <div class="join-logo">🏛️</div>
+        <h1 class="join-title">Geldpolitik-Simulator</h1>
+        <p class="join-subtitle">Krisen-Eskalation: Deutschland-Edition</p>
+
+        <form class="join-form" id="joinForm" onsubmit="joinGame(event)">
+            <input
+                type="text"
+                class="join-input"
+                id="playerName"
+                placeholder="Dein Name"
+                maxlength="20"
+                required
+                autocomplete="off"
+            >
+            <button type="submit" class="join-btn" id="joinBtn">
+                🎮 Beitreten
+            </button>
+        </form>
+
+        <div class="join-status hidden" id="joinStatus"></div>
+    </div>
+
+    <!-- LOBBY SCREEN -->
+    <div class="lobby-screen" id="lobbyScreen">
+        <div class="lobby-icon">⏳</div>
+        <h2 class="lobby-message">Warte auf Spielstart...</h2>
+        <p class="lobby-submessage">Die Lehrkraft startet das Spiel gleich</p>
+        <div class="player-count-badge" id="lobbyPlayerCount">
+            1 Spieler:in verbunden
+        </div>
+    </div>
+
+    <!-- GAME SCREEN -->
+    <div class="game-screen" id="gameScreen">
+        <div class="game-header">
+            <div class="game-timer" id="gameTimer">05:00</div>
+            <div class="game-score">Score: <span id="gameScore">0</span></div>
+        </div>
+
+        <div class="inflation-section">
+            <div class="inflation-value" id="inflationValue">4.2</div>
+            <div class="inflation-label">% Inflation</div>
+            <div class="target-indicator">Ziel: <span>2.0%</span></div>
+        </div>
+
+        <div class="carousel-section">
+            <div class="carousel-container" id="instrumentCarousel">
+                <!-- Filled by JS -->
+            </div>
+        </div>
+
+        <div class="action-section">
+            <button class="action-btn raise" id="btnRaise" onclick="applyAction('raise')">
+                <span class="icon">📈</span>
+                <span>Erhöhen</span>
+            </button>
+            <button class="action-btn lower" id="btnLower" onclick="applyAction('lower')">
+                <span class="icon">📉</span>
+                <span>Senken</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- BREAKING NEWS OVERLAY -->
+    <div class="breaking-news" id="breakingNews">
+        <div class="breaking-badge">BREAKING NEWS</div>
+        <div class="breaking-icon" id="breakingIcon">🔥</div>
+        <h2 class="breaking-headline" id="breakingHeadline">HEADLINE</h2>
+        <p class="breaking-description" id="breakingDescription">Description</p>
+        <div class="breaking-impact" id="breakingImpact">+5.0%</div>
+        <button class="breaking-dismiss" onclick="dismissBreakingNews()">Verstanden</button>
+    </div>
+
+    <!-- RESULT SCREEN -->
+    <div class="result-screen" id="resultScreen">
+        <div class="result-stars" id="resultStars">⭐⭐⭐⭐⭐</div>
+        <h2 class="result-title" id="resultTitle">Preisstabilität erreicht!</h2>
+        <div class="result-score" id="resultScore">8,750</div>
+        <div class="result-stats">
+            <div class="result-stat">
+                <div class="result-stat-value" id="resultInflation">2.1%</div>
+                <div class="result-stat-label">Inflation</div>
+            </div>
+            <div class="result-stat">
+                <div class="result-stat-value" id="resultMoves">12</div>
+                <div class="result-stat-label">Züge</div>
+            </div>
+            <div class="result-stat">
+                <div class="result-stat-value" id="resultTime">4:32</div>
+                <div class="result-stat-label">Zeit</div>
+            </div>
+        </div>
+        <p class="result-message" id="resultMessage">
+            Du hast die Inflation erfolgreich stabilisiert.
+        </p>
+    </div>
+
+    <script>
+        // ==================== CONFIGURATION ====================
+        const INSTRUMENTS = [
+            {
+                id: 'leitzins',
+                name: 'Leitzins',
+                icon: '🏦',
+                effect: 'Kreditkosten',
+                cooldown: 2000,
+                baseEffect: 1.0
+            },
+            {
+                id: 'anleihen',
+                name: 'Anleihenkauf',
+                icon: '📜',
+                effect: 'Geldmenge',
+                cooldown: 2500,
+                baseEffect: 0.8
+            },
+            {
+                id: 'reserve',
+                name: 'Mindestreserve',
+                icon: '🏛️',
+                effect: 'Kreditvergabe',
+                cooldown: 3000,
+                baseEffect: 0.6
+            },
+            {
+                id: 'kommunikation',
+                name: 'Kommunikation',
+                icon: '📢',
+                effect: 'Erwartungen',
+                cooldown: 1500,
+                baseEffect: 0.4
+            }
+        ];
+
+        const TARGET_INFLATION = 2.0;
+        const START_INFLATION = 4.2;
+        const GAME_DURATION = 300;
+
+        const SCORING = {
+            basis: 10000,
+            zeitMalusFaktor: 10,
+            zuegeMalusFaktor: 25,
+            abweichungsMalusFaktor: 1000
+        };
+
+        // ==================== STATE ====================
+        let peer = null;
+        let hostConnection = null;
+        let playerName = '';
+        let sessionId = null;
+
+        let gameState = 'join'; // join, lobby, playing, finished
+        let inflation = START_INFLATION;
+        let score = 0;
+        let moves = 0;
+        let gameStartTime = null;
+        let gameEndTime = null;
+        let timerInterval = null;
+
+        let selectedInstrument = 0;
+        let instrumentCooldowns = {};
+        let instrumentUseCounts = {};
+
+        // ==================== CONNECTION ====================
+        function getSessionFromUrl() {
+            const params = new URLSearchParams(window.location.search);
+            return params.get('session');
+        }
+
+        async function joinGame(event) {
+            event.preventDefault();
+
+            playerName = document.getElementById('playerName').value.trim();
+            if (!playerName) return;
+
+            sessionId = getSessionFromUrl();
+            if (!sessionId) {
+                showJoinStatus('Keine Session-ID gefunden. Bitte QR-Code scannen.', 'error');
+                return;
+            }
+
+            showJoinStatus('Verbinde...', 'connecting');
+            document.getElementById('joinBtn').disabled = true;
+
+            try {
+                await connectToHost();
+            } catch (err) {
+                showJoinStatus('Verbindung fehlgeschlagen: ' + err.message, 'error');
+                document.getElementById('joinBtn').disabled = false;
+            }
+        }
+
+        async function connectToHost() {
+            return new Promise((resolve, reject) => {
+                peer = new Peer();
+
+                peer.on('open', (id) => {
+                    console.log('My peer ID:', id);
+
+                    hostConnection = peer.connect(sessionId, { reliable: true });
+
+                    hostConnection.on('open', () => {
+                        console.log('Connected to host');
+                        hostConnection.send({ type: 'join', name: playerName });
+                        resolve();
+                    });
+
+                    hostConnection.on('data', (data) => {
+                        handleHostMessage(data);
+                    });
+
+                    hostConnection.on('close', () => {
+                        console.log('Disconnected from host');
+                        showJoinStatus('Verbindung zum Host verloren', 'error');
+                    });
+
+                    hostConnection.on('error', (err) => {
+                        reject(err);
+                    });
+
+                    // Timeout
+                    setTimeout(() => {
+                        if (!hostConnection.open) {
+                            reject(new Error('Timeout'));
+                        }
+                    }, 10000);
+                });
+
+                peer.on('error', (err) => {
+                    console.error('Peer error:', err);
+                    reject(err);
+                });
+            });
+        }
+
+        function handleHostMessage(data) {
+            console.log('Message from host:', data);
+
+            switch (data.type) {
+                case 'welcome':
+                    if (data.gameState === 'running') {
+                        startGame(data.timeRemaining);
+                    } else {
+                        showLobby();
+                    }
+                    break;
+
+                case 'player_joined':
+                    updateLobbyCount(data.count);
+                    break;
+
+                case 'game_start':
+                    startGame(data.duration);
+                    break;
+
+                case 'shock':
+                    applyShock(data.shock);
+                    break;
+
+                case 'game_end':
+                    endGame();
+                    break;
+            }
+        }
+
+        function sendUpdate() {
+            if (hostConnection && hostConnection.open) {
+                hostConnection.send({
+                    type: 'update',
+                    inflation: inflation,
+                    score: score,
+                    moves: moves
+                });
+            }
+        }
+
+        // ==================== UI SCREENS ====================
+        function showJoinStatus(message, type) {
+            const el = document.getElementById('joinStatus');
+            el.textContent = message;
+            el.className = 'join-status ' + type;
+            el.classList.remove('hidden');
+        }
+
+        function showLobby() {
+            gameState = 'lobby';
+            document.getElementById('joinScreen').classList.add('hidden');
+            document.getElementById('lobbyScreen').classList.add('active');
+        }
+
+        function updateLobbyCount(count) {
+            document.getElementById('lobbyPlayerCount').textContent =
+                `${count} Spieler:in${count !== 1 ? 'nen' : ''} verbunden`;
+        }
+
+        function showGame() {
+            gameState = 'playing';
+            document.getElementById('lobbyScreen').classList.remove('active');
+            document.getElementById('joinScreen').classList.add('hidden');
+            document.getElementById('gameScreen').classList.add('active');
+        }
+
+        function showResults() {
+            gameState = 'finished';
+            document.getElementById('gameScreen').classList.remove('active');
+            document.getElementById('resultScreen').classList.add('active');
+
+            const deviation = Math.abs(inflation - TARGET_INFLATION);
+            const stars = getStarRating(deviation);
+            const timeUsed = Math.floor((gameEndTime - gameStartTime) / 1000);
+
+            document.getElementById('resultStars').textContent = '⭐'.repeat(stars) + '☆'.repeat(5 - stars);
+            document.getElementById('resultScore').textContent = score.toLocaleString();
+            document.getElementById('resultInflation').textContent = inflation.toFixed(1) + '%';
+            document.getElementById('resultMoves').textContent = moves;
+            document.getElementById('resultTime').textContent = formatTime(timeUsed);
+            document.getElementById('resultTitle').textContent = getResultTitle(stars);
+            document.getElementById('resultMessage').textContent = getResultMessage(stars);
+        }
+
+        // ==================== GAME LOGIC ====================
+        function startGame(duration = GAME_DURATION) {
+            inflation = START_INFLATION;
+            score = 0;
+            moves = 0;
+            gameStartTime = Date.now();
+            gameEndTime = gameStartTime + duration * 1000;
+
+            instrumentCooldowns = {};
+            instrumentUseCounts = {};
+            INSTRUMENTS.forEach(inst => {
+                instrumentCooldowns[inst.id] = 0;
+                instrumentUseCounts[inst.id] = 0;
+            });
+
+            showGame();
+            renderInstruments();
+            updateDisplay();
+
+            timerInterval = setInterval(updateTimer, 100);
+        }
+
+        function updateTimer() {
+            const remaining = Math.max(0, gameEndTime - Date.now());
+            const seconds = Math.ceil(remaining / 1000);
+
+            const timerEl = document.getElementById('gameTimer');
+            timerEl.textContent = formatTime(seconds);
+
+            timerEl.className = 'game-timer';
+            if (seconds <= 30) {
+                timerEl.classList.add('danger');
+            } else if (seconds <= 60) {
+                timerEl.classList.add('warning');
+            }
+
+            // Update cooldowns
+            updateCooldowns();
+
+            if (remaining <= 0) {
+                endGame();
+            }
+        }
+
+        function formatTime(seconds) {
+            const m = Math.floor(seconds / 60);
+            const s = seconds % 60;
+            return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+        }
+
+        function endGame() {
+            clearInterval(timerInterval);
+            gameEndTime = Date.now();
+
+            const timeUsed = Math.floor((gameEndTime - gameStartTime) / 1000);
+            score = calculateScore(inflation, timeUsed, moves);
+
+            if (hostConnection && hostConnection.open) {
+                hostConnection.send({
+                    type: 'finished',
+                    inflation: inflation,
+                    score: score,
+                    moves: moves
+                });
+            }
+
+            showResults();
+        }
+
+        function calculateScore(endInflation, timeSeconds, moveCount) {
+            const deviation = Math.abs(endInflation - TARGET_INFLATION);
+            const zeitMalus = timeSeconds * SCORING.zeitMalusFaktor;
+            const zuegeMalus = moveCount * SCORING.zuegeMalusFaktor;
+            const abweichungsMalus = deviation * SCORING.abweichungsMalusFaktor;
+            return Math.max(0, Math.round(SCORING.basis - zeitMalus - zuegeMalus - abweichungsMalus));
+        }
+
+        function getStarRating(deviation) {
+            if (deviation <= 0.1) return 5;
+            if (deviation <= 0.3) return 4;
+            if (deviation <= 0.5) return 3;
+            if (deviation <= 1.0) return 2;
+            return 1;
+        }
+
+        function getResultTitle(stars) {
+            const titles = {
+                5: 'Perfekte Preisstabilität!',
+                4: 'Preisstabilität erreicht!',
+                3: 'Gute Arbeit!',
+                2: 'Noch Luft nach oben',
+                1: 'Weiter üben...'
+            };
+            return titles[stars];
+        }
+
+        function getResultMessage(stars) {
+            const messages = {
+                5: 'Du hast die Inflation perfekt auf 2% stabilisiert. Die EZB wäre stolz!',
+                4: 'Die Inflation ist nahe am Zielwert. Sehr gute Geldpolitik!',
+                3: 'Die Inflation ist unter Kontrolle, aber nicht optimal.',
+                2: 'Die Preisstabilität wurde nicht ganz erreicht. Probiere es nochmal!',
+                1: 'Die Inflation ist außer Kontrolle geraten. Übung macht den Meister!'
+            };
+            return messages[stars];
+        }
+
+        // ==================== INSTRUMENTS ====================
+        function renderInstruments() {
+            const carousel = document.getElementById('instrumentCarousel');
+            carousel.innerHTML = INSTRUMENTS.map((inst, i) => `
+                <div class="instrument-card ${i === selectedInstrument ? 'selected' : ''}"
+                     id="inst-${inst.id}"
+                     onclick="selectInstrument(${i})">
+                    <div class="instrument-icon">${inst.icon}</div>
+                    <div class="instrument-name">${inst.name}</div>
+                    <div class="instrument-effect">${inst.effect}</div>
+                    <div class="cooldown-bar">
+                        <div class="cooldown-fill" id="cooldown-${inst.id}" style="width: 100%"></div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function selectInstrument(index) {
+            selectedInstrument = index;
+
+            document.querySelectorAll('.instrument-card').forEach((el, i) => {
+                el.classList.toggle('selected', i === index);
+            });
+        }
+
+        function updateCooldowns() {
+            const now = Date.now();
+
+            INSTRUMENTS.forEach(inst => {
+                const cooldownEnd = instrumentCooldowns[inst.id] || 0;
+                const remaining = Math.max(0, cooldownEnd - now);
+                const percent = 100 - (remaining / inst.cooldown * 100);
+
+                const fillEl = document.getElementById(`cooldown-${inst.id}`);
+                const cardEl = document.getElementById(`inst-${inst.id}`);
+
+                if (fillEl) {
+                    fillEl.style.width = percent + '%';
+                }
+
+                if (cardEl) {
+                    cardEl.classList.toggle('cooldown', remaining > 0);
+                }
+            });
+        }
+
+        function applyAction(direction) {
+            const inst = INSTRUMENTS[selectedInstrument];
+            const now = Date.now();
+
+            // Check cooldown
+            if (instrumentCooldowns[inst.id] > now) return;
+
+            // Calculate effect with diminishing returns
+            const useCount = instrumentUseCounts[inst.id] || 0;
+            const effectiveness = Math.max(0.3, 1 - useCount * 0.1);
+            const baseStep = calculateDynamicStep();
+            const effect = baseStep * inst.baseEffect * effectiveness;
+
+            // Apply inflation change
+            if (direction === 'raise') {
+                inflation += effect;
+            } else {
+                inflation -= effect;
+            }
+
+            inflation = Math.max(0, Math.min(15, inflation));
+            moves++;
+
+            // Set cooldown and increment use count
+            instrumentCooldowns[inst.id] = now + inst.cooldown;
+            instrumentUseCounts[inst.id] = useCount + 1;
+
+            // Update display
+            updateDisplay();
+            sendUpdate();
+
+            // Visual feedback
+            const btn = document.getElementById(direction === 'raise' ? 'btnRaise' : 'btnLower');
+            btn.style.transform = 'scale(0.95)';
+            setTimeout(() => btn.style.transform = '', 100);
+        }
+
+        function calculateDynamicStep() {
+            const distance = Math.abs(inflation - TARGET_INFLATION);
+            return Math.max(0.3, Math.min(3, distance * 0.2));
+        }
+
+        function updateDisplay() {
+            const valueEl = document.getElementById('inflationValue');
+            valueEl.textContent = inflation.toFixed(1);
+
+            const deviation = Math.abs(inflation - TARGET_INFLATION);
+            valueEl.className = 'inflation-value';
+            if (deviation <= 0.3) {
+                valueEl.classList.add('good');
+            } else if (deviation <= 1) {
+                valueEl.classList.add('warning');
+            } else {
+                valueEl.classList.add('bad');
+            }
+
+            // Update score display
+            const timeUsed = Math.floor((Date.now() - gameStartTime) / 1000);
+            score = calculateScore(inflation, timeUsed, moves);
+            document.getElementById('gameScore').textContent = score.toLocaleString();
+        }
+
+        // ==================== SHOCKS ====================
+        function applyShock(shock) {
+            // Show breaking news
+            document.getElementById('breakingIcon').textContent = shock.icon;
+            document.getElementById('breakingHeadline').textContent = shock.headline;
+            document.getElementById('breakingDescription').textContent = shock.description;
+            document.getElementById('breakingImpact').textContent = `+${shock.impact}%`;
+            document.getElementById('breakingNews').classList.add('active');
+
+            // Apply inflation impact
+            inflation += shock.impact;
+            inflation = Math.min(15, inflation);
+            updateDisplay();
+            sendUpdate();
+        }
+
+        function dismissBreakingNews() {
+            document.getElementById('breakingNews').classList.remove('active');
+        }
+
+        // ==================== INIT ====================
+        document.addEventListener('DOMContentLoaded', () => {
+            // Check if session ID in URL
+            const session = getSessionFromUrl();
+            if (!session) {
+                showJoinStatus('Kein Session-Link. Bitte QR-Code der Lehrkraft scannen.', 'error');
+            }
+
+            // Focus name input
+            document.getElementById('playerName').focus();
+        });
+
+        // Auto-dismiss breaking news after 5 seconds
+        setInterval(() => {
+            if (document.getElementById('breakingNews').classList.contains('active')) {
+                const showTime = Date.now() - (window.breakingNewsShownAt || 0);
+                if (showTime > 5000) {
+                    dismissBreakingNews();
+                }
+            }
+        }, 1000);
+    </script>
+</body>
+</html>
