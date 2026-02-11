@@ -2077,6 +2077,215 @@
       box-shadow: 0 4px 12px rgba(45, 106, 79, 0.4);
     }
   }
+
+  /* ==========================================
+     DÖNER PRICE FEATURE
+     ========================================== */
+
+  /* Input Modal */
+  .doener-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    backdrop-filter: blur(8px);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+  }
+
+  .doener-modal.hidden {
+    display: none;
+  }
+
+  .doener-modal-box {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    border-radius: 20px;
+    width: 100%;
+    max-width: 400px;
+    padding: 24px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    border: 2px solid rgba(255, 165, 0, 0.3);
+    text-align: center;
+  }
+
+  .doener-modal-emoji {
+    font-size: 4rem;
+    margin-bottom: 16px;
+  }
+
+  .doener-modal-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 20px;
+    line-height: 1.4;
+  }
+
+  .doener-input-group {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+
+  .doener-input {
+    width: 120px;
+    padding: 14px 16px;
+    font-size: 1.5rem;
+    font-weight: 700;
+    text-align: center;
+    border: 2px solid rgba(255, 165, 0, 0.4);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    outline: none;
+    transition: border-color 0.3s;
+  }
+
+  .doener-input:focus {
+    border-color: #ffa500;
+  }
+
+  .doener-input::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+  }
+
+  .doener-currency {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #ffa500;
+  }
+
+  .doener-submit {
+    width: 100%;
+    padding: 14px 24px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    background: linear-gradient(135deg, #ffa500, #ff8c00);
+    color: #000;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .doener-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(255, 165, 0, 0.4);
+  }
+
+  .doener-submit:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .doener-hint {
+    margin-top: 12px;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.5);
+  }
+
+  /* Price Display */
+  .doener-display {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin: 12px auto;
+    padding: 12px 20px;
+    background: rgba(255, 165, 0, 0.1);
+    border: 1px solid rgba(255, 165, 0, 0.3);
+    border-radius: 12px;
+    max-width: 320px;
+    transition: background 0.3s;
+  }
+
+  .doener-display.active {
+    display: flex;
+  }
+
+  .doener-display-emoji {
+    font-size: 1.8rem;
+  }
+
+  .doener-display-text {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .doener-display-label {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.6);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .doener-display-price {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #fff;
+    transition: color 0.3s;
+  }
+
+  .doener-display-price.rising {
+    color: #ff6b6b;
+  }
+
+  .doener-display-price.falling {
+    color: #51cf66;
+  }
+
+  .doener-display-change {
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-left: auto;
+    padding: 4px 8px;
+    border-radius: 6px;
+  }
+
+  .doener-display-change.rising {
+    background: rgba(255, 107, 107, 0.2);
+    color: #ff6b6b;
+  }
+
+  .doener-display-change.falling {
+    background: rgba(81, 207, 102, 0.2);
+    color: #51cf66;
+  }
+
+  .doener-display-change.neutral {
+    background: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  /* Responsive */
+  @media (max-width: 400px) {
+    .doener-modal-box {
+      padding: 20px 16px;
+    }
+
+    .doener-modal-emoji {
+      font-size: 3rem;
+    }
+
+    .doener-modal-title {
+      font-size: 1.1rem;
+    }
+
+    .doener-input {
+      width: 100px;
+      font-size: 1.3rem;
+      padding: 12px;
+    }
+  }
 </style>
 </head>
 <body>
@@ -2128,7 +2337,42 @@
   </div>
 </div>
 
+<!-- Döner Price Input Modal -->
+<div class="doener-modal" id="doenerModal">
+  <div class="doener-modal-box">
+    <div class="doener-modal-emoji">🥙</div>
+    <div class="doener-modal-title">Was zahlt man bei deinem Stammladen gerade für 'nen Döner?</div>
+    <div class="doener-input-group">
+      <input
+        type="number"
+        class="doener-input"
+        id="doenerInput"
+        placeholder="8,00"
+        min="1"
+        max="50"
+        step="0.10"
+        inputmode="decimal"
+      >
+      <span class="doener-currency">€</span>
+    </div>
+    <button class="doener-submit" id="doenerSubmit" onclick="submitDoenerPrice()" disabled>
+      Los geht's! 🚀
+    </button>
+    <div class="doener-hint">Tipp: Der Durchschnittspreis liegt bei ~8 €</div>
+  </div>
+</div>
+
 <h1>Monetarismus-Simulation: Interaktive Waage</h1>
+
+<!-- Döner Price Display -->
+<div class="doener-display" id="doenerDisplay">
+  <span class="doener-display-emoji">🥙</span>
+  <div class="doener-display-text">
+    <span class="doener-display-label">Dein Döner kostet jetzt</span>
+    <span class="doener-display-price" id="doenerPrice">8,00 €</span>
+  </div>
+  <span class="doener-display-change neutral" id="doenerChange">±0%</span>
+</div>
 
 <div class="cta-hero">
   <div class="cta-icon">👇</div>
@@ -2706,6 +2950,105 @@ let challengeCompleted = {
   ecb_live: false
 };
 
+// ===========================================
+// DÖNER PRICE FEATURE
+// ===========================================
+let doenerBasePrice = null;      // User's entered price
+let doenerBaseInflation = null;  // Inflation at time of entry
+let doenerCurrentPrice = null;   // Current calculated price
+
+function initDoenerModal() {
+  const input = document.getElementById('doenerInput');
+  const submitBtn = document.getElementById('doenerSubmit');
+
+  // Enable submit when valid price entered
+  input.addEventListener('input', function() {
+    const value = parseFloat(this.value);
+    submitBtn.disabled = !(value >= 1 && value <= 50);
+  });
+
+  // Allow Enter key to submit
+  input.addEventListener('keypress', function(e) {
+    if (e.key === 'Enter' && !submitBtn.disabled) {
+      submitDoenerPrice();
+    }
+  });
+
+  // Focus input
+  setTimeout(() => input.focus(), 100);
+}
+
+function submitDoenerPrice() {
+  const input = document.getElementById('doenerInput');
+  const value = parseFloat(input.value);
+
+  if (value < 1 || value > 50 || isNaN(value)) return;
+
+  // Store base values
+  doenerBasePrice = value;
+  doenerBaseInflation = getCurrentInflation();
+  doenerCurrentPrice = value;
+
+  // Hide modal
+  document.getElementById('doenerModal').classList.add('hidden');
+
+  // Show display
+  document.getElementById('doenerDisplay').classList.add('active');
+
+  // Initial update
+  updateDoenerPrice();
+}
+
+function getCurrentInflation() {
+  const ratio = geldMenge / bip;
+  return (ratio - 1) * 100;
+}
+
+function updateDoenerPrice() {
+  if (doenerBasePrice === null) return;
+
+  const currentInflation = getCurrentInflation();
+  const inflationChange = currentInflation - doenerBaseInflation;
+
+  // Calculate new price: price increases with inflation
+  // Simple model: 1% more inflation = 1% higher price
+  doenerCurrentPrice = doenerBasePrice * (1 + inflationChange / 100);
+  doenerCurrentPrice = Math.max(0.01, doenerCurrentPrice); // Min 1 cent
+
+  // Calculate percentage change
+  const percentChange = ((doenerCurrentPrice / doenerBasePrice) - 1) * 100;
+
+  // Update display
+  const priceEl = document.getElementById('doenerPrice');
+  const changeEl = document.getElementById('doenerChange');
+
+  // Format price (German format with comma)
+  priceEl.textContent = doenerCurrentPrice.toLocaleString('de-DE', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  }) + ' €';
+
+  // Update colors and change indicator
+  priceEl.classList.remove('rising', 'falling');
+  changeEl.classList.remove('rising', 'falling', 'neutral');
+
+  if (percentChange > 0.5) {
+    priceEl.classList.add('rising');
+    changeEl.classList.add('rising');
+    changeEl.textContent = '+' + percentChange.toFixed(1) + '%';
+  } else if (percentChange < -0.5) {
+    priceEl.classList.add('falling');
+    changeEl.classList.add('falling');
+    changeEl.textContent = percentChange.toFixed(1) + '%';
+  } else {
+    changeEl.classList.add('neutral');
+    changeEl.textContent = '±0%';
+  }
+}
+
+// Hook into updateWaage to update Döner price
+const originalUpdateWaage = typeof updateWaage === 'function' ? updateWaage : null;
+
 // Scenario data
 // ECB Live data source: https://data.ecb.europa.eu/
 // M3 Money Supply: https://www.ecb.europa.eu/press/stats/md/
@@ -2878,6 +3221,9 @@ function updateWaage() {
   // Werte auf den Pans anzeigen
   document.getElementById("leftPan").innerHTML = `💶<br>${geldMenge.toFixed(2)} Bio€`;
   document.getElementById("rightPan").innerHTML = `📦<br>${bip.toFixed(3)} Bio€`;
+
+  // Update Döner price display
+  updateDoenerPrice();
 }
 
 // Geldpolitik: positive percent = Reduktion, negative percent = Erhöhung
@@ -2973,6 +3319,8 @@ function closeDisclaimerModal() {
 
   setTimeout(() => {
     modal.classList.add('hidden');
+    // Show Döner price input modal after disclaimer
+    initDoenerModal();
   }, 300);
 }
 
