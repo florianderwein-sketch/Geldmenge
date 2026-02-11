@@ -1489,6 +1489,368 @@
       max-width: 600px;
     }
   }
+
+  /* ===========================================
+     INSTRUMENT CAROUSEL SYSTEM
+     =========================================== */
+
+  .instrument-carousel-section {
+    display: none;
+    margin: 20px auto;
+    max-width: 95%;
+  }
+
+  .instrument-carousel-section.active {
+    display: block;
+  }
+
+  .instrument-carousel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+
+  .instrument-carousel-title {
+    font-size: 1em;
+    color: #a0a0a0;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+  }
+
+  .instrument-dots {
+    display: flex;
+    gap: 8px;
+  }
+
+  .instrument-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .instrument-dot.active {
+    background: #ffa500;
+    transform: scale(1.2);
+  }
+
+  .instrument-dot.on-cooldown {
+    background: rgba(255, 69, 0, 0.5);
+  }
+
+  .instrument-dot.degraded {
+    background: rgba(255, 165, 0, 0.3);
+  }
+
+  /* Carousel Container */
+  .instrument-carousel {
+    position: relative;
+    overflow: hidden;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .instrument-cards-wrapper {
+    display: flex;
+    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    touch-action: pan-x;
+  }
+
+  .instrument-card {
+    flex: 0 0 100%;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+
+  .instrument-card-inner {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
+    border-radius: 12px;
+    padding: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+  }
+
+  .instrument-card.on-cooldown .instrument-card-inner {
+    opacity: 0.5;
+    border-color: rgba(255, 69, 0, 0.3);
+    background: linear-gradient(135deg, rgba(255, 69, 0, 0.1) 0%, rgba(255, 69, 0, 0.02) 100%);
+  }
+
+  .instrument-card.degraded .instrument-card-inner {
+    border-color: rgba(255, 165, 0, 0.3);
+  }
+
+  .instrument-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+
+  .instrument-icon-name {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .instrument-icon {
+    font-size: 2em;
+  }
+
+  .instrument-name {
+    font-size: 1.2em;
+    font-weight: 700;
+    color: #fff;
+  }
+
+  .instrument-status {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+  }
+
+  .instrument-effectiveness {
+    font-size: 0.8em;
+    color: #4ade80;
+    font-weight: 600;
+  }
+
+  .instrument-effectiveness.degraded {
+    color: #fbbf24;
+  }
+
+  .instrument-effectiveness.low {
+    color: #f87171;
+  }
+
+  .instrument-cooldown-badge {
+    display: none;
+    font-size: 0.75em;
+    background: rgba(255, 69, 0, 0.3);
+    color: #ff6347;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-weight: 600;
+  }
+
+  .instrument-card.on-cooldown .instrument-cooldown-badge {
+    display: block;
+  }
+
+  .instrument-value-display {
+    text-align: center;
+    margin-bottom: 16px;
+  }
+
+  .instrument-current-value {
+    font-size: 2.5em;
+    font-weight: 700;
+    color: #fff;
+    font-family: 'Courier New', monospace;
+  }
+
+  .instrument-unit {
+    font-size: 0.9em;
+    color: #a0a0a0;
+    margin-top: 4px;
+  }
+
+  .instrument-description {
+    font-size: 0.85em;
+    color: #888;
+    margin-bottom: 20px;
+    line-height: 1.4;
+  }
+
+  /* Action Buttons */
+  .instrument-actions {
+    display: flex;
+    gap: 12px;
+  }
+
+  .instrument-btn {
+    flex: 1;
+    min-height: 56px;
+    border: none;
+    border-radius: 12px;
+    font-size: 1em;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .instrument-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none !important;
+  }
+
+  .instrument-btn.decrease {
+    background: linear-gradient(135deg, #c1121f 0%, #a00f1a 100%);
+    color: white;
+  }
+
+  .instrument-btn.decrease:not(:disabled):active {
+    transform: scale(0.97);
+    background: linear-gradient(135deg, #a00f1a 0%, #800c14 100%);
+  }
+
+  .instrument-btn.increase {
+    background: linear-gradient(135deg, #2d6a4f 0%, #1e4d3a 100%);
+    color: white;
+  }
+
+  .instrument-btn.increase:not(:disabled):active {
+    transform: scale(0.97);
+    background: linear-gradient(135deg, #1e4d3a 0%, #143a2c 100%);
+  }
+
+  /* Cooldown Progress on Button */
+  .instrument-btn.on-cooldown {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .instrument-btn.on-cooldown::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 4px;
+    background: #ffa500;
+    animation: cooldownProgress var(--cooldown-duration, 2s) linear forwards;
+  }
+
+  @keyframes cooldownProgress {
+    from { width: 0%; }
+    to { width: 100%; }
+  }
+
+  /* Carousel Navigation Arrows */
+  .carousel-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #fff;
+    font-size: 1.2em;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    z-index: 10;
+  }
+
+  .carousel-nav:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+
+  .carousel-nav.prev {
+    left: 8px;
+  }
+
+  .carousel-nav.next {
+    right: 8px;
+  }
+
+  /* Usage Stats */
+  .instrument-usage-stats {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: space-around;
+    font-size: 0.75em;
+    color: #666;
+  }
+
+  .usage-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+  }
+
+  .usage-stat-value {
+    font-weight: 700;
+    color: #888;
+  }
+
+  .usage-stat-label {
+    color: #555;
+  }
+
+  /* Swipe hint */
+  .swipe-hint {
+    text-align: center;
+    font-size: 0.8em;
+    color: #555;
+    margin-top: 8px;
+    opacity: 1;
+    transition: opacity 0.5s ease;
+  }
+
+  .swipe-hint.hidden {
+    opacity: 0;
+  }
+
+  @media(min-width: 600px) {
+    .instrument-carousel-section {
+      max-width: 600px;
+    }
+
+    .instrument-card {
+      padding: 24px;
+    }
+
+    .instrument-name {
+      font-size: 1.3em;
+    }
+
+    .instrument-current-value {
+      font-size: 3em;
+    }
+
+    .instrument-btn {
+      min-height: 60px;
+      font-size: 1.1em;
+    }
+
+    .carousel-nav {
+      width: 48px;
+      height: 48px;
+      font-size: 1.4em;
+    }
+  }
+
+  @media(min-width: 900px) and (hover: hover) {
+    .instrument-btn.decrease:not(:disabled):hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(193, 18, 31, 0.4);
+    }
+
+    .instrument-btn.increase:not(:disabled):hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(45, 106, 79, 0.4);
+    }
+  }
 </style>
 </head>
 <body>
@@ -1806,6 +2168,192 @@
     <span class="click-label">🖱️ Aktionen:</span>
     <span class="click-value" id="clickValue">0</span>
   </div>
+</div>
+
+<!-- Instrument Carousel (active during crisis mode) -->
+<div class="instrument-carousel-section" id="instrumentCarouselSection">
+  <div class="instrument-carousel-header">
+    <span class="instrument-carousel-title">🎛️ Geldpolitische Instrumente</span>
+    <div class="instrument-dots" id="instrumentDots">
+      <span class="instrument-dot active" data-index="0"></span>
+      <span class="instrument-dot" data-index="1"></span>
+      <span class="instrument-dot" data-index="2"></span>
+      <span class="instrument-dot" data-index="3"></span>
+    </div>
+  </div>
+
+  <div class="instrument-carousel" id="instrumentCarousel">
+    <button class="carousel-nav prev" onclick="navigateCarousel(-1)">◀</button>
+    <button class="carousel-nav next" onclick="navigateCarousel(1)">▶</button>
+
+    <div class="instrument-cards-wrapper" id="instrumentCardsWrapper">
+      <!-- Instrument 1: Leitzins -->
+      <div class="instrument-card" data-instrument="leitzins" id="card-leitzins">
+        <div class="instrument-card-inner">
+          <div class="instrument-header">
+            <div class="instrument-icon-name">
+              <span class="instrument-icon">💰</span>
+              <span class="instrument-name">Leitzins</span>
+            </div>
+            <div class="instrument-status">
+              <span class="instrument-effectiveness" id="eff-leitzins">100%</span>
+              <span class="instrument-cooldown-badge" id="cooldown-leitzins">Cooldown</span>
+            </div>
+          </div>
+          <div class="instrument-value-display">
+            <div class="instrument-current-value" id="value-leitzins">4.25%</div>
+            <div class="instrument-unit">EZB-Hauptrefinanzierungssatz</div>
+          </div>
+          <div class="instrument-description">
+            Der Zinssatz, zu dem Banken Geld von der Zentralbank leihen. Höherer Zins = weniger Kredite = weniger Inflation.
+          </div>
+          <div class="instrument-actions">
+            <button class="instrument-btn decrease" onclick="useInstrument('leitzins', 'decrease')" id="btn-leitzins-decrease">
+              ◀ Senken
+            </button>
+            <button class="instrument-btn increase" onclick="useInstrument('leitzins', 'increase')" id="btn-leitzins-increase">
+              Erhöhen ▶
+            </button>
+          </div>
+          <div class="instrument-usage-stats">
+            <div class="usage-stat">
+              <span class="usage-stat-value" id="uses-leitzins">0</span>
+              <span class="usage-stat-label">Nutzungen</span>
+            </div>
+            <div class="usage-stat">
+              <span class="usage-stat-value" id="streak-leitzins">0</span>
+              <span class="usage-stat-label">In Folge</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Instrument 2: Anleihenkauf -->
+      <div class="instrument-card" data-instrument="anleihen" id="card-anleihen">
+        <div class="instrument-card-inner">
+          <div class="instrument-header">
+            <div class="instrument-icon-name">
+              <span class="instrument-icon">📈</span>
+              <span class="instrument-name">Anleihenkauf</span>
+            </div>
+            <div class="instrument-status">
+              <span class="instrument-effectiveness" id="eff-anleihen">100%</span>
+              <span class="instrument-cooldown-badge" id="cooldown-anleihen">Cooldown</span>
+            </div>
+          </div>
+          <div class="instrument-value-display">
+            <div class="instrument-current-value" id="value-anleihen">0 Mrd</div>
+            <div class="instrument-unit">Monatliches Kaufvolumen</div>
+          </div>
+          <div class="instrument-description">
+            Die EZB kauft Staatsanleihen und pumpt so Geld in den Markt. Mehr Käufe = mehr Liquidität = höhere Inflation.
+          </div>
+          <div class="instrument-actions">
+            <button class="instrument-btn decrease" onclick="useInstrument('anleihen', 'decrease')" id="btn-anleihen-decrease">
+              ◀ Verkaufen
+            </button>
+            <button class="instrument-btn increase" onclick="useInstrument('anleihen', 'increase')" id="btn-anleihen-increase">
+              Kaufen ▶
+            </button>
+          </div>
+          <div class="instrument-usage-stats">
+            <div class="usage-stat">
+              <span class="usage-stat-value" id="uses-anleihen">0</span>
+              <span class="usage-stat-label">Nutzungen</span>
+            </div>
+            <div class="usage-stat">
+              <span class="usage-stat-value" id="streak-anleihen">0</span>
+              <span class="usage-stat-label">In Folge</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Instrument 3: Mindestreserve -->
+      <div class="instrument-card" data-instrument="reserve" id="card-reserve">
+        <div class="instrument-card-inner">
+          <div class="instrument-header">
+            <div class="instrument-icon-name">
+              <span class="instrument-icon">🏦</span>
+              <span class="instrument-name">Mindestreserve</span>
+            </div>
+            <div class="instrument-status">
+              <span class="instrument-effectiveness" id="eff-reserve">100%</span>
+              <span class="instrument-cooldown-badge" id="cooldown-reserve">Cooldown</span>
+            </div>
+          </div>
+          <div class="instrument-value-display">
+            <div class="instrument-current-value" id="value-reserve">1.0%</div>
+            <div class="instrument-unit">Reserveanforderung</div>
+          </div>
+          <div class="instrument-description">
+            Anteil der Einlagen, den Banken bei der Zentralbank halten müssen. Höhere Reserve = weniger Kredite möglich.
+          </div>
+          <div class="instrument-actions">
+            <button class="instrument-btn decrease" onclick="useInstrument('reserve', 'decrease')" id="btn-reserve-decrease">
+              ◀ Senken
+            </button>
+            <button class="instrument-btn increase" onclick="useInstrument('reserve', 'increase')" id="btn-reserve-increase">
+              Erhöhen ▶
+            </button>
+          </div>
+          <div class="instrument-usage-stats">
+            <div class="usage-stat">
+              <span class="usage-stat-value" id="uses-reserve">0</span>
+              <span class="usage-stat-label">Nutzungen</span>
+            </div>
+            <div class="usage-stat">
+              <span class="usage-stat-value" id="streak-reserve">0</span>
+              <span class="usage-stat-label">In Folge</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Instrument 4: Forward Guidance -->
+      <div class="instrument-card" data-instrument="guidance" id="card-guidance">
+        <div class="instrument-card-inner">
+          <div class="instrument-header">
+            <div class="instrument-icon-name">
+              <span class="instrument-icon">📢</span>
+              <span class="instrument-name">Kommunikation</span>
+            </div>
+            <div class="instrument-status">
+              <span class="instrument-effectiveness" id="eff-guidance">100%</span>
+              <span class="instrument-cooldown-badge" id="cooldown-guidance">Cooldown</span>
+            </div>
+          </div>
+          <div class="instrument-value-display">
+            <div class="instrument-current-value" id="value-guidance">Neutral</div>
+            <div class="instrument-unit">Forward Guidance</div>
+          </div>
+          <div class="instrument-description">
+            Öffentliche Ankündigungen beeinflussen Erwartungen. Hawkish = restriktiv, Dovish = expansiv.
+          </div>
+          <div class="instrument-actions">
+            <button class="instrument-btn decrease" onclick="useInstrument('guidance', 'decrease')" id="btn-guidance-decrease">
+              🕊️ Dovish
+            </button>
+            <button class="instrument-btn increase" onclick="useInstrument('guidance', 'increase')" id="btn-guidance-increase">
+              🦅 Hawkish
+            </button>
+          </div>
+          <div class="instrument-usage-stats">
+            <div class="usage-stat">
+              <span class="usage-stat-value" id="uses-guidance">0</span>
+              <span class="usage-stat-label">Nutzungen</span>
+            </div>
+            <div class="usage-stat">
+              <span class="usage-stat-value" id="streak-guidance">0</span>
+              <span class="usage-stat-label">In Folge</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="swipe-hint" id="swipeHint">👆 Swipe oder klicke die Pfeile um Instrumente zu wechseln</div>
 </div>
 
 <div class="scenario-section">
@@ -2582,6 +3130,362 @@ adjustMoney = function(percent) {
     originalAdjustMoney(percent);
   }
 };
+
+// ===========================================
+// INSTRUMENT CAROUSEL SYSTEM
+// ===========================================
+
+// Instrument configuration
+const INSTRUMENTS = {
+  leitzins: {
+    name: 'Leitzins',
+    icon: '💰',
+    baseValue: 4.25,
+    unit: '%',
+    step: 0.25,
+    cooldown: 2000, // 2 seconds
+    maxStreak: 3, // Max uses in a row before penalty
+    effect: {
+      decrease: -2, // Expansiv: Geldmenge erhöhen (Inflation steigt)
+      increase: 2   // Kontraktiv: Geldmenge reduzieren (Inflation sinkt)
+    }
+  },
+  anleihen: {
+    name: 'Anleihenkauf',
+    icon: '📈',
+    baseValue: 0,
+    unit: ' Mrd',
+    step: 10,
+    cooldown: 2500,
+    maxStreak: 3,
+    effect: {
+      decrease: 3,  // Verkaufen: Kontraktiv
+      increase: -3  // Kaufen: Expansiv
+    }
+  },
+  reserve: {
+    name: 'Mindestreserve',
+    icon: '🏦',
+    baseValue: 1.0,
+    unit: '%',
+    step: 0.5,
+    cooldown: 3000,
+    maxStreak: 2,
+    effect: {
+      decrease: -2, // Senken: Expansiv
+      increase: 2   // Erhöhen: Kontraktiv
+    }
+  },
+  guidance: {
+    name: 'Kommunikation',
+    icon: '📢',
+    baseValue: 0, // -2 = very dovish, +2 = very hawkish
+    unit: '',
+    step: 1,
+    cooldown: 1500,
+    maxStreak: 2,
+    guidanceLabels: ['Sehr Dovish', 'Dovish', 'Neutral', 'Hawkish', 'Sehr Hawkish'],
+    effect: {
+      decrease: -1.5, // Dovish: Expansiv
+      increase: 1.5   // Hawkish: Kontraktiv
+    }
+  }
+};
+
+// Instrument state
+let instrumentState = {
+  leitzins: { value: 4.25, uses: 0, streak: 0, lastAction: null, onCooldown: false, effectiveness: 100 },
+  anleihen: { value: 0, uses: 0, streak: 0, lastAction: null, onCooldown: false, effectiveness: 100 },
+  reserve: { value: 1.0, uses: 0, streak: 0, lastAction: null, onCooldown: false, effectiveness: 100 },
+  guidance: { value: 0, uses: 0, streak: 0, lastAction: null, onCooldown: false, effectiveness: 100 }
+};
+
+let currentInstrumentIndex = 0;
+let touchStartX = 0;
+let touchEndX = 0;
+
+// Initialize carousel
+function initInstrumentCarousel() {
+  const wrapper = document.getElementById('instrumentCardsWrapper');
+  const carousel = document.getElementById('instrumentCarousel');
+
+  // Touch events for swipe
+  carousel.addEventListener('touchstart', (e) => {
+    touchStartX = e.changedTouches[0].screenX;
+  }, { passive: true });
+
+  carousel.addEventListener('touchend', (e) => {
+    touchEndX = e.changedTouches[0].screenX;
+    handleSwipe();
+  }, { passive: true });
+
+  // Dot navigation
+  document.querySelectorAll('.instrument-dot').forEach((dot, index) => {
+    dot.addEventListener('click', () => goToInstrument(index));
+  });
+
+  // Hide swipe hint after first interaction
+  carousel.addEventListener('click', hideSwipeHint);
+  carousel.addEventListener('touchstart', hideSwipeHint, { once: true });
+
+  updateInstrumentDisplays();
+}
+
+function hideSwipeHint() {
+  const hint = document.getElementById('swipeHint');
+  if (hint) hint.classList.add('hidden');
+}
+
+function handleSwipe() {
+  const swipeThreshold = 50;
+  const diff = touchStartX - touchEndX;
+
+  if (Math.abs(diff) > swipeThreshold) {
+    if (diff > 0) {
+      navigateCarousel(1); // Swipe left = next
+    } else {
+      navigateCarousel(-1); // Swipe right = prev
+    }
+  }
+}
+
+function navigateCarousel(direction) {
+  const instrumentKeys = Object.keys(INSTRUMENTS);
+  currentInstrumentIndex += direction;
+
+  if (currentInstrumentIndex < 0) {
+    currentInstrumentIndex = instrumentKeys.length - 1;
+  } else if (currentInstrumentIndex >= instrumentKeys.length) {
+    currentInstrumentIndex = 0;
+  }
+
+  goToInstrument(currentInstrumentIndex);
+}
+
+function goToInstrument(index) {
+  currentInstrumentIndex = index;
+  const wrapper = document.getElementById('instrumentCardsWrapper');
+  wrapper.style.transform = `translateX(-${index * 100}%)`;
+
+  // Update dots
+  document.querySelectorAll('.instrument-dot').forEach((dot, i) => {
+    dot.classList.toggle('active', i === index);
+
+    // Show cooldown state on dot
+    const instrumentKey = Object.keys(INSTRUMENTS)[i];
+    const state = instrumentState[instrumentKey];
+    dot.classList.toggle('on-cooldown', state.onCooldown);
+    dot.classList.toggle('degraded', state.effectiveness < 75);
+  });
+}
+
+// Use an instrument
+function useInstrument(instrumentId, action) {
+  const instrument = INSTRUMENTS[instrumentId];
+  const state = instrumentState[instrumentId];
+
+  // Check cooldown
+  if (state.onCooldown) {
+    showToast('⏳', 'Cooldown aktiv', `${instrument.name} ist noch nicht wieder verfügbar.`);
+    return;
+  }
+
+  // Calculate effective step with degradation
+  const effectivenessMultiplier = state.effectiveness / 100;
+  const baseEffect = instrument.effect[action];
+  const actualEffect = baseEffect * effectivenessMultiplier;
+
+  // Update streak
+  if (state.lastAction === action) {
+    state.streak++;
+  } else {
+    state.streak = 1;
+    state.lastAction = action;
+  }
+
+  // Apply degradation if streak exceeds max
+  if (state.streak > instrument.maxStreak) {
+    state.effectiveness = Math.max(25, state.effectiveness - 15);
+    showToast('⚠️', 'Effektivität sinkt!', `${instrument.name} wird bei wiederholter Nutzung weniger wirksam. Wechsle zu anderen Instrumenten!`);
+  }
+
+  state.uses++;
+
+  // Apply effect to money supply
+  if (crisisModeActive) {
+    const dynamicStep = calculateDynamicStep() * effectivenessMultiplier;
+    const direction = actualEffect > 0 ? 1 : -1;
+    geldMenge *= (1 - (direction * dynamicStep) / 100);
+
+    clickCount++;
+    updateClickCounter();
+    updateStepIndicator();
+  } else {
+    geldMenge *= (1 - actualEffect / 100);
+  }
+
+  // Update instrument value display
+  if (action === 'increase') {
+    state.value += instrument.step;
+  } else {
+    state.value -= instrument.step;
+  }
+
+  // Start cooldown
+  startCooldown(instrumentId);
+
+  // Update displays
+  updateWaage();
+  updateInstrumentDisplays();
+
+  // Check challenge
+  if (activeChallenge) {
+    checkChallengeSuccess();
+  }
+
+  // Vibration feedback
+  if (navigator.vibrate) {
+    navigator.vibrate(50);
+  }
+}
+
+function startCooldown(instrumentId) {
+  const instrument = INSTRUMENTS[instrumentId];
+  const state = instrumentState[instrumentId];
+  const card = document.getElementById(`card-${instrumentId}`);
+  const decreaseBtn = document.getElementById(`btn-${instrumentId}-decrease`);
+  const increaseBtn = document.getElementById(`btn-${instrumentId}-increase`);
+
+  state.onCooldown = true;
+  card.classList.add('on-cooldown');
+  decreaseBtn.disabled = true;
+  increaseBtn.disabled = true;
+
+  // Set CSS variable for cooldown animation
+  decreaseBtn.style.setProperty('--cooldown-duration', `${instrument.cooldown}ms`);
+  increaseBtn.style.setProperty('--cooldown-duration', `${instrument.cooldown}ms`);
+  decreaseBtn.classList.add('on-cooldown');
+  increaseBtn.classList.add('on-cooldown');
+
+  // Update dot
+  const instrumentKeys = Object.keys(INSTRUMENTS);
+  const index = instrumentKeys.indexOf(instrumentId);
+  const dot = document.querySelectorAll('.instrument-dot')[index];
+  if (dot) dot.classList.add('on-cooldown');
+
+  setTimeout(() => {
+    state.onCooldown = false;
+    card.classList.remove('on-cooldown');
+    decreaseBtn.disabled = false;
+    increaseBtn.disabled = false;
+    decreaseBtn.classList.remove('on-cooldown');
+    increaseBtn.classList.remove('on-cooldown');
+    if (dot) dot.classList.remove('on-cooldown');
+  }, instrument.cooldown);
+}
+
+function updateInstrumentDisplays() {
+  Object.keys(INSTRUMENTS).forEach(instrumentId => {
+    const instrument = INSTRUMENTS[instrumentId];
+    const state = instrumentState[instrumentId];
+
+    // Update value display
+    const valueEl = document.getElementById(`value-${instrumentId}`);
+    if (valueEl) {
+      if (instrumentId === 'guidance') {
+        const labelIndex = Math.max(0, Math.min(4, Math.round(state.value + 2)));
+        valueEl.textContent = instrument.guidanceLabels[labelIndex];
+      } else {
+        valueEl.textContent = `${state.value.toFixed(instrumentId === 'anleihen' ? 0 : 2)}${instrument.unit}`;
+      }
+    }
+
+    // Update effectiveness display
+    const effEl = document.getElementById(`eff-${instrumentId}`);
+    if (effEl) {
+      effEl.textContent = `${state.effectiveness}%`;
+      effEl.classList.remove('degraded', 'low');
+      if (state.effectiveness < 50) {
+        effEl.classList.add('low');
+      } else if (state.effectiveness < 75) {
+        effEl.classList.add('degraded');
+      }
+    }
+
+    // Update usage stats
+    const usesEl = document.getElementById(`uses-${instrumentId}`);
+    if (usesEl) usesEl.textContent = state.uses;
+
+    const streakEl = document.getElementById(`streak-${instrumentId}`);
+    if (streakEl) streakEl.textContent = state.streak;
+  });
+}
+
+function resetInstrumentState() {
+  Object.keys(instrumentState).forEach(id => {
+    const instrument = INSTRUMENTS[id];
+    instrumentState[id] = {
+      value: instrument.baseValue,
+      uses: 0,
+      streak: 0,
+      lastAction: null,
+      onCooldown: false,
+      effectiveness: 100
+    };
+
+    // Reset UI
+    const card = document.getElementById(`card-${id}`);
+    if (card) card.classList.remove('on-cooldown', 'degraded');
+
+    const decreaseBtn = document.getElementById(`btn-${id}-decrease`);
+    const increaseBtn = document.getElementById(`btn-${id}-increase`);
+    if (decreaseBtn) {
+      decreaseBtn.disabled = false;
+      decreaseBtn.classList.remove('on-cooldown');
+    }
+    if (increaseBtn) {
+      increaseBtn.disabled = false;
+      increaseBtn.classList.remove('on-cooldown');
+    }
+  });
+
+  updateInstrumentDisplays();
+  goToInstrument(0);
+}
+
+// Modify startCrisisMode to show instrument carousel
+const originalStartCrisisMode = startCrisisMode;
+startCrisisMode = function() {
+  originalStartCrisisMode();
+  document.getElementById('instrumentCarouselSection').classList.add('active');
+  resetInstrumentState();
+};
+
+// Modify stopCrisisMode to hide instrument carousel
+const originalStopCrisisMode = stopCrisisMode;
+stopCrisisMode = function() {
+  originalStopCrisisMode();
+  document.getElementById('instrumentCarouselSection').classList.remove('active');
+};
+
+// Recover effectiveness over time when not using an instrument
+setInterval(() => {
+  if (crisisModeActive) {
+    Object.keys(instrumentState).forEach(id => {
+      const state = instrumentState[id];
+      if (!state.onCooldown && state.effectiveness < 100) {
+        // Slowly recover effectiveness when not on cooldown
+        state.effectiveness = Math.min(100, state.effectiveness + 2);
+        updateInstrumentDisplays();
+      }
+    });
+  }
+}, 3000); // Every 3 seconds
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', function() {
+  initInstrumentCarousel();
+});
 
 // ===========================================
 // BALANCING: WEIMAR ~18 Klicks, VENEZUELA ~9 Klicks
