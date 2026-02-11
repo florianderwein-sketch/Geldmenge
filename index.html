@@ -2972,12 +2972,17 @@ let doenerBaseInflation = null;  // Inflation at time of entry
 let doenerCurrentPrice = null;   // Current calculated price
 
 function initDoenerModal() {
+  console.log('🥙 initDoenerModal() aufgerufen');
   const modal = document.getElementById('doenerModal');
   const input = document.getElementById('doenerInput');
   const submitBtn = document.getElementById('doenerSubmit');
 
+  console.log('🥙 Modal Element:', modal);
+  console.log('🥙 Modal classList vor remove:', modal.classList.toString());
+
   // Show modal
   modal.classList.remove('hidden');
+  console.log('🥙 Modal classList nach remove:', modal.classList.toString());
 
   // Enable submit when valid price entered
   input.addEventListener('input', function() {
@@ -3364,17 +3369,20 @@ function toggleHelp(helpId, event) {
 
 // Disclaimer Modal functions
 function closeDisclaimerModal() {
+  console.log('🔵 closeDisclaimerModal() aufgerufen');
   const modal = document.getElementById('disclaimerModal');
   modal.classList.remove('show');
 
   setTimeout(() => {
     modal.classList.add('hidden');
+    console.log('🔵 Disclaimer versteckt, rufe initDoenerModal() auf...');
     // Show Döner price input modal after disclaimer
     initDoenerModal();
   }, 300);
 }
 
 function showDisclaimerModal() {
+  console.log('🔵 showDisclaimerModal() aufgerufen');
   const modal = document.getElementById('disclaimerModal');
   modal.classList.remove('hidden');
 
