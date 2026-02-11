@@ -2338,7 +2338,7 @@
 </div>
 
 <!-- Döner Price Input Modal -->
-<div class="doener-modal" id="doenerModal">
+<div class="doener-modal hidden" id="doenerModal">
   <div class="doener-modal-box">
     <div class="doener-modal-emoji">🥙</div>
     <div class="doener-modal-title">Was zahlt man bei deinem Stammladen gerade für 'nen Döner?</div>
@@ -2972,8 +2972,12 @@ let doenerBaseInflation = null;  // Inflation at time of entry
 let doenerCurrentPrice = null;   // Current calculated price
 
 function initDoenerModal() {
+  const modal = document.getElementById('doenerModal');
   const input = document.getElementById('doenerInput');
   const submitBtn = document.getElementById('doenerSubmit');
+
+  // Show modal
+  modal.classList.remove('hidden');
 
   // Enable submit when valid price entered
   input.addEventListener('input', function() {
