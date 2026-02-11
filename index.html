@@ -1455,7 +1455,7 @@
 
   /* Dynamic Step Indicator */
   .step-indicator {
-    display: none;
+    display: block;
     margin: 10px auto;
     max-width: 95%;
     background: rgba(59, 130, 246, 0.1);
@@ -3147,7 +3147,7 @@ let clickCount = 0;
 const TARGET_INFLATION = 2; // Target: 2% inflation (balanced)
 const MIN_STEP = 0.5; // Minimum step size
 const MAX_STEP = 8; // Maximum step size
-const STEP_FACTOR = 0.15; // 15% of distance to target
+const STEP_FACTOR = 0.25; // 25% of distance to target
 
 function toggleCrisisMode() {
   if (crisisModeActive) {
@@ -3587,29 +3587,29 @@ function updateClickCounter() {
   }
 }
 
-// Override adjustMoney with dynamic step size when crisis mode is active
+// Override adjustMoney with dynamic step size (always active)
 const originalAdjustMoney = adjustMoney;
 
 adjustMoney = function(percent) {
+  // Always use dynamic step size (25% of distance to target)
+  const dynamicStep = calculateDynamicStep();
+  const direction = percent > 0 ? 1 : -1; // Positive = reduce money, Negative = increase
+
+  geldMenge *= (1 - (direction * dynamicStep) / 100);
+
+  // Update step indicator (visible in both modes)
+  updateStepIndicator();
+  updateWaage();
+
+  // Crisis mode specific tracking
   if (crisisModeActive) {
-    // Use dynamic step size
-    const dynamicStep = calculateDynamicStep();
-    const direction = percent > 0 ? 1 : -1; // Positive = reduce money, Negative = increase
-
-    geldMenge *= (1 - (direction * dynamicStep) / 100);
-
     clickCount++;
     updateClickCounter();
-    updateStepIndicator();
-    updateWaage();
+  }
 
-    // Check challenge success after each action
-    if (activeChallenge) {
-      checkChallengeSuccess();
-    }
-  } else {
-    // Use original fixed percentages
-    originalAdjustMoney(percent);
+  // Check challenge success after each action
+  if (activeChallenge) {
+    checkChallengeSuccess();
   }
 };
 
@@ -3967,23 +3967,23 @@ setInterval(() => {
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {
   initInstrumentCarousel();
+  updateStepIndicator(); // Show initial dynamic step size
 });
 
 // ===========================================
-// BALANCING: WEIMAR ~18 Klicks, VENEZUELA ~9 Klicks
+// DYNAMIC STEP SIZE (25% of distance to target)
 // ===========================================
 
-// The dynamic step system naturally achieves this:
-// - Weimar starts at ~99900% inflation (very high)
-//   Distance to 2%: ~99898%, Step: 99898 * 0.15 = capped at 8%
-//   With 8% steps: ~18 clicks needed to reach stable
+// The dynamic step system works in ALL modes (Solo + Crisis):
+// - Step = 25% of distance to 2% target inflation
+// - Clamped between 0.5% (MIN_STEP) and 8% (MAX_STEP)
 //
-// - Venezuela starts at ~2900% inflation
-//   Distance to 2%: ~2898%, Step: capped at 8%
-//   With 8% steps: ~9 clicks needed to reach stable
+// Examples:
+// - At 10% inflation: distance=8%, step=8*0.25=2%
+// - At 4% inflation: distance=2%, step=2*0.25=0.5%
+// - At 2.5% inflation: distance=0.5%, step=0.5*0.25=0.125% → clamped to 0.5%
 //
-// - As inflation decreases, step size decreases too
-//   This creates the feel of "fine-tuning" near the target
+// This creates natural "fine-tuning" behavior near the target
 
 // ===========================================
 // SOUND DESIGN
