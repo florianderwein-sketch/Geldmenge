@@ -2915,6 +2915,19 @@
       </button>
     </div>
 
+    <div class="challenge-btn-wrapper">
+      <button class="challenge-btn" onclick="startChallenge('doener')" id="challenge-doener">
+        <div class="challenge-btn-left">
+          <span class="challenge-flag">🥙</span>
+          <div class="challenge-info">
+            <div class="challenge-name">Döner wieder 3€</div>
+            <div class="challenge-goal">🎯 Ziel: Senke die Inflation bis der Döner wieder 3€ kostet!</div>
+          </div>
+        </div>
+        <span class="challenge-arrow">▶</span>
+      </button>
+    </div>
+
   </div>
 </div>
 
@@ -2947,7 +2960,8 @@ let challengeCompleted = {
   weimar: false,
   venezuela: false,
   japan: false,
-  ecb_live: false
+  ecb_live: false,
+  doener: false
 };
 
 // ===========================================
@@ -3082,6 +3096,13 @@ const scenarios = {
     geldmenge: 17.2,
     bip: 14.5,
     description: 'Eurozone aktuell: M3 Geldmenge €17,2 Bio (Nov 2025), BIP ~€14,5 Bio. Ratio 1.19 → moderate Inflation ~19%.'
+  },
+  doener: {
+    name: 'Döner-Krise 2025',
+    icon: '🥙',
+    geldmenge: 18,     // Creates ~300% inflation (18/4.5 = 4, ratio-1 = 3 = 300%)
+    bip: 4.5,
+    description: 'Döner-Desaster: Durch massive Inflation kostet dein Döner jetzt ein Vermögen! Früher waren es mal 3€...'
   }
 };
 
@@ -3110,6 +3131,31 @@ const challenges = {
     goal: 'Erreiche Preisstabilität: 1-3% Inflation (EZB-Zielkorridor)',
     scenario: 'ecb_live',
     checkSuccess: (inflationPercent) => inflationPercent >= 1 && inflationPercent <= 3
+  },
+  doener: {
+    name: '🥙 Döner wieder 3€',
+    goal: 'Senke die Inflation bis dein Döner wieder 3€ kostet!',
+    scenario: 'doener',
+    checkSuccess: () => doenerCurrentPrice !== null && doenerCurrentPrice <= 3.05,
+    onStart: () => {
+      // Save original values
+      window.savedDoenerBase = doenerBasePrice;
+      window.savedDoenerInflation = doenerBaseInflation;
+      // Set challenge values: Döner "was" 3€ at 0% inflation
+      doenerBasePrice = 3;
+      doenerBaseInflation = 0;
+      // Make sure display is active
+      document.getElementById('doenerDisplay').classList.add('active');
+      updateDoenerPrice();
+    },
+    onEnd: () => {
+      // Restore original values if they existed
+      if (window.savedDoenerBase !== undefined) {
+        doenerBasePrice = window.savedDoenerBase;
+        doenerBaseInflation = window.savedDoenerInflation;
+        updateDoenerPrice();
+      }
+    }
   }
 };
 
@@ -3352,11 +3398,21 @@ function startChallenge(challengeId) {
   const challenge = challenges[challengeId];
   if (!challenge) return;
 
+  // End previous challenge if any
+  if (activeChallenge && challenges[activeChallenge].onEnd) {
+    challenges[activeChallenge].onEnd();
+  }
+
   // Set active challenge
   activeChallenge = challengeId;
 
   // Load scenario
   loadScenario(challenge.scenario);
+
+  // Call onStart hook if exists
+  if (challenge.onStart) {
+    challenge.onStart();
+  }
 
   // Show challenge start toast
   showToast('🎯', challenge.name, challenge.goal);
@@ -3381,6 +3437,11 @@ function checkChallengeSuccess() {
     if (btn) {
       btn.classList.add('completed');
       btn.querySelector('.challenge-arrow').textContent = '✅';
+    }
+
+    // Call onEnd hook if exists
+    if (challenge.onEnd) {
+      challenge.onEnd();
     }
 
     // Show success toast
